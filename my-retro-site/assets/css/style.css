@@ -1,0 +1,57 @@
+/* style.css */
+/* Set the deep dark olive green for elements that aren’t inline */
+body {  
+  background-color: #556B2F; /* Deep Dark Olive Green */  
+  color: #FFFFFF;            /* White text for contrast */  
+  font-family: 'Courier New', Courier, monospace; /* Monospaced, early web feel */  
+  margin: 0;  
+  padding: 0;  
+}  
+
+/* 90s-style heading */
+h1, h2, h3 {  
+  font-family: 'Impact', 'Arial Black', sans-serif; /* Bold, condensed 90s headings */  
+  color: #FFFF00; /* Bright yellow headings */  
+  text-transform: uppercase;  
+  margin: 20px 0 10px;  
+}  
+
+/* Link styles reminiscent of 90s: neon green default, magenta visited */
+a:link {  
+  color: #00FF00; /* Neon green */  
+  text-decoration: underline blink; /* Blink tag effect (deprecated, but emulated) */  
+}  
+a:visited {  
+  color: #FF00FF; /* Magenta for visited links */  
+}  
+a:hover {  
+  color: #FFFF00; /* Yellow on hover */  
+  text-decoration: none;  
+}  
+
+/* Use frameset-like box-outlines around main content (simulating <frameset> borders) */
+#content {  
+  border: 3px dashed #00FF00; /* Dashed neon green border */  
+  padding: 15px;  
+  margin: 20px auto;  
+  max-width: 800px;  
+  background-color: #333300; /* Darker olive shade to frame text area */  
+}  
+
+/* Retro button style: simulate <input type="button"> look */
+.btn {  
+  background-color: #FF0000; /* Bright red button background */  
+  color: #FFFFFF;            /* White button text */  
+  font-family: 'Tahoma', sans-serif;  
+  font-weight: bold;  
+  border: 2px outset #CCCCCC; /* Pressed-in 90s look */  
+  padding: 5px 10px;  
+  cursor: pointer;  
+}  
+
+/* Footer text in small monospace, center aligned */
+footer {  
+  font-size: 0.8em;  
+  text-align: center;  
+  padding: 10px 0;  
+}  
