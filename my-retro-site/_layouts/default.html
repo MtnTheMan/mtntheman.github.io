@@ -1,0 +1,29 @@
+---
+permalink: /default.html
+layout: page
+---
+<!DOCTYPE html>  
+<html lang="en">  
+  <head>  
+    <meta charset="UTF-8" />  
+    <meta name="viewport" content="width=device-width, initial-scale=1" />  
+    <title>{{ page.title }}</title>  
+    <!-- Link the retro CSS file -->  
+    <link rel="stylesheet" href="/assets/css/style.css" />  
+    <!-- Inline 90s meta tag for browser compatibility -->  
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />  
+  </head>  
+  <body bgcolor="#556B2F" text="#FFFFFF" link="#00FF00" vlink="#FF00FF">  
+    <!-- Use a centered table to mimic early web layouts -->  
+    <table width="800" align="center" cellpadding="10" cellspacing="0" border="2" bordercolor="#00FF00">  
+      <tr>  
+        <td>  
+          <!-- Page content injected here -->  
+          {{ content }}  
+        </td>  
+      </tr>  
+    </table>  
+  </body>  
+</html>  
+
+
