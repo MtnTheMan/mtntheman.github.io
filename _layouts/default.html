@@ -1,61 +1,8 @@
----
-permalink: /default.html
-layout: page
----
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ page.title }}</title>
+  {% include head.html %}
 
-    <!-- Favicon and touch/icon formats -->
-    <!-- Standard favicon -->
-    <link
-      rel="shortcut icon"
-      href="{{ '/assets/images/favicons/favicon.ico' | relative_url }}"
-      type="image/x-icon"
-    />
-
-    <!-- PNG favicons for browsers that prefer PNG -->
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="{{ '/assets/images/favicons/favicon-32x32.png' | relative_url }}"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="{{ '/assets/images/favicons/favicon-16x16.png' | relative_url }}"
-    />
-
-    <!-- Apple Touch Icon (for iOS home screen) -->
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="{{ '/assets/images/favicons/apple-touch-icon.png' | relative_url }}"
-    />
-
-    <!-- Android Chrome (via Web Manifest) -->
-    <link rel="manifest" href="{{ '/site.webmanifest' | relative_url }}" />
-
-    <!-- Microsoft Tiles -->
-    <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta
-      name="msapplication-TileImage"
-      content="{{ '/assets/images/favicons/favicon-270x270.png' | relative_url }}"
-    />
-
-    <!-- Link the retro CSS file -->
-    <link rel="stylesheet" href="/assets/css/style.css" />
-
-    <!-- Inline 90s meta tag for browser compatibility -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  </head>
   <body bgcolor="#556B2F" text="#FFFFFF" link="#00FF00" vlink="#FF00FF">
-    <!-- Use a centered table to mimic early web layouts -->
     <table
       width="800"
       align="center"
@@ -66,13 +13,9 @@ layout: page
     >
       <tr>
         <td>
-          <!-- Page content injected here -->
           {{ content }}
         </td>
       </tr>
     </table>
   </body>
 </html>
-
-
-
