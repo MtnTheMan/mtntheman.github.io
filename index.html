@@ -2,42 +2,142 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Site Under Construction</title>
-    <!-- Inline CSS to center content and set background -->
+    <title>mtntheman - Home</title>
     <style>
+      /* 1. Import Fonts */
+      @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap'); /* Open Sans for body */ 
+      @import url('https://fonts.cdnfonts.com/css/rockwell-nova');                           /* Rockwell Nova for headers */ 
+
+      /* 2. Base Styles */
       body {
+        background-color: #556B2F;             /* Deep dark olive green */ 
+        color: #FFFDD0;                        /* Cream text */ 
+        font-family: 'Open Sans', sans-serif;  /* Open Sans for body text */ 
         margin: 0;
         padding: 0;
-        background-color: #556B2F; /* Deep dark olive green */
-        color: #FFFDD0;            /* Cream text for the blurb */
-        font-family: 'Open Sans', sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+      }
+
+      /* 3. Link Styles (90s Neon & Blinking) */
+      a:link {
+        color: #FFFDD0;                        /* Cream unvisited links */ 
+        text-decoration: underline blink;      /* Blink effect typical of 90s */
+      }
+      a:visited {
+        color: #FFDDA0;                        /* Slightly darker cream for visited */ 
+      }
+      a:hover {
+        color: #FFFF00;                        /* Neon yellow on hover */ 
+        text-decoration: none;
+      }
+
+      /* 4. Header Styles (Rockwell Nova, Cream, Uppercase) */
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Rockwell Nova', Rockwell, serif;  /* Rockwell Nova or fallback */ 
+        color: #FFFDD0;                                  /* Cream headers */ 
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        line-height: 1.2;
+        text-transform: uppercase;                       /* 90s-style uppercase */ 
+      }
+
+      /* 5. Content Box (90s Dashed Neon Border) */
+      #content {
+        border: 3px dashed #00FF00; /* Dashed neon green border */ 
+        background-color: #333300;   /* Darker olive for content box */ 
+        padding: 15px;
+        margin: 20px auto;
+        max-width: 800px;
+      }
+
+      /* 6. Navigation Row */
+      #nav td {
+        background-color: #333300;   /* Darker olive for nav background */ 
+        padding: 10px;
         text-align: center;
-      }
-      .under-construction {
-        max-width: 600px;
-      }
-      img {
-        max-width: 100%;
-        height: auto;
-      }
-      p {
-        margin-top: 1em;
-        font-size: 1.2em;
       }
     </style>
   </head>
   <body>
-    <div class="under-construction">
-      <!-- Reference the under construction GIF -->
-      <img
-        src="/my-retro-site/assets/images/Under_construction_graphic.gif"
-        alt="Under Construction"
-      />
-      <p>Working on something awesome. Check back soon!</p>
-    </div>
+    <!-- Main Table Wrapper -->
+    <table
+      width="800"
+      align="center"
+      cellpadding="10"
+      cellspacing="0"
+      border="2"
+      bordercolor="#00FF00"
+    >
+      <!-- 7. Navigation Bar Row -->
+      <tr id="nav">
+        <td>
+          <!-- Home Link -->
+          <a href="index.html">Home</a> |
+          <!-- About Anchor (could be the same page anchor or separate about.html) -->
+          <a href="#about">About</a> |
+          <!-- Photo Gallery Placeholder -->
+          <a href="gallery.html">Gallery</a> |
+          <!-- Blog Placeholder -->
+          <a href="blog.html">Blog</a> |
+          <!-- Instagram External Link -->
+          <a
+            href="https://instagram.com/mtntheman"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Instagram</a
+          > |
+          <!-- iNaturalist External Link -->
+          <a
+            href="https://www.inaturalist.org/people/parker_hopkins"
+            target="_blank"
+            rel="noopener noreferrer"
+            >iNaturalist</a
+          > |
+          <!-- GitHub External Link -->
+          <a
+            href="https://github.com/mtntheman"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub</a
+          >
+        </td>
+      </tr>
+
+      <!-- 8. About Me Section Row -->
+      <tr>
+        <td>
+          <div id="content">
+            <h1 id="about">About Me</h1>
+            <p>This section is under construction. More content to come soon!</p>
+            <!-- External Links List -->
+            <ul>
+              <li>
+                <a
+                  href="https://instagram.com/mtntheman"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Instagram: mtntheman</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.inaturalist.org/people/parker_hopkins"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >iNaturalist Profile</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/mtntheman"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >GitHub</a
+                >
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
