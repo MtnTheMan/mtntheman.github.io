@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Projects – Parker A. Hopkins</title>
+    <style>
+      /* 1. Import Fonts */
+      @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+      @import url('https://fonts.cdnfonts.com/css/rockwell-nova');
+
+      /* 2. Base Styles */
+      body {
+        background-color: #556B2F;             /* Deep dark olive green */
+        color: #FFFDD0;                        /* Cream text */
+        font-family: 'Open Sans', sans-serif;  /* Open Sans for body text */
+        margin: 0;
+        padding: 0;
+      }
+
+      /* 3. Link Styles (90s Neon & Blinking) */
+      a:link {
+        color: #FFFDD0;                        /* Cream unvisited links */
+        text-decoration: underline blink;      /* Blink effect typical of 90s */
+      }
+      a:visited {
+        color: #FFDDA0;                        /* Slightly darker cream for visited */
+      }
+      a:hover {
+        color: #FFFF00;                        /* Neon yellow on hover */
+        text-decoration: none;
+      }
+
+      /* 4. Header Styles (Rockwell Nova, Cream, Uppercase) */
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Rockwell Nova', Rockwell, serif;  /* Rockwell Nova or fallback */
+        color: #FFFDD0;                                  /* Cream headers */
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        line-height: 1.2;
+        text-transform: uppercase;                       /* 90s-style uppercase */
+      }
+
+      /* 5. Content Box (90s Dashed Neon Border) */
+      #content {
+        border: 3px dashed #00FF00; /* Dashed neon green border */
+        background-color: #333300;   /* Darker olive for content box */
+        padding: 15px;
+        margin: 20px auto;
+        max-width: 800px;
+      }
+
+      /* 6. Navigation Row */
+      #nav td {
+        background-color: #333300;   /* Darker olive for nav background */
+        padding: 10px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Table Wrapper -->
+    <table
+      width="800"
+      align="center"
+      cellpadding="10"
+      cellspacing="0"
+      border="2"
+      bordercolor="#00FF00"
+    >
+      <!-- Navigation Bar Row -->
+      <tr id="nav">
+        <td>
+          <a href="index.html">Home</a> |
+          <a href="index.html#about">About</a> |
+          <a href="projects.html">Projects</a> |
+          <a href="gallery.html">Gallery</a> |
+          <a href="blog.html">Blog</a> |
+          <a
+            href="https://instagram.com/mtntheman"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Instagram</a
+          > |
+          <a
+            href="https://www.inaturalist.org/people/parker_hopkins"
+            target="_blank"
+            rel="noopener noreferrer"
+            >iNaturalist</a
+          > |
+          <a
+            href="https://github.com/mtntheman"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub</a
+          >
+        </td>
+      </tr>
+
+      <!-- Projects Section Row -->
+      <tr>
+        <td>
+          <div id="content">
+            <h1>Projects</h1>
+            <p>
+              This section is under construction. A summary of my research
+              projects, publications, and collaborations will be available here
+              soon. Thank you for your patience!
+            </p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

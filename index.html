@@ -5,45 +5,45 @@
     <title>Parker A. Hopkins (mtntheman)</title>
     <style>
       /* 1. Import Fonts */
-      @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap'); /* Open Sans for body */ 
-      @import url('https://fonts.cdnfonts.com/css/rockwell-nova');                           /* Rockwell Nova for headers */ 
+      @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+      @import url('https://fonts.cdnfonts.com/css/rockwell-nova');
 
       /* 2. Base Styles */
       body {
-        background-color: #556B2F;             /* Deep dark olive green */ 
-        color: #FFFDD0;                        /* Cream text */ 
-        font-family: 'Open Sans', sans-serif;  /* Open Sans for body text */ 
+        background-color: #556B2F;             /* Deep dark olive green */
+        color: #FFFDD0;                        /* Cream text */
+        font-family: 'Open Sans', sans-serif;  /* Open Sans for body text */
         margin: 0;
         padding: 0;
       }
 
       /* 3. Link Styles (90s Neon & Blinking) */
       a:link {
-        color: #FFFDD0;                        /* Cream unvisited links */ 
+        color: #FFFDD0;                        /* Cream unvisited links */
         text-decoration: underline blink;      /* Blink effect typical of 90s */
       }
       a:visited {
-        color: #FFDDA0;                        /* Slightly darker cream for visited */ 
+        color: #FFDDA0;                        /* Slightly darker cream for visited */
       }
       a:hover {
-        color: #FFFF00;                        /* Neon yellow on hover */ 
+        color: #FFFF00;                        /* Neon yellow on hover */
         text-decoration: none;
       }
 
       /* 4. Header Styles (Rockwell Nova, Cream, Uppercase) */
       h1, h2, h3, h4, h5, h6 {
-        font-family: 'Rockwell Nova', Rockwell, serif;  /* Rockwell Nova or fallback */ 
-        color: #FFFDD0;                                  /* Cream headers */ 
+        font-family: 'Rockwell Nova', Rockwell, serif;  /* Rockwell Nova or fallback */
+        color: #FFFDD0;                                  /* Cream headers */
         margin-top: 1.5em;
         margin-bottom: 0.5em;
         line-height: 1.2;
-        text-transform: uppercase;                       /* 90s-style uppercase */ 
+        text-transform: uppercase;                       /* 90s-style uppercase */
       }
 
       /* 5. Content Box (90s Dashed Neon Border) */
       #content {
-        border: 3px dashed #00FF00; /* Dashed neon green border */ 
-        background-color: #333300;   /* Darker olive for content box */ 
+        border: 3px dashed #00FF00; /* Dashed neon green border */
+        background-color: #333300;   /* Darker olive for content box */
         padding: 15px;
         margin: 20px auto;
         max-width: 800px;
@@ -51,9 +51,16 @@
 
       /* 6. Navigation Row */
       #nav td {
-        background-color: #333300;   /* Darker olive for nav background */ 
+        background-color: #333300;   /* Darker olive for nav background */
         padding: 10px;
         text-align: center;
+      }
+      /* 7. Profile Photo */
+      #profile-photo {
+        display: block;
+        margin: 10px auto 20px;
+        max-width: 200px;
+        border: 2px solid #00FF00;
       }
     </style>
   </head>
@@ -67,32 +74,26 @@
       border="2"
       bordercolor="#00FF00"
     >
-      <!-- 7. Navigation Bar Row -->
+      <!-- Navigation Bar Row -->
       <tr id="nav">
         <td>
-          <!-- Home Link -->
           <a href="index.html">Home</a> |
-          <!-- About Anchor (could be the same page anchor or separate about.html) -->
           <a href="#about">About</a> |
-          <!-- Photo Gallery Placeholder -->
+          <a href="projects.html">Projects</a> |
           <a href="gallery.html">Gallery</a> |
-          <!-- Blog Placeholder -->
           <a href="blog.html">Blog</a> |
-          <!-- Instagram External Link -->
           <a
             href="https://instagram.com/mtntheman"
             target="_blank"
             rel="noopener noreferrer"
             >Instagram</a
           > |
-          <!-- iNaturalist External Link -->
           <a
             href="https://www.inaturalist.org/people/parker_hopkins"
             target="_blank"
             rel="noopener noreferrer"
             >iNaturalist</a
           > |
-          <!-- GitHub External Link -->
           <a
             href="https://github.com/mtntheman"
             target="_blank"
@@ -102,10 +103,17 @@
         </td>
       </tr>
 
-      <!-- 8. About Me Section Row -->
+      <!-- About Me Section Row -->
       <tr>
         <td>
           <div id="content">
+            <!-- Profile Photo -->
+            <img
+              id="profile-photo"
+              src="/assets/images/TaquamenonPhoto_phopkins.jpeg"
+              alt="Parker A. Hopkins"
+            />
+
             <h1 id="about">About Me</h1>
 
             <p>
