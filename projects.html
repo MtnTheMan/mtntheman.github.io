@@ -10,40 +10,40 @@
 
       /* 2. Base Styles */
       body {
-        background-color: #556B2F;             /* Deep dark olive green */
-        color: #FFFDD0;                        /* Cream text */
-        font-family: 'Open Sans', sans-serif;  /* Open Sans for body text */
+        background-color: #556B2F;
+        color: #FFFDD0;
+        font-family: 'Open Sans', sans-serif;
         margin: 0;
         padding: 0;
       }
 
       /* 3. Link Styles (90s Neon & Blinking) */
       a:link {
-        color: #FFFDD0;                        /* Cream unvisited links */
-        text-decoration: underline blink;      /* Blink effect typical of 90s */
+        color: #FFFDD0;
+        text-decoration: underline blink;
       }
       a:visited {
-        color: #FFDDA0;                        /* Slightly darker cream for visited */
+        color: #FFDDA0;
       }
       a:hover {
-        color: #FFFF00;                        /* Neon yellow on hover */
+        color: #FFFF00;
         text-decoration: none;
       }
 
       /* 4. Header Styles (Rockwell Nova, Cream, Uppercase) */
       h1, h2, h3, h4, h5, h6 {
-        font-family: 'Rockwell Nova', Rockwell, serif;  /* Rockwell Nova or fallback */
-        color: #FFFDD0;                                  /* Cream headers */
+        font-family: 'Rockwell Nova', Rockwell, serif;
+        color: #FFFDD0;
         margin-top: 1.5em;
         margin-bottom: 0.5em;
         line-height: 1.2;
-        text-transform: uppercase;                       /* 90s-style uppercase */
+        text-transform: uppercase;
       }
 
       /* 5. Content Box (90s Dashed Neon Border) */
       #content {
-        border: 3px dashed #00FF00; /* Dashed neon green border */
-        background-color: #333300;   /* Darker olive for content box */
+        border: 3px dashed #00FF00;
+        background-color: #333300;
         padding: 15px;
         margin: 20px auto;
         max-width: 800px;
@@ -51,9 +51,31 @@
 
       /* 6. Navigation Row */
       #nav td {
-        background-color: #333300;   /* Darker olive for nav background */
+        background-color: #333300;
         padding: 10px;
         text-align: center;
+      }
+
+      /* 7. Details/Dropdown Styling */
+      details {
+        margin-bottom: 1em;
+      }
+      details summary {
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: bold;
+        outline: none;
+      }
+      .project-img {
+        display: block;
+        margin: 10px 0;
+        max-width: 100%;
+        border: 2px solid #00FF00;
+      }
+      /* 8. Nested lists styling */
+      details ul {
+        margin-left: 1.5em;
+        list-style-type: disc;
       }
     </style>
   </head>
@@ -100,12 +122,156 @@
       <tr>
         <td>
           <div id="content">
+            <!-- Introduction + summary of diversity of work -->
             <h1>Projects</h1>
             <p>
-              This section is under construction. A summary of my research
-              projects, publications, and collaborations will be available here
-              soon. Thank you for your patience!
+              I work across a wide array of natural-resource and creative projects—from spatial modeling and indices development to citizen-science platforms and agent-based simulations. Click each header below to learn more.
             </p>
+
+            <!-- Northern Hardwoods Resilience Project -->
+            <details>
+              <summary>Northern Hardwoods Resilience Project</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="Northern Hardwoods Placeholder"
+              />
+              <p>Placeholder blurb for the Northern Hardwoods Resilience Project.</p>
+            </details>
+
+            <!-- Roads and their Genesis/Utilization on USFS lands -->
+            <details>
+              <summary>Roads and their Genesis/Utilization on USFS lands</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="USFS Roads Placeholder"
+              />
+              <p>Placeholder blurb on the study of road origin and use in USFS units.</p>
+            </details>
+
+            <!-- Agroforestry in Lake States -->
+            <details>
+              <summary>Agroforestry in Lake States</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="Agroforestry Placeholder"
+              />
+              <ul>
+                <li><strong>Spatial modeling of AF features:</strong> placeholder description.</li>
+                <li><strong>Survey instrument + reporting:</strong> placeholder description.</li>
+              </ul>
+            </details>
+
+            <!-- Riparian Buffer Index + Functional Forest Classification -->
+            <details>
+              <summary>Riparian Buffer Index + Functional Forest Classification</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="Riparian Buffer Placeholder"
+              />
+              <ul>
+                <li><strong>Extensions of methods for AF project:</strong> placeholder description.</li>
+              </ul>
+            </details>
+
+            <!-- Mountain Pine Beetle Agent Based Model -->
+            <details>
+              <summary>Mountain Pine Beetle Agent Based Model</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="MPB ABM Placeholder"
+              />
+              <ul>
+                <li><strong>Final project of GEO 869 ABM:</strong> placeholder description.</li>
+              </ul>
+            </details>
+
+            <!-- Land Cover in Michigan -->
+            <details>
+              <summary>Land Cover in Michigan</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="Land Cover Placeholder"
+              />
+              <ul>
+                <li><strong>Based on NAIP imagery and CNN methods:</strong> placeholder description.</li>
+              </ul>
+            </details>
+
+            <!-- Gullies Project -->
+            <details>
+              <summary>Gullies Project</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="Gullies Placeholder"
+              />
+              <ul>
+                <li><a href="#">Link to published paper</a></li>
+              </ul>
+            </details>
+
+            <!-- iNaturalist administration + guidance -->
+            <details>
+              <summary>iNaturalist administration + guidance</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="iNaturalist Admin Placeholder"
+              />
+              <ul>
+                <li>Which includes other citizen science guidance</li>
+                <li>BioBlitz consulting work in NPS</li>
+                <li>Expanding role of passive scientific data collection, scientific visitor interpretive experiences</li>
+              </ul>
+            </details>
+
+            <!-- Larger iNaturalist implementation + methods -->
+            <details>
+              <summary>Larger iNaturalist implementation + methods</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="iNaturalist Methods Placeholder"
+              />
+              <ul>
+                <li>Species watchlists</li>
+                <li>Undergraduate honors thesis (informed)</li>
+              </ul>
+            </details>
+
+            <!-- Responsible stewardship of public lands -->
+            <details>
+              <summary>Responsible stewardship of public lands</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="Stewardship Placeholder"
+              />
+              <ul>
+                <li>Reflect on time at USFS managing on front line</li>
+                <li>Functions as a conclusion paragraph</li>
+              </ul>
+            </details>
+
+            <!-- Upcoming Projects -->
+            <details>
+              <summary>Upcoming Projects</summary>
+              <img
+                class="project-img"
+                src="/assets/images/Under_construction_graphic.gif"
+                alt="Upcoming Projects Placeholder"
+              />
+              <ul>
+                <li>Northern Hardwoods Resilience</li>
+                <li>USFS Infrastructure Utilization</li>
+              </ul>
+            </details>
           </div>
         </td>
       </tr>
