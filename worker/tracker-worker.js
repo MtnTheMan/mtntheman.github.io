@@ -1,93 +1,81 @@
-const DEFAULT_DELAY_MINUTES = 30;
-const DEFAULT_COORD_DECIMALS = 3;
-const DEFAULT_MAX_PUBLIC_POINTS = 2500;
-const DEFAULT_STALE_HOURS = 6;
-const DEFAULT_BOUNDS = {
-  minLat: 18,
-  maxLat: 72,
-  minLon: -170,
-  maxLon: -50
-};
+const DEFAULT_PUBLIC_DELAY_MINUTES = 30;
+const DEFAULT_COORDINATE_DECIMALS = 3;
+const DEFAULT_MAX_PUBLIC_POINTS = 5000;
+const DEFAULT_STALE_MINUTES = 180;
+const TRIP_START_DATE = "2026-05-17";
+const TRIP_END_DATE = "2026-06-22";
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
     if (request.method === "OPTIONS") {
-      return withCors(new Response(null, { status: 204 }), env);
+      return withCors(new Response(null, { status: 204 }), request, env);
     }
 
     try {
       if (url.pathname === "/api/tracker/ingest" && request.method === "POST") {
-        return withCors(await ingestOwnTracks(request, env), env);
+        return withCors(await ingestOwnTracks(request, env), request, env);
       }
 
       if (url.pathname === "/api/tracker/geojson" && request.method === "GET") {
-        return withCors(await readPublicGeoJson(env), env);
+        return withCors(await publicGeoJson(env), request, env);
       }
 
-      if (url.pathname === "/api/tracker/export.geojson" && request.method === "GET") {
-        return withCors(await exportAllGeoJson(request, env), env);
+      if (url.pathname === "/api/tracker/health" && request.method === "GET") {
+        return withCors(await health(env), request, env);
       }
 
       if (url.pathname === "/api/tracker/export.csv" && request.method === "GET") {
-        return withCors(await exportAllCsv(request, env), env);
+        return withCors(await exportCsv(request, env), request, env);
       }
 
-      if (url.pathname === "/api/tracker/clear-test" && request.method === "POST") {
-        return withCors(await clearTestPoints(request, env), env);
-      }
-
-      return json({ error: "not_found" }, 404);
+      return withCors(json({ ok: false, error: "not_found" }, 404), request, env);
     } catch (error) {
-      return json({ error: "server_error", message: error.message }, 500);
+      return withCors(json({ ok: false, error: "server_error", message: error.message }, 500), request, env);
     }
   }
 };
 
 async function ingestOwnTracks(request, env) {
   if (!isAuthorized(request, env)) {
-    return json({ error: "unauthorized" }, 401);
+    return json({ ok: false, error: "unauthorized" }, 401, {
+      "WWW-Authenticate": 'Basic realm="Trip Tracker"'
+    });
   }
 
   let payload;
   try {
-    payload = await readJson(request);
+    payload = await request.json();
   } catch {
-    return json({ error: "invalid_json" }, 400);
+    return json({ ok: false, error: "invalid_json" }, 400);
   }
 
   if (!payload || typeof payload !== "object") {
-    return json({ ok: true, ignored: true, reason: "empty_payload" });
+    return json({ ok: false, error: "invalid_payload" }, 400);
   }
 
-  const type = stringOrNull(payload._type || payload.type);
-  if (type && type !== "location" && type !== "transition") {
-    return json({ ok: true, ignored: true, reason: "non_location_payload", raw_type: type });
+  const rawType = stringOrNull(payload._type);
+  if (rawType !== "location") {
+    return json({ ok: true, stored: false, reason: "ignored_non_location_payload" });
   }
 
   const lat = numberOrNull(payload.lat);
   const lon = numberOrNull(payload.lon);
-  if (lat === null || lon === null) {
-    return json({ ok: true, ignored: true, reason: "missing_coordinates" });
+  const validationError = validateCoordinates(lat, lon, env);
+  if (validationError) {
+    return json({ ok: false, error: validationError }, 400);
   }
 
-  if (!validCoordinate(lat, lon)) {
-    return json({ error: "invalid_coordinates" }, 400);
-  }
+  const nowEpoch = epochSeconds();
+  const recordedAt = integerOrNull(payload.tst) ?? nowEpoch;
+  const receivedAt = nowEpoch;
+  const velocity = numberOrNull(payload.vel) ?? numberOrNull(payload.velocity);
 
-  if (!boundsDisabled(env) && !insideExpectedBounds(lat, lon, env)) {
-    return json({ error: "outside_expected_region" }, 400);
-  }
-
-  const recordedAt = ownTracksTimestamp(payload.tst);
-  const receivedAt = new Date().toISOString();
-  const topic = stringOrNull(payload.topic || request.headers.get("X-OwnTracks-Topic"));
-
-  await env.DB.prepare(
-    `INSERT INTO tracker_points
-      (recorded_at, received_at, lat, lon, acc, alt, batt, velocity, topic, raw_type, source)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  const result = await env.DB.prepare(
+    `INSERT INTO location_points
+      (recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   )
     .bind(
       recordedAt,
@@ -96,189 +84,298 @@ async function ingestOwnTracks(request, env) {
       lon,
       numberOrNull(payload.acc),
       numberOrNull(payload.alt),
-      numberOrNull(payload.batt),
-      numberOrNull(payload.vel || payload.velocity),
-      topic,
-      type,
+      recognizedBattery(payload),
+      velocity,
+      rawType,
       "owntracks"
     )
     .run();
 
-  return json({ ok: true, recorded_at: recordedAt, received_at: receivedAt });
+  return json({ ok: true, stored: true, id: result.meta.last_row_id });
 }
 
-async function readPublicGeoJson(env) {
-  if (trackerHidden(env)) {
-    return json(emptyFeatureCollection({ feedStatus: "complete", message: "Trip complete" }));
-  }
-
-  const privacy = privacyConfig(env);
-  const cutoff = new Date(Date.now() - privacy.delayMinutes * 60 * 1000).toISOString();
-  const limit = intEnv(env.MAX_PUBLIC_POINTS, DEFAULT_MAX_PUBLIC_POINTS);
+async function publicGeoJson(env) {
+  const config = publicConfig(env);
+  const cutoff = epochSeconds() - config.publicDelayMinutes * 60;
 
   const rows = await env.DB.prepare(
-    `SELECT recorded_at, received_at, lat, lon, acc, alt, batt, velocity, topic, raw_type, source
-     FROM tracker_points
+    `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
+     FROM location_points
      WHERE recorded_at <= ?
      ORDER BY recorded_at ASC
      LIMIT ?`
-  ).bind(cutoff, limit).all();
+  ).bind(cutoff, config.maxPublicPoints).all();
 
-  return json(buildPublicGeoJson(rows.results || [], privacy));
+  return json(buildFeatureCollection(rows.results || [], config));
 }
 
-async function exportAllGeoJson(request, env) {
+async function health(env) {
+  const countResult = await env.DB.prepare(
+    "SELECT COUNT(*) AS point_count, MAX(received_at) AS latest_received_at FROM location_points"
+  ).first();
+
+  const config = publicConfig(env);
+  return json({
+    ok: true,
+    service: "trip-tracker",
+    point_count: countResult?.point_count ?? 0,
+    latest_received_at: countResult?.latest_received_at ?? null,
+    config: {
+      public_delay_minutes: config.publicDelayMinutes,
+      coordinate_decimals: config.coordinateDecimals,
+      max_public_points: config.maxPublicPoints,
+      stale_minutes: config.staleMinutes,
+      allow_zero_coords: config.allowZeroCoords,
+      bounding_box: configuredBounds(env),
+      cors_allowed_origins: allowedOrigins(env),
+      trip_start_date: TRIP_START_DATE,
+      trip_end_date: TRIP_END_DATE
+    }
+  });
+}
+
+async function exportCsv(request, env) {
   if (!isAuthorized(request, env)) {
-    return json({ error: "unauthorized" }, 401);
+    return json({ ok: false, error: "unauthorized" }, 401, {
+      "WWW-Authenticate": 'Basic realm="Trip Tracker"'
+    });
   }
 
   const rows = await env.DB.prepare(
-    `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, topic, raw_type, source
-     FROM tracker_points
+    `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
+     FROM location_points
      ORDER BY recorded_at ASC`
   ).all();
 
-  const features = (rows.results || []).map((row) => ({
-    type: "Feature",
-    geometry: { type: "Point", coordinates: [row.lon, row.lat] },
-    properties: pointProperties(row)
-  }));
-
-  return json({ type: "FeatureCollection", features });
-}
-
-async function exportAllCsv(request, env) {
-  if (!isAuthorized(request, env)) {
-    return json({ error: "unauthorized" }, 401);
-  }
-
-  const rows = await env.DB.prepare(
-    `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, topic, raw_type, source
-     FROM tracker_points
-     ORDER BY recorded_at ASC`
-  ).all();
-
-  const columns = ["id", "recorded_at", "received_at", "lat", "lon", "acc", "alt", "batt", "velocity", "topic", "raw_type", "source"];
+  const columns = ["id", "recorded_at", "received_at", "lat", "lon", "acc", "alt", "batt", "velocity", "raw_type", "source"];
   const body = [
     columns.join(","),
     ...(rows.results || []).map((row) => columns.map((column) => csvCell(row[column])).join(","))
   ].join("\n");
 
-  return new Response(body + "\n", {
+  return new Response(`${body}\n`, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="tracker-points.csv"'
+      "Content-Disposition": 'attachment; filename="trip-tracker-location-points.csv"'
     }
   });
 }
 
-async function clearTestPoints(request, env) {
-  if (!isAuthorized(request, env)) {
-    return json({ error: "unauthorized" }, 401);
-  }
+function buildFeatureCollection(rows, config) {
+  const roundedRows = rows.map((row) => ({
+    ...row,
+    lat: roundCoordinate(row.lat, config.coordinateDecimals),
+    lon: roundCoordinate(row.lon, config.coordinateDecimals)
+  }));
 
-  const url = new URL(request.url);
-  const before = url.searchParams.get("before");
-  if (before) {
-    await env.DB.prepare("DELETE FROM tracker_points WHERE recorded_at < ?").bind(before).run();
-  } else {
-    await env.DB.prepare("DELETE FROM tracker_points").run();
-  }
+  const latest = roundedRows[roundedRows.length - 1] || null;
+  const coordinates = roundedRows.map((row) => [row.lon, row.lat]);
+  const routeCoordinates = coordinates.length === 1 ? [coordinates[0], coordinates[0]] : coordinates;
+  const status = tripStatus(latest, config);
 
-  return json({ ok: true, cleared: true });
-}
+  const sharedProperties = {
+    last_recorded_at: latest?.recorded_at ?? null,
+    received_at: latest?.received_at ?? null,
+    acc: latest?.acc ?? null,
+    batt: latest?.batt ?? null,
+    public_delay_minutes: config.publicDelayMinutes,
+    coordinate_decimals: config.coordinateDecimals,
+    point_count: roundedRows.length,
+    privacy_mode: privacyMode(config)
+  };
 
-function buildPublicGeoJson(rows, privacy) {
-  if (!rows.length) {
-    return emptyFeatureCollection({
-      feedStatus: "stale",
-      coordinatePrecision: precisionLabel(privacy.coordDecimals),
-      pointCount: 0,
-      privacy
+  const features = [];
+  if (routeCoordinates.length > 0) {
+    features.push({
+      type: "Feature",
+      geometry: { type: "LineString", coordinates: routeCoordinates },
+      properties: {
+        name: "Route",
+        kind: "route",
+        ...sharedProperties
+      }
     });
   }
 
-  const roundedRows = rows.map((row) => ({
-    ...row,
-    lat: roundCoord(row.lat, privacy.coordDecimals),
-    lon: roundCoord(row.lon, privacy.coordDecimals)
-  }));
-
-  const coordinates = roundedRows.map((row) => [row.lon, row.lat]);
-  const latest = roundedRows[roundedRows.length - 1];
-  const lastRecordedAt = latest.recorded_at;
-  const ageHours = (Date.now() - new Date(lastRecordedAt).getTime()) / 3600000;
-  const feedStatus = ageHours > privacy.staleHours
-    ? "stale"
-    : privacy.delayMinutes > 0 ? "delayed" : "live";
-
-  const features = [];
-  const routeCoordinates = coordinates.length === 1 ? [coordinates[0], coordinates[0]] : coordinates;
-  features.push({
-    type: "Feature",
-    geometry: { type: "LineString", coordinates: routeCoordinates },
-    properties: { kind: "route" }
-  });
-
-  features.push({
-    type: "Feature",
-    geometry: { type: "Point", coordinates: [latest.lon, latest.lat] },
-    properties: {
-      kind: "latest",
-      recorded_at: latest.recorded_at,
-      acc: latest.acc,
-      alt: latest.alt
-    }
-  });
+  if (latest) {
+    features.push({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [latest.lon, latest.lat] },
+      properties: {
+        name: "Latest delayed location",
+        kind: "latest",
+        recorded_at: latest.recorded_at,
+        velocity: latest.velocity,
+        raw_type: latest.raw_type,
+        source: latest.source,
+        ...sharedProperties
+      }
+    });
+  }
 
   return {
     type: "FeatureCollection",
+    properties: {
+      ...sharedProperties,
+      generated_at: epochSeconds(),
+      status
+    },
     metadata: {
       generatedAt: new Date().toISOString(),
-      lastRecordedAt,
-      coordinatePrecision: precisionLabel(privacy.coordDecimals),
+      lastRecordedAt: latest ? epochToIso(latest.recorded_at) : null,
+      lastReceivedAt: latest ? epochToIso(latest.received_at) : null,
       pointCount: roundedRows.length,
-      feedStatus,
-      privacy
+      publicDelayMinutes: config.publicDelayMinutes,
+      coordinateDecimals: config.coordinateDecimals,
+      privacyMode: privacyMode(config),
+      feedStatus: status,
+      tripStartDate: TRIP_START_DATE,
+      tripEndDate: TRIP_END_DATE
     },
     features
   };
 }
 
-function emptyFeatureCollection(metadata = {}) {
-  return {
-    type: "FeatureCollection",
-    metadata: {
-      generatedAt: new Date().toISOString(),
-      pointCount: 0,
-      ...metadata
-    },
-    features: []
-  };
+function tripStatus(latest, config) {
+  const tripEnd = new Date(`${TRIP_END_DATE}T23:59:59-04:00`).getTime();
+  if (Date.now() > tripEnd) return "trip_complete";
+  if (!latest) return "stale";
+
+  const latestAgeMinutes = (epochSeconds() - latest.recorded_at) / 60;
+  if (latestAgeMinutes > config.publicDelayMinutes + config.staleMinutes) return "stale";
+  return config.publicDelayMinutes > 0 || config.coordinateDecimals <= 3 ? "delayed" : "live";
 }
 
 function isAuthorized(request, env) {
-  const expected = env.TRACKER_TOKEN;
-  if (!expected) return false;
-
   const auth = request.headers.get("Authorization") || "";
+
   if (auth.startsWith("Bearer ")) {
-    return timingSafeEqual(auth.slice(7), expected);
+    return Boolean(env.TRACKER_TOKEN) && timingSafeEqual(auth.slice(7), env.TRACKER_TOKEN);
   }
 
   if (auth.startsWith("Basic ")) {
-    try {
-      const decoded = atob(auth.slice(6));
-      const token = decoded.includes(":") ? decoded.split(":").pop() : decoded;
-      return timingSafeEqual(token, expected);
-    } catch {
-      return false;
+    const credentials = decodeBasicAuth(auth);
+    if (!credentials) return false;
+    return Boolean(env.TRACKER_USERNAME && env.TRACKER_PASSWORD)
+      && timingSafeEqual(credentials.username, env.TRACKER_USERNAME)
+      && timingSafeEqual(credentials.password, env.TRACKER_PASSWORD);
+  }
+
+  return false;
+}
+
+function decodeBasicAuth(auth) {
+  try {
+    const decoded = atob(auth.slice(6));
+    const separator = decoded.indexOf(":");
+    if (separator === -1) return null;
+    return {
+      username: decoded.slice(0, separator),
+      password: decoded.slice(separator + 1)
+    };
+  } catch {
+    return null;
+  }
+}
+
+function validateCoordinates(lat, lon, env) {
+  if (lat === null || lon === null) return "missing_coordinates";
+  if (lat < -90 || lat > 90) return "invalid_latitude";
+  if (lon < -180 || lon > 180) return "invalid_longitude";
+  if (lat === 0 && lon === 0 && !booleanEnv(env.ALLOW_ZERO_COORDS)) return "zero_coordinates_rejected";
+
+  const bounds = configuredBounds(env);
+  if (bounds) {
+    if (lat < bounds.min_lat || lat > bounds.max_lat || lon < bounds.min_lon || lon > bounds.max_lon) {
+      return "outside_configured_bounds";
     }
   }
 
-  const url = new URL(request.url);
-  const queryToken = url.searchParams.get("token");
-  return queryToken ? timingSafeEqual(queryToken, expected) : false;
+  return null;
+}
+
+function configuredBounds(env) {
+  const minLat = numberOrNull(env.MIN_LAT);
+  const maxLat = numberOrNull(env.MAX_LAT);
+  const minLon = numberOrNull(env.MIN_LON);
+  const maxLon = numberOrNull(env.MAX_LON);
+
+  if ([minLat, maxLat, minLon, maxLon].every((value) => value === null)) return null;
+  if ([minLat, maxLat, minLon, maxLon].some((value) => value === null)) {
+    throw new Error("MIN_LAT, MAX_LAT, MIN_LON, and MAX_LON must all be set when using bounds");
+  }
+
+  return {
+    min_lat: minLat,
+    max_lat: maxLat,
+    min_lon: minLon,
+    max_lon: maxLon
+  };
+}
+
+function publicConfig(env) {
+  return {
+    publicDelayMinutes: integerEnv(env.PUBLIC_DELAY_MINUTES, DEFAULT_PUBLIC_DELAY_MINUTES),
+    coordinateDecimals: clamp(integerEnv(env.COORDINATE_DECIMALS, DEFAULT_COORDINATE_DECIMALS), 0, 6),
+    maxPublicPoints: integerEnv(env.MAX_PUBLIC_POINTS, DEFAULT_MAX_PUBLIC_POINTS),
+    staleMinutes: integerEnv(env.STALE_MINUTES, DEFAULT_STALE_MINUTES),
+    allowZeroCoords: booleanEnv(env.ALLOW_ZERO_COORDS)
+  };
+}
+
+function recognizedBattery(payload) {
+  return numberOrNull(payload.batt) ?? numberOrNull(payload.BAT) ?? numberOrNull(payload.battery);
+}
+
+function privacyMode(config) {
+  return `delayed ${config.publicDelayMinutes} minutes, rounded to ${config.coordinateDecimals} decimals`;
+}
+
+function withCors(response, request, env) {
+  const headers = new Headers(response.headers);
+  const origin = request.headers.get("Origin");
+  const origins = allowedOrigins(env);
+
+  if (origin && origins.includes(origin)) {
+    headers.set("Access-Control-Allow-Origin", origin);
+    headers.set("Vary", "Origin");
+  } else if (!origin) {
+    headers.set("Access-Control-Allow-Origin", "https://mtntheman.com");
+  }
+
+  headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  headers.set("Access-Control-Allow-Headers", "Authorization, Content-Type");
+  headers.set("Access-Control-Max-Age", "86400");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
+}
+
+function allowedOrigins(env) {
+  const configured = stringOrNull(env.CORS_ALLOWED_ORIGINS || env.CORS_ORIGIN);
+  const defaults = [
+    "https://mtntheman.com",
+    "https://www.mtntheman.com",
+    "http://localhost:4000",
+    "http://127.0.0.1:4000",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080"
+  ];
+
+  if (!configured) return defaults;
+  return configured.split(",").map((origin) => origin.trim()).filter(Boolean);
+}
+
+function json(data, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      ...extraHeaders
+    }
+  });
 }
 
 function timingSafeEqual(a, b) {
@@ -291,108 +388,46 @@ function timingSafeEqual(a, b) {
   return result === 0;
 }
 
-async function readJson(request) {
-  const text = await request.text();
-  if (!text.trim()) return null;
-  return JSON.parse(text);
-}
-
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json; charset=utf-8" }
-  });
-}
-
-function withCors(response, env) {
-  const headers = new Headers(response.headers);
-  headers.set("Access-Control-Allow-Origin", env.CORS_ORIGIN || "https://mtntheman.com");
-  headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  headers.set("Access-Control-Allow-Headers", "Authorization, Content-Type");
-  headers.set("Access-Control-Max-Age", "86400");
-  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
-}
-
-function privacyConfig(env) {
-  const strictHours = numberOrNull(env.STRICT_DELAY_HOURS);
-  return {
-    delayMinutes: strictHours !== null
-      ? Math.max(strictHours * 60, DEFAULT_DELAY_MINUTES)
-      : intEnv(env.PUBLIC_DELAY_MINUTES, DEFAULT_DELAY_MINUTES),
-    coordDecimals: intEnv(env.COORD_DECIMALS, DEFAULT_COORD_DECIMALS),
-    staleHours: intEnv(env.STALE_HOURS, DEFAULT_STALE_HOURS)
-  };
-}
-
-function trackerHidden(env) {
-  if (!env.TRACKER_HIDE_AFTER) return false;
-  return Date.now() > new Date(env.TRACKER_HIDE_AFTER).getTime();
-}
-
-function boundsDisabled(env) {
-  return String(env.DISABLE_BOUNDS || "").toLowerCase() === "true";
-}
-
-function insideExpectedBounds(lat, lon, env) {
-  const bounds = {
-    minLat: numberOrNull(env.MIN_LAT) ?? DEFAULT_BOUNDS.minLat,
-    maxLat: numberOrNull(env.MAX_LAT) ?? DEFAULT_BOUNDS.maxLat,
-    minLon: numberOrNull(env.MIN_LON) ?? DEFAULT_BOUNDS.minLon,
-    maxLon: numberOrNull(env.MAX_LON) ?? DEFAULT_BOUNDS.maxLon
-  };
-  return lat >= bounds.minLat && lat <= bounds.maxLat && lon >= bounds.minLon && lon <= bounds.maxLon;
-}
-
-function validCoordinate(lat, lon) {
-  return Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
-}
-
-function ownTracksTimestamp(value) {
-  const timestamp = numberOrNull(value);
-  return timestamp === null ? new Date().toISOString() : new Date(timestamp * 1000).toISOString();
-}
-
 function numberOrNull(value) {
-  if (value === null || value === undefined || value === "") return null;
+  if (value === undefined || value === null || value === "") return null;
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
 }
 
+function integerOrNull(value) {
+  const number = numberOrNull(value);
+  return number === null ? null : Math.trunc(number);
+}
+
+function integerEnv(value, fallback) {
+  const integer = integerOrNull(value);
+  return integer === null ? fallback : integer;
+}
+
 function stringOrNull(value) {
-  if (value === null || value === undefined || value === "") return null;
+  if (value === undefined || value === null || value === "") return null;
   return String(value);
 }
 
-function intEnv(value, fallback) {
-  const number = Number.parseInt(value, 10);
-  return Number.isFinite(number) ? number : fallback;
+function booleanEnv(value) {
+  return String(value || "").toLowerCase() === "true";
 }
 
-function roundCoord(value, decimals) {
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function roundCoordinate(value, decimals) {
   const multiplier = 10 ** decimals;
   return Math.round(Number(value) * multiplier) / multiplier;
 }
 
-function precisionLabel(decimals) {
-  if (decimals <= 2) return "city-scale";
-  if (decimals === 3) return "about 100 meters";
-  if (decimals === 4) return "about 10 meters";
-  return `${decimals} decimal places`;
+function epochSeconds() {
+  return Math.floor(Date.now() / 1000);
 }
 
-function pointProperties(row) {
-  return {
-    id: row.id,
-    recorded_at: row.recorded_at,
-    received_at: row.received_at,
-    acc: row.acc,
-    alt: row.alt,
-    batt: row.batt,
-    velocity: row.velocity,
-    topic: row.topic,
-    raw_type: row.raw_type,
-    source: row.source
-  };
+function epochToIso(value) {
+  return new Date(value * 1000).toISOString();
 }
 
 function csvCell(value) {

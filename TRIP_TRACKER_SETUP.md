@@ -1,41 +1,43 @@
 # Trip Tracker Setup
 
-This repo includes a temporary live road-trip tracker for mtntheman.com. The static page lives at `/trip-tracker/`; the API is a separate Cloudflare Worker backed by D1.
+Temporary OwnTracks road-trip tracker for mtntheman.com, active May 17, 2026 through June 22, 2026.
 
-The default public behavior is privacy-preserving:
+Architecture:
 
-- Public points are delayed by 30 minutes.
-- Public coordinates are rounded to 3 decimal places, roughly 100 meters.
-- The Worker can be switched to a stricter several-hour delay.
-- The tracker can auto-hide after the trip.
-- Secrets are stored as Worker secrets, not committed.
+```text
+OwnTracks mobile app -> Cloudflare Worker POST /api/tracker/ingest -> Cloudflare D1 -> GET /api/tracker/geojson -> Leaflet map page
+```
 
 ## Files
 
-- `trip-tracker.html` - Jekyll page with the Leaflet map and status panel.
+- `trip-tracker.html` - Jekyll page at `/trip-tracker/`.
 - `worker/tracker-worker.js` - Cloudflare Worker API.
 - `worker/migrations/0001_create_tracker_points.sql` - D1 schema.
-- `worker/wrangler.example.toml` - example Wrangler config with placeholders.
-- `worker/sample-owntracks-payload.json` - sample OwnTracks payload for tests.
+- `worker/wrangler.toml` - local Wrangler config with placeholders. This file is gitignored.
+- `worker/wrangler.example.toml` - committed example config.
+- `worker/sample-owntracks-payload.json` - sample OwnTracks location payload.
 
-## Endpoints
+## Public Privacy Defaults
 
-- `POST /api/tracker/ingest` - private OwnTracks ingest endpoint.
-- `GET /api/tracker/geojson` - public delayed/generalized GeoJSON for the map.
-- `GET /api/tracker/export.geojson` - private full export.
-- `GET /api/tracker/export.csv` - private full CSV export.
-- `POST /api/tracker/clear-test` - private cleanup endpoint for test points.
+- Public endpoint is unauthenticated, but only returns delayed/generalized data.
+- `PUBLIC_DELAY_MINUTES = "30"` by default.
+- `COORDINATE_DECIMALS = "3"` by default.
+- Raw current exact location is never returned unless those settings are intentionally changed.
+- The page displays a visible privacy note and reports the active privacy mode.
 
 ## 1. Install Wrangler
 
-Use the current Cloudflare Wrangler CLI. This is only needed on the machine used to deploy the Worker.
-
 ```powershell
 npm install -g wrangler
+```
+
+## 2. Login to Cloudflare
+
+```powershell
 wrangler login
 ```
 
-## 2. Create the D1 Database
+## 3. Create the D1 Database
 
 From the repo root:
 
@@ -44,245 +46,71 @@ Set-Location worker
 wrangler d1 create mtntheman-trip-tracker
 ```
 
-Copy the returned `database_id` into a new local config:
-
-```powershell
-Copy-Item wrangler.example.toml wrangler.toml
-```
-
-Edit `worker/wrangler.toml` and replace:
+Cloudflare prints a `database_id`. Put that value in `worker/wrangler.toml`:
 
 ```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "mtntheman-trip-tracker"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
 ```
 
-Do not commit `wrangler.toml` if it contains account-specific values you do not want public.
-The repo ignores `worker/wrangler.toml` by default.
+The binding name must stay `DB`.
 
-## 3. Run the D1 Migration
+## 4. Run Migrations
+
+Remote production D1:
 
 ```powershell
 Set-Location worker
 wrangler d1 migrations apply mtntheman-trip-tracker --remote
 ```
 
-For local Worker testing:
+Local D1 for `wrangler dev`:
 
 ```powershell
+Set-Location worker
 wrangler d1 migrations apply mtntheman-trip-tracker --local
 ```
 
-For `wrangler dev`, put local-only secrets in `worker/.dev.vars`:
+## 5. Set Worker Secrets
+
+Use Wrangler secrets. Do not commit credentials.
+
+```powershell
+Set-Location worker
+wrangler secret put TRACKER_USERNAME
+wrangler secret put TRACKER_PASSWORD
+wrangler secret put TRACKER_TOKEN
+```
+
+`TRACKER_TOKEN` is optional for Bearer auth, but recommended. `TRACKER_USERNAME` and `TRACKER_PASSWORD` are required for Basic Auth.
+
+For local development, create `worker/.dev.vars`:
 
 ```text
-TRACKER_TOKEN=replace-with-your-local-test-token
+TRACKER_USERNAME=parker
+TRACKER_PASSWORD=replace-with-local-password
+TRACKER_TOKEN=replace-with-local-token
 ```
 
 `worker/.dev.vars` is ignored by git.
 
-## 4. Configure Worker Secrets
+## 6. Configure Public Settings
 
-Set a long random token for OwnTracks and maintenance endpoints:
-
-```powershell
-Set-Location worker
-wrangler secret put TRACKER_TOKEN
-```
-
-Recommended token: at least 32 random characters.
-
-The public privacy settings are normal environment variables in `wrangler.toml`:
+In `worker/wrangler.toml`:
 
 ```toml
+[vars]
 PUBLIC_DELAY_MINUTES = "30"
-COORD_DECIMALS = "3"
-STALE_HOURS = "6"
-TRACKER_HIDE_AFTER = "2026-06-23T00:00:00-04:00"
+COORDINATE_DECIMALS = "3"
+MAX_PUBLIC_POINTS = "5000"
+STALE_MINUTES = "180"
+CORS_ALLOWED_ORIGINS = "https://mtntheman.com,https://www.mtntheman.com,http://localhost:4000,http://127.0.0.1:4000"
 ```
 
-For stricter mode, add:
-
-```toml
-STRICT_DELAY_HOURS = "4"
-```
-
-That shows only the trail up to at least 4 hours ago.
-
-## 5. Deploy the Worker
-
-```powershell
-Set-Location worker
-wrangler deploy
-```
-
-The example route is:
-
-```toml
-routes = [
-  { pattern = "mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" }
-]
-```
-
-That lets the static page fetch:
-
-```text
-https://mtntheman.com/api/tracker/geojson
-```
-
-## 6. Website Navigation
-
-The shared Jekyll nav in `_layouts/default.html` includes:
-
-```liquid
-<a href="{{ '/trip-tracker/' | relative_url }}">Trip Tracker</a>
-```
-
-To remove the tracker after the trip, delete that nav item and either delete `trip-tracker.html` or leave it unlinked. The Worker can also show a complete/empty feed after `TRACKER_HIDE_AFTER`.
-
-## 7. Configure OwnTracks
-
-Use HTTP mode and point OwnTracks at:
-
-```text
-https://mtntheman.com/api/tracker/ingest
-```
-
-Preferred authentication:
-
-```text
-Authorization: Bearer YOUR_TRACKER_TOKEN
-```
-
-If the app makes bearer auth awkward, the Worker also supports:
-
-- HTTP Basic Auth, using the token as the password.
-- Query string fallback: `https://mtntheman.com/api/tracker/ingest?token=YOUR_TRACKER_TOKEN`
-
-The query string fallback is less private because URLs can appear in logs. Prefer the `Authorization` header.
-
-### iOS Notes
-
-- Set OwnTracks to use HTTP mode.
-- Allow location access while using the app or always, depending on how active the trip tracking should be.
-- Enable background app refresh.
-- Keep low power mode in mind; it can reduce background sending.
-- Use significant-change or move mode if you want lower battery use.
-
-### Android Notes
-
-- Set OwnTracks to use HTTP mode.
-- Allow background location permission.
-- Disable battery optimization for OwnTracks.
-- Confirm mobile data is allowed in the background.
-- Use move mode or significant-change style settings for lower battery use.
-
-## 8. Test Locally
-
-Start the Worker locally:
-
-```powershell
-Set-Location worker
-wrangler dev
-```
-
-In another terminal, send a sample point:
-
-```powershell
-$env:TRACKER_TOKEN = "replace-with-your-token"
-curl.exe -X POST "http://127.0.0.1:8787/api/tracker/ingest" `
-  -H "Authorization: Bearer $env:TRACKER_TOKEN" `
-  -H "Content-Type: application/json" `
-  --data-binary "@sample-owntracks-payload.json"
-```
-
-Fetch public GeoJSON:
-
-```powershell
-curl.exe "http://127.0.0.1:8787/api/tracker/geojson"
-```
-
-Because of the default 30-minute privacy delay, a just-created test point may not appear immediately. Temporarily set this for local testing:
-
-```toml
-PUBLIC_DELAY_MINUTES = "0"
-```
-
-Then restart `wrangler dev`.
-
-## 9. Test Deployed Endpoint
-
-```powershell
-$env:TRACKER_TOKEN = "replace-with-your-token"
-curl.exe -X POST "https://mtntheman.com/api/tracker/ingest" `
-  -H "Authorization: Bearer $env:TRACKER_TOKEN" `
-  -H "Content-Type: application/json" `
-  --data-binary "@worker/sample-owntracks-payload.json"
-```
-
-```powershell
-curl.exe "https://mtntheman.com/api/tracker/geojson"
-```
-
-Export all points:
-
-```powershell
-curl.exe "https://mtntheman.com/api/tracker/export.csv" `
-  -H "Authorization: Bearer $env:TRACKER_TOKEN" `
-  -o tracker-points.csv
-```
-
-Clear test points before the trip:
-
-```powershell
-curl.exe -X POST "https://mtntheman.com/api/tracker/clear-test" `
-  -H "Authorization: Bearer $env:TRACKER_TOKEN"
-```
-
-Or clear only points before a date:
-
-```powershell
-curl.exe -X POST "https://mtntheman.com/api/tracker/clear-test?before=2026-05-17T00:00:00-04:00" `
-  -H "Authorization: Bearer $env:TRACKER_TOKEN"
-```
-
-## 10. Sample Payload
-
-`worker/sample-owntracks-payload.json`:
-
-```json
-{
-  "_type": "location",
-  "lat": 39.7392,
-  "lon": -104.9903,
-  "tst": 1779033600,
-  "acc": 25,
-  "alt": 1609,
-  "batt": 87,
-  "vel": 12,
-  "topic": "owntracks/parker/phone"
-}
-```
-
-The Worker stores latitude, longitude, recorded time, received time, accuracy, altitude, battery, velocity, topic, raw type, and source.
-
-## 11. Privacy Controls
-
-Set these in `wrangler.toml`:
-
-```toml
-PUBLIC_DELAY_MINUTES = "30"
-COORD_DECIMALS = "3"
-STRICT_DELAY_HOURS = "4"
-TRACKER_HIDE_AFTER = "2026-06-23T00:00:00-04:00"
-```
-
-Coordinate rounding examples:
-
-- `2` - city/region scale.
-- `3` - roughly 100 meters.
-- `4` - roughly 10 meters.
-
-Bounds are enabled by default for a broad North America region:
+Optional broad trip bounds. Set all four or omit all four:
 
 ```toml
 MIN_LAT = "18"
@@ -291,60 +119,165 @@ MIN_LON = "-170"
 MAX_LON = "-50"
 ```
 
-Disable only if needed:
+`ALLOW_ZERO_COORDS` defaults to false. Only set it for deliberate testing:
 
 ```toml
-DISABLE_BOUNDS = "true"
+ALLOW_ZERO_COORDS = "true"
 ```
+
+## 7. Deploy the Worker
+
+```powershell
+Set-Location worker
+wrangler deploy
+```
+
+## 8. Attach the Worker
+
+Option A, route under the main site:
+
+```toml
+routes = [
+  { pattern = "mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" }
+]
+```
+
+The frontend default API URL is then:
+
+```text
+https://mtntheman.com/api/tracker/geojson
+```
+
+Option B, custom domain:
+
+```text
+tracker-api.mtntheman.com
+```
+
+In Cloudflare, attach that custom domain to the Worker. Then set this before the tracker script runs in `trip-tracker.html`:
+
+```html
+<script>
+  window.TRIP_TRACKER_API_BASE_URL = "https://tracker-api.mtntheman.com";
+</script>
+```
+
+The frontend will fetch:
+
+```text
+https://tracker-api.mtntheman.com/api/tracker/geojson
+```
+
+## 9. OwnTracks iOS HTTP Configuration
+
+Use HTTP mode.
+
+- Endpoint URL for same-domain route: `https://mtntheman.com/api/tracker/ingest`
+- Endpoint URL for custom domain: `https://tracker-api.mtntheman.com/api/tracker/ingest`
+- Authentication: username/password with `TRACKER_USERNAME` and `TRACKER_PASSWORD`.
+- If using Bearer auth, send `Authorization: Bearer <TRACKER_TOKEN>`.
+- Location permissions: Always.
+- Precise Location: on.
+- Background App Refresh: on.
+- Avoid Low Power Mode during travel.
+- Do not force-close OwnTracks during travel.
+- Use Move mode or significant-change mode.
+
+## 10. Curl Tests
+
+Basic Auth ingest test:
+
+```powershell
+curl.exe -X POST "https://tracker-api.mtntheman.com/api/tracker/ingest" `
+  -u "parker:REPLACE_WITH_PASSWORD" `
+  -H "Content-Type: application/json" `
+  -d '{"_type":"location","lat":42.7221,"lon":-84.4784,"acc":4,"alt":260,"batt":88,"tst":1779048000}'
+```
+
+Bearer token ingest test:
+
+```powershell
+curl.exe -X POST "https://tracker-api.mtntheman.com/api/tracker/ingest" `
+  -H "Authorization: Bearer REPLACE_WITH_TOKEN" `
+  -H "Content-Type: application/json" `
+  -d '{"_type":"location","lat":42.7221,"lon":-84.4784,"acc":4,"alt":260,"batt":88,"vel":13,"tst":1779048000}'
+```
+
+Public GeoJSON:
+
+```powershell
+curl.exe "https://tracker-api.mtntheman.com/api/tracker/geojson"
+```
+
+Health:
+
+```powershell
+curl.exe "https://tracker-api.mtntheman.com/api/tracker/health"
+```
+
+Authenticated CSV export:
+
+```powershell
+curl.exe "https://tracker-api.mtntheman.com/api/tracker/export.csv" `
+  -u "parker:REPLACE_WITH_PASSWORD" `
+  -o trip-tracker-location-points.csv
+```
+
+Because the default privacy delay is 30 minutes, a freshly ingested test point will not appear in public GeoJSON immediately. Temporarily set `PUBLIC_DELAY_MINUTES = "0"` only for local testing.
+
+## 11. Sample OwnTracks Payload
+
+```json
+{
+  "_type": "location",
+  "lat": 42.7221,
+  "lon": -84.4784,
+  "acc": 4,
+  "alt": 260,
+  "batt": 88,
+  "vel": 13,
+  "tst": 1779048000
+}
+```
+
+Non-location OwnTracks status/debug payloads return:
+
+```json
+{ "ok": true, "stored": false, "reason": "ignored_non_location_payload" }
+```
+
+## 12. Test OwnTracks
+
+Use OwnTracks "Send Debug Status" first. The Worker should return a 200 ignored response because it is not a location payload.
+
+Then trigger a manual publish/location update. The Worker should return:
+
+```json
+{ "ok": true, "stored": true, "id": 1 }
+```
+
+Check health:
+
+```powershell
+curl.exe "https://tracker-api.mtntheman.com/api/tracker/health"
+```
+
+## 13. Trip Completion
+
+The page has constants for:
+
+- Start: `2026-05-17`
+- End: `2026-06-22`
+
+After June 22, 2026, the page still shows the completed route and displays `Trip complete` instead of `Live`. Data is not deleted automatically.
 
 ## Troubleshooting
 
-### OwnTracks is not sending in the background
-
-Check background app refresh, location permission, low power mode, mobile data, and OwnTracks mode settings. On Android, disable battery optimization for OwnTracks.
-
-### Battery optimization stops updates
-
-Use a less aggressive OwnTracks tracking mode or exempt OwnTracks from battery optimization. Confirm the phone is not in low power mode.
-
-### Bad token or 401 errors
-
-Confirm the Worker secret was set:
-
-```powershell
-wrangler secret put TRACKER_TOKEN
-```
-
-Then confirm OwnTracks sends exactly:
-
-```text
-Authorization: Bearer YOUR_TRACKER_TOKEN
-```
-
-### No GPS fix
-
-OwnTracks may send no location or stale location indoors. Check phone location permissions and confirm the app can see a current GPS/network location.
-
-### Browser CORS issues
-
-Set:
-
-```toml
-CORS_ORIGIN = "https://mtntheman.com"
-```
-
-If testing from `wrangler dev`, temporarily use the local origin or `*`.
-
-### The map loads but no trail appears
-
-Common causes:
-
-- No points have been ingested.
-- The test point is newer than `PUBLIC_DELAY_MINUTES`.
-- Coordinates were outside the expected bounds and rejected.
-- D1 migration was not applied to the remote database.
-- The Worker route is not attached to `mtntheman.com/api/tracker/*`.
-
-### The feed is delayed intentionally
-
-This is expected. By default, the public page does not show exact current position. Set `PUBLIC_DELAY_MINUTES` or `STRICT_DELAY_HOURS` only if you deliberately want different behavior.
+- `401`: credentials or Bearer token are wrong, or the relevant secret was not set.
+- `404`: Worker route/custom domain/path is wrong.
+- No map points: default 30-minute privacy delay may be hiding recent test points.
+- No map points: D1 migration may not have been applied.
+- No map points: Worker may not be bound to `DB`.
+- OwnTracks background gaps: check iOS Always location permission, Precise Location, Background App Refresh, Low Power Mode, and whether the app was force-closed.
+- CORS errors: include `https://mtntheman.com` and local dev origins in `CORS_ALLOWED_ORIGINS`.
+- OwnTracks points hitting the wrong host: `mtntheman.com/api/tracker/ingest` only works if the Worker route exists there. Use `tracker-api.mtntheman.com/api/tracker/ingest` if you only configured the custom domain.

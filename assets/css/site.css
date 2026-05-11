@@ -187,8 +187,12 @@ details.resume-details summary {
 
 .trip-map {
   border: 3px dashed #00FF00;
+  box-sizing: border-box;
   height: 520px;
   margin: 1em 0;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
   width: 100%;
 }
 
@@ -198,7 +202,15 @@ details.resume-details summary {
 }
 
 .leaflet-container {
+  background: #b8d7ef;
   font-family: 'Open Sans', sans-serif;
+  height: 100%;
+  width: 100%;
+}
+
+.leaflet-container img {
+  border: 0;
+  max-width: none;
 }
 
 .leaflet-control-attribution a {

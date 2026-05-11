@@ -2,11 +2,13 @@ name = "mtntheman-trip-tracker"
 main = "tracker-worker.js"
 compatibility_date = "2026-05-11"
 
-# Route this Worker only for tracker API paths on the production domain.
-# Adjust the zone name if Cloudflare shows mtntheman.com under a different account/zone.
-routes = [
-  { pattern = "mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" }
-]
+# Use either a route on mtntheman.com:
+# routes = [
+#   { pattern = "mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" }
+# ]
+#
+# Or attach a custom domain in the Cloudflare dashboard:
+# tracker-api.mtntheman.com
 
 [[d1_databases]]
 binding = "DB"
@@ -15,22 +17,22 @@ database_id = "REPLACE_WITH_D1_DATABASE_ID"
 migrations_dir = "migrations"
 
 [vars]
-CORS_ORIGIN = "https://mtntheman.com"
 PUBLIC_DELAY_MINUTES = "30"
-COORD_DECIMALS = "3"
-STALE_HOURS = "6"
-MAX_PUBLIC_POINTS = "2500"
-TRACKER_HIDE_AFTER = "2026-06-23T00:00:00-04:00"
+COORDINATE_DECIMALS = "3"
+MAX_PUBLIC_POINTS = "5000"
+STALE_MINUTES = "180"
+CORS_ALLOWED_ORIGINS = "https://mtntheman.com,https://www.mtntheman.com,http://localhost:4000,http://127.0.0.1:4000"
 
-# Broad North America bounds. Set DISABLE_BOUNDS = "true" to disable this guard.
-MIN_LAT = "18"
-MAX_LAT = "72"
-MIN_LON = "-170"
-MAX_LON = "-50"
+# Optional broad trip bounds. Set all four or omit all four.
+# MIN_LAT = "18"
+# MAX_LAT = "72"
+# MIN_LON = "-170"
+# MAX_LON = "-50"
 
-# Optional stricter mode. If set, this overrides PUBLIC_DELAY_MINUTES with a
-# delay of STRICT_DELAY_HOURS hours or the default 30 minutes, whichever is larger.
-# STRICT_DELAY_HOURS = "4"
+# Rejects 0,0 by default. Only set this during deliberate testing.
+# ALLOW_ZERO_COORDS = "true"
 
-# Do not put TRACKER_TOKEN here. Set it as a Worker secret:
+# Do not put secrets in this file. Use:
+# wrangler secret put TRACKER_USERNAME
+# wrangler secret put TRACKER_PASSWORD
 # wrangler secret put TRACKER_TOKEN

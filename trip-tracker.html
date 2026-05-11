@@ -21,7 +21,7 @@ permalink: /trip-tracker/
 <section class="tracker-status" aria-live="polite">
   <p><strong>Status:</strong> <span id="tracker-feed-status">Loading...</span></p>
   <p><strong>Last update:</strong> <span id="tracker-last-update">Loading...</span></p>
-  <p><strong>Approximate precision:</strong> <span id="tracker-precision">Loading...</span></p>
+  <p><strong>Privacy mode:</strong> <span id="tracker-privacy-mode">Loading...</span></p>
   <p><strong>Points shown:</strong> <span id="tracker-point-count">Loading...</span></p>
   <button id="tracker-recenter" class="tracker-button" type="button">Recenter on latest</button>
 </section>
@@ -40,14 +40,21 @@ permalink: /trip-tracker/
 ></script>
 <script>
   (function () {
-    var apiUrl = "{{ '/api/tracker/geojson' | relative_url }}";
+    var defaultApiBaseUrl = "";
+    var configuredApiBaseUrl = window.TRIP_TRACKER_API_BASE_URL || defaultApiBaseUrl;
+    var apiUrl = configuredApiBaseUrl.replace(/\/$/, "") + "{{ '/api/tracker/geojson' | relative_url }}";
     var refreshMs = 60000;
+    var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
     var fittedOnce = false;
     var latestLatLng = null;
 
     var map = L.map("trip-map", {
       scrollWheelZoom: false
     }).setView([39.5, -98.35], 4);
+
+    window.setTimeout(function () {
+      map.invalidateSize();
+    }, 0);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
@@ -99,10 +106,25 @@ permalink: /trip-tracker/
     }
 
     function updateStatus(metadata) {
-      setText("tracker-feed-status", metadata.feedStatus || "unknown");
+      setText("tracker-feed-status", statusLabel(metadata.feedStatus));
       setText("tracker-last-update", metadata.lastRecordedAt ? relativeTime(metadata.lastRecordedAt) : "No published points yet");
-      setText("tracker-precision", metadata.coordinatePrecision || "generalized");
+      setText("tracker-privacy-mode", metadata.privacyMode || privacyLabel(metadata));
       setText("tracker-point-count", String(metadata.pointCount || 0));
+    }
+
+    function statusLabel(status) {
+      if (Date.now() > tripEnd || status === "trip_complete") return "Trip complete";
+      if (status === "delayed") return "Live, delayed for privacy";
+      if (status === "live") return "Live";
+      if (status === "stale") return "Stale or waiting for delayed points";
+      return status || "unknown";
+    }
+
+    function privacyLabel(metadata) {
+      var delay = metadata.publicDelayMinutes;
+      var decimals = metadata.coordinateDecimals;
+      if (delay === undefined || decimals === undefined) return "delayed and generalized";
+      return "delayed " + delay + " minutes, rounded to " + decimals + " decimals";
     }
 
     function loadTracker() {
@@ -119,6 +141,7 @@ permalink: /trip-tracker/
 
           var bounds = routeLayer.getBounds();
           if (!fittedOnce && bounds.isValid()) {
+            map.invalidateSize();
             map.fitBounds(bounds.pad(0.2));
             fittedOnce = true;
           }
@@ -126,7 +149,7 @@ permalink: /trip-tracker/
         .catch(function (error) {
           setText("tracker-feed-status", "unavailable");
           setText("tracker-last-update", error.message);
-          setText("tracker-precision", "unknown");
+          setText("tracker-privacy-mode", "unknown");
           setText("tracker-point-count", "0");
         });
     }
@@ -139,5 +162,8 @@ permalink: /trip-tracker/
 
     loadTracker();
     window.setInterval(loadTracker, refreshMs);
+    window.addEventListener("resize", function () {
+      map.invalidateSize();
+    });
   })();
 </script>
