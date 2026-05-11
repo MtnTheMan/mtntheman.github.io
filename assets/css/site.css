@@ -108,6 +108,17 @@ details ul {
   list-style-type: disc;
 }
 
+details.resume-details {
+  border: 2px dotted #00FF00;
+  margin-top: 1.5em;
+  padding: 12px;
+}
+
+details.resume-details summary {
+  font-family: 'Rockwell Nova', Rockwell, serif;
+  text-transform: uppercase;
+}
+
 /* 10. Blog */
 .post-list {
   list-style: none;
