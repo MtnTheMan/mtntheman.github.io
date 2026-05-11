@@ -1,0 +1,11 @@
+{
+  "_type": "location",
+  "lat": 39.7392,
+  "lon": -104.9903,
+  "tst": 1779033600,
+  "acc": 25,
+  "alt": 1609,
+  "batt": 87,
+  "vel": 12,
+  "topic": "owntracks/parker/phone"
+}

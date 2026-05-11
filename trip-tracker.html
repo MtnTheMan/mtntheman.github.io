@@ -1,0 +1,143 @@
+---
+layout: default
+title: Trip Tracker
+permalink: /trip-tracker/
+---
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIINfQ8i8ea6Vr5cEXb7Je4tYhJ85QTwvAk="
+  crossorigin=""
+/>
+
+<h1>Trip Tracker</h1>
+
+<p>
+  Temporary road-trip tracker for May 17-June 22, 2026. For privacy, the map
+  intentionally shows a delayed and generalized location rather than an exact
+  real-time position.
+</p>
+
+<section class="tracker-status" aria-live="polite">
+  <p><strong>Status:</strong> <span id="tracker-feed-status">Loading...</span></p>
+  <p><strong>Last update:</strong> <span id="tracker-last-update">Loading...</span></p>
+  <p><strong>Approximate precision:</strong> <span id="tracker-precision">Loading...</span></p>
+  <p><strong>Points shown:</strong> <span id="tracker-point-count">Loading...</span></p>
+  <button id="tracker-recenter" class="tracker-button" type="button">Recenter on latest</button>
+</section>
+
+<div id="trip-map" class="trip-map" role="application" aria-label="Trip tracker map"></div>
+
+<p class="tracker-note">
+  If the feed appears stale, the tracker may be offline, intentionally delayed,
+  or outside cell coverage.
+</p>
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+<script>
+  (function () {
+    var apiUrl = "{{ '/api/tracker/geojson' | relative_url }}";
+    var refreshMs = 60000;
+    var fittedOnce = false;
+    var latestLatLng = null;
+
+    var map = L.map("trip-map", {
+      scrollWheelZoom: false
+    }).setView([39.5, -98.35], 4);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var routeLayer = L.geoJSON(null, {
+      style: {
+        color: "#00FF00",
+        weight: 4,
+        opacity: 0.85
+      },
+      pointToLayer: function (feature, latlng) {
+        var isLatest = feature.properties && feature.properties.kind === "latest";
+        return L.circleMarker(latlng, {
+          radius: isLatest ? 8 : 4,
+          color: isLatest ? "#FFFF00" : "#00FF00",
+          fillColor: isLatest ? "#FFFF00" : "#333300",
+          fillOpacity: 0.9,
+          weight: 2
+        });
+      },
+      onEachFeature: function (feature, layer) {
+        if (!feature.properties) return;
+        if (feature.properties.kind === "latest") {
+          latestLatLng = layer.getLatLng();
+          layer.bindPopup("Latest published location");
+        }
+      }
+    }).addTo(map);
+
+    function setText(id, value) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    function relativeTime(isoTime) {
+      if (!isoTime) return "No published points yet";
+      var then = new Date(isoTime).getTime();
+      if (Number.isNaN(then)) return isoTime;
+      var seconds = Math.max(0, Math.round((Date.now() - then) / 1000));
+      if (seconds < 90) return "about a minute ago";
+      var minutes = Math.round(seconds / 60);
+      if (minutes < 90) return minutes + " minutes ago";
+      var hours = Math.round(minutes / 60);
+      if (hours < 48) return hours + " hours ago";
+      var days = Math.round(hours / 24);
+      return days + " days ago";
+    }
+
+    function updateStatus(metadata) {
+      setText("tracker-feed-status", metadata.feedStatus || "unknown");
+      setText("tracker-last-update", metadata.lastRecordedAt ? relativeTime(metadata.lastRecordedAt) : "No published points yet");
+      setText("tracker-precision", metadata.coordinatePrecision || "generalized");
+      setText("tracker-point-count", String(metadata.pointCount || 0));
+    }
+
+    function loadTracker() {
+      fetch(apiUrl, { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Tracker API returned " + response.status);
+          return response.json();
+        })
+        .then(function (geojson) {
+          latestLatLng = null;
+          routeLayer.clearLayers();
+          routeLayer.addData(geojson);
+          updateStatus(geojson.metadata || {});
+
+          var bounds = routeLayer.getBounds();
+          if (!fittedOnce && bounds.isValid()) {
+            map.fitBounds(bounds.pad(0.2));
+            fittedOnce = true;
+          }
+        })
+        .catch(function (error) {
+          setText("tracker-feed-status", "unavailable");
+          setText("tracker-last-update", error.message);
+          setText("tracker-precision", "unknown");
+          setText("tracker-point-count", "0");
+        });
+    }
+
+    document.getElementById("tracker-recenter").addEventListener("click", function () {
+      if (latestLatLng) {
+        map.setView(latestLatLng, Math.max(map.getZoom(), 9));
+      }
+    });
+
+    loadTracker();
+    window.setInterval(loadTracker, refreshMs);
+  })();
+</script>

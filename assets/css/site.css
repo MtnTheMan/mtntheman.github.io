@@ -156,7 +156,56 @@ details.resume-details summary {
   margin-top: 2em;
 }
 
-/* 11. Footer */
+/* 11. Trip Tracker */
+.tracker-status {
+  border: 2px dotted #00FF00;
+  background-color: #3d3d08;
+  display: grid;
+  gap: 0.35em;
+  margin: 1em 0;
+  padding: 12px;
+}
+
+.tracker-status p {
+  margin: 0;
+}
+
+.tracker-button {
+  background-color: #333300;
+  border: 2px outset #00FF00;
+  color: #FFFDD0;
+  cursor: pointer;
+  font: inherit;
+  justify-self: start;
+  margin-top: 0.5em;
+  padding: 6px 10px;
+}
+
+.tracker-button:hover {
+  color: #FFFF00;
+}
+
+.trip-map {
+  border: 3px dashed #00FF00;
+  height: 520px;
+  margin: 1em 0;
+  width: 100%;
+}
+
+.tracker-note {
+  color: #FFDDA0;
+  font-size: 0.95em;
+}
+
+.leaflet-container {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.leaflet-control-attribution a {
+  color: #006600;
+}
+
+/* 12. Footer */
 .site-footer {
   background-color: #333300;
   color: #FFDDA0;
@@ -172,5 +221,9 @@ details.resume-details summary {
 
   #content {
     margin: 10px auto;
+  }
+
+  .trip-map {
+    height: 420px;
   }
 }
