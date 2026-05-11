@@ -1,223 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Parker A. Hopkins (mtntheman)</title>
-    <style>
-      /* 1. Import Fonts */
-      @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
-      @import url('https://fonts.cdnfonts.com/css/rockwell-nova');
+---
+layout: default
+title: Home
+---
+<img
+  id="profile-photo"
+  src="{{ '/assets/images/TaquamenonPhoto_phopkins.jpeg' | relative_url }}"
+  alt="Parker A. Hopkins"
+/>
 
-      /* 2. Base Styles */
-      body {
-        background-color: #556B2F;             /* Deep dark olive green */
-        color: #FFFDD0;                        /* Cream text */
-        font-family: 'Open Sans', sans-serif;  /* Open Sans for body text */
-        margin: 0;
-        padding: 0;
-      }
+<h1 id="about">About Me</h1>
 
-      /* 3. Link Styles (90s Neon & Blinking) */
-      a:link {
-        color: #FFFDD0;                        /* Cream unvisited links */
-        text-decoration: underline blink;      /* Blink effect typical of 90s */
-      }
-      a:visited {
-        color: #FFDDA0;                        /* Slightly darker cream for visited */
-      }
-      a:hover {
-        color: #FFFF00;                        /* Neon yellow on hover */
-        text-decoration: none;
-      }
+<p>
+  My professional goal is to advance stewardship of natural resources with cognizant and coherent science-informed policy, with the utility and application of findings as a focal point of work.
+</p>
 
-      /* 4. Header Styles (Rockwell Nova, Cream, Uppercase) */
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Rockwell Nova', Rockwell, serif;  /* Rockwell Nova or fallback */
-        color: #FFFDD0;                                  /* Cream headers */
-        margin-top: 1.5em;
-        margin-bottom: 0.5em;
-        line-height: 1.2;
-        text-transform: uppercase;                       /* 90s-style uppercase */
-      }
+<details>
+  <summary>Read more about me</summary>
 
-      /* 5. Content Box (90s Dashed Neon Border) */
-      #content {
-        border: 3px dashed #00FF00; /* Dashed neon green border */
-        background-color: #333300;   /* Darker olive for content box */
-        padding: 15px;
-        margin: 20px auto;
-        max-width: 800px;
-      }
+  <p>
+    I am driven by a vision of natural resource stewardship that bridges rigorous science with community-centered practice. My ambition is to foster resilient landscapes by integrating high-resolution spatial analysis, stakeholder engagement, and policy insight into land management. I approach every project as a systems thinker, seeking to understand how ecological patterns interact with human values. By emphasizing applied research and inclusive collaboration, I aim to inform decision-making processes that support sustainable resource use across diverse landscapes.
+  </p>
 
-      /* 6. Navigation Row */
-      #nav td {
-        background-color: #333300;   /* Darker olive for nav background */
-        padding: 10px;
-        text-align: center;
-      }
-      /* 7. Profile Photo */
-      #profile-photo {
-        display: block;
-        margin: 10px auto 20px;
-        max-width: 200px;
-        border: 2px solid #00FF00;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Main Table Wrapper -->
-    <table
-      width="800"
-      align="center"
-      cellpadding="10"
-      cellspacing="0"
-      border="2"
-      bordercolor="#00FF00"
-    >
-      <!-- Navigation Bar Row -->
-      <tr id="nav">
-        <td>
-          <a href="index.html">Home</a> |
-          <a href="#about">About</a> |
-          <a href="projects.html">Projects</a> |
-          <a href="resume.html">Resume/CV</a> |
-          <a href="blog.html">Pro Blog</a> |
-          <a href="#links">Links</a> |
-          <a
-            href="https://www.massadona.co"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Creative Things</a
-          > |
-          <a
-            href="https://www.cochetopa.co"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Games/Hobby Things</a
-          >
-        </td>
-      </tr>
+  <p>
+    Since joining Michigan State University's Human Dimensions of Natural Resources Lab in May 2023, I have played a part in an expansive agroforestry research initiative across the Great Lakes states. Drawing on advanced machine learning and GIS methods, I developed an ultra-high-resolution land cover map for Michigan that underpins precision conservation across 35 counties. Building on this foundation, I designed a new riparian buffer index and have presented findings at national forums, including the Society of American Foresters conference. Collaborating with the U.S. Forest Service, Ohio State University, and the University of Wisconsin-Madison, I have examined how individual landowner choices shape agroforestry adoption-and my five-chapter master's thesis on this topic was successfully defended in March 2025.
+  </p>
 
-      <!-- About Me Section Row -->
-      <tr>
-        <td>
-          <div id="content">
-            <!-- Profile Photo -->
-            <img
-              id="profile-photo"
-              src="/assets/images/TaquamenonPhoto_phopkins.jpeg"
-              alt="Parker A. Hopkins"
-            />
+  <p>
+    Prior to MSU, I held forestry technician and natural resource specialist roles with the U.S. Forest Service and National Park Service, where I managed over 400 miles of trails, developed recreation infrastructure, and coordinated citizen science integration across park units. At NOAA's Halocarbons and Trace Species group, I built airborne sampling tools and analyzed greenhouse gas distributions. During legislative internships in Washington, D.C. and Denver, I researched environmental policy, drafted briefs for congressional representatives, and honed my ability to navigate complex regulatory environments. Through these experiences, I cultivated expertise in stakeholder outreach, data-driven decision making, and collaborative leadership.
+  </p>
 
-            <h1 id="about">About Me</h1>
+  <p>
+    I hold a B.A. in Environmental Studies (magna cum laude) and Atmospheric/Oceanic Sciences from the University of Colorado at Boulder, where my honors thesis on citizen science informed early detection of invasive species. At MSU, I have maintained a 4.0 GPA, served as president of the Forestry Graduate Student Organization, and contributed to interdisciplinary work on agroforestry in the Great Lakes states. I look forward to continuing my professional journey by pursuing doctoral research focused on mapping timber management strategies across North American hardwood forests.
+  </p>
+</details>
 
-            <!-- short description always visible -->
-            <p>
-              My professional goal is to advance stewardship of natural resources with cognizant and coherent science-informed policy, with the utility and application of findings as a focal point of work.
-            </p>
+<img
+  id="links-photo"
+  src="{{ '/assets/images/Rotating_earth_(large).gif' | relative_url }}"
+  alt="Rotating Earth"
+/>
 
-            <!-- long bio tucked into a dropdown -->
-            <details>
-              <summary>Read more about me</summary>
+<h1 id="links">Links to my Stuff</h1>
 
-              <p>
-                I am driven by a vision of natural resource stewardship that bridges rigorous science with community-centered practice. My ambition is to foster resilient landscapes by integrating high-resolution spatial analysis, stakeholder engagement, and policy insight into land management. I approach every project as a systems thinker, seeking to understand how ecological patterns interact with human values. By emphasizing applied research and inclusive collaboration, I aim to inform decision-making processes that support sustainable resource use across diverse landscapes.
-              </p>
+<ul>
+  <li>
+    <a href="https://instagram.com/mtntheman" target="_blank" rel="noopener noreferrer">Instagram: mtntheman</a>
+  </li>
+  <li>
+    <a href="https://www.inaturalist.org/people/parker_hopkins" target="_blank" rel="noopener noreferrer">iNaturalist: parker_hopkins</a>
+  </li>
+  <li>
+    <a href="https://github.com/mtntheman" target="_blank" rel="noopener noreferrer">GitHub: MtnTheMan</a>
+  </li>
+  <li>
+    <a href="https://www.linkedin.com/in/parkerhopkins" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+  </li>
+  <li>
+    <a href="https://orcid.org/0000-0002-7970-1998" target="_blank" rel="noopener noreferrer">ORCID: 0000-0002-7970-1998</a>
+  </li>
+</ul>
 
-              <p>
-                Since joining Michigan State University’s Human Dimensions of Natural Resources Lab in May 2023, I have played a part in an expansive agroforestry research initiative across the Great Lakes states. Drawing on advanced machine learning and GIS methods, I developed an ultra-high-resolution land cover map for Michigan that underpins precision conservation across 35 counties. Building on this foundation, I designed a new riparian buffer index and have presented findings at national forums, including the Society of American Foresters conference. Collaborating with the U.S. Forest Service, Ohio State University, and the University of Wisconsin–Madison, I have examined how individual landowner choices shape agroforestry adoption—and my five-chapter master’s thesis on this topic was successfully defended in March 2025.
-              </p>
-
-              <p>
-                Prior to MSU, I held forestry technician and natural resource specialist roles with the U.S. Forest Service and National Park Service, where I managed over 400 miles of trails, developed recreation infrastructure, and coordinated citizen science integration across park units. At NOAA’s Halocarbons and Trace Species group, I built airborne sampling tools and analyzed greenhouse gas distributions. During legislative internships in Washington, D.C. and Denver, I researched environmental policy, drafted briefs for congressional representatives, and honed my ability to navigate complex regulatory environments. Through these experiences, I cultivated expertise in stakeholder outreach, data-driven decision making, and collaborative leadership.
-              </p>
-
-              <p>
-                I hold a B.A. in Environmental Studies (magna cum laude) and Atmospheric/Oceanic Sciences from the University of Colorado at Boulder, where my honors thesis on citizen science informed early detection of invasive species. At MSU, I have maintained a 4.0 GPA, served as president of the Forestry Graduate Student Organization, and contributed to interdisciplinary work on agroforestry in the Great Lakes states. I look forward to continuing my professional journey by pursuing doctoral research focused on mapping timber management strategies across North American hardwood forests.
-              </p>
-
-            </details>
-
-
-            <!-- External Links List -->
-
-            <p>
-               
-            </p>
-
-            <!-- Links Photo -->
-            <img
-              id="links-photo"
-              src="/assets/images/Rotating_earth_(large).gif"
-              alt="Rotating Earth"
-            />
-
-            <h1 id="links">Links to my Stuff</h1>
-
-            <ul>
-              <li>
-                <a
-                  href="https://instagram.com/mtntheman"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Instagram: mtntheman</a
-                >
-              </li>
-              <li>
-                <a
-                  href="https://www.inaturalist.org/people/parker_hopkins"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >iNaturalist: parker_hopkins</a
-                >
-              </li>
-              <li>
-                <a
-                  href="https://github.com/mtntheman"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >GitHub: MtnTheMan</a
-                >
-              <li>
-                <a
-                  href="https://www.linkedin.com/in/parkerhopkins"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >LinkedIn</a
-                >
-              </li>
-              <li>
-                <a
-                  href="https://orcid.org/0000-0002-7970-1998"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >ORCID: 0000-0002-7970-1998</a
-                >
-              </li>
-            </ul>
-
-            <p>(Less commonly-used platforms)</p>
-            <ul>
-              <li>
-                <a
-                  href="https://x.com/mtntheman"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >X: @mtntheman</a
-                >
-              </li>
-              <li>
-                <a
-                  href="https://mtntheman.bsky.social"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Bluesky: @mtntheman.bsky.social</a
-                >
-              </li>
-            </ul>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
+<p>(Less commonly-used platforms)</p>
+<ul>
+  <li>
+    <a href="https://x.com/mtntheman" target="_blank" rel="noopener noreferrer">X: @mtntheman</a>
+  </li>
+  <li>
+    <a href="https://mtntheman.bsky.social" target="_blank" rel="noopener noreferrer">Bluesky: @mtntheman.bsky.social</a>
+  </li>
+</ul>

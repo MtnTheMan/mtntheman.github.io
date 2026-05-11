@@ -1,20 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  {% include head.html %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title | default: "Parker A. Hopkins" }}</title>
+    <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | escape }}" />
+
+    <link rel="shortcut icon" href="{{ '/assets/images/favicons/favicon.ico' | relative_url }}" type="image/x-icon" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/images/favicons/favicon-32x32.png' | relative_url }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ '/assets/images/favicons/favicon-16x16.png' | relative_url }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/favicons/apple-touch-icon.png' | relative_url }}" />
+    <link rel="manifest" href="{{ '/assets/images/favicons/site.webmanifest' | relative_url }}" />
+    <meta name="msapplication-TileColor" content="#333300" />
+    <meta name="msapplication-TileImage" content="{{ '/assets/images/favicons/favicon-270x270.png' | relative_url }}" />
+
+    <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}" />
   </head>
-  <body bgcolor="#556B2F" text="#FFFFFF" link="#00FF00" vlink="#FF00FF">
-    <table
-      width="800"
-      align="center"
-      cellpadding="10"
-      cellspacing="0"
-      border="2"
-      bordercolor="#00FF00"
-    >
+  <body>
+    <table class="site-table" width="800" align="center" cellpadding="10" cellspacing="0" border="2" bordercolor="#00FF00">
+      <tr id="nav">
+        <td>
+          <nav aria-label="Main navigation">
+            <a href="{{ '/index.html' | relative_url }}">Home</a> |
+            <a href="{{ '/index.html#about' | relative_url }}">About</a> |
+            <a href="{{ '/projects.html' | relative_url }}">Projects</a> |
+            <a href="{{ '/resume.html' | relative_url }}">Resume/CV</a> |
+            <a href="{{ '/blog.html' | relative_url }}">Pro Blog</a> |
+            <a href="{{ '/index.html#links' | relative_url }}">Links</a> |
+            <a href="https://www.massadona.co" target="_blank" rel="noopener noreferrer">Creative Things</a> |
+            <a href="https://www.cochetopa.co" target="_blank" rel="noopener noreferrer">Games/Hobby Things</a>
+          </nav>
+        </td>
+      </tr>
       <tr>
         <td>
-          {{ content }}
+          <main id="content">
+            {{ content }}
+          </main>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <footer class="site-footer">
+            &copy; {{ site.time | date: '%Y' }} {{ site.title }}
+          </footer>
         </td>
       </tr>
     </table>
