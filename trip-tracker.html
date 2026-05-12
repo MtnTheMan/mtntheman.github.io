@@ -171,6 +171,16 @@ permalink: /trip-tracker/
       return bounds;
     }
 
+    function routeHasArea(geojson) {
+      var bounds = routeBounds(geojson);
+      if (!bounds || bounds.isEmpty()) return false;
+      var west = bounds.getWest();
+      var east = bounds.getEast();
+      var south = bounds.getSouth();
+      var north = bounds.getNorth();
+      return Math.abs(east - west) > 0.01 || Math.abs(north - south) > 0.01;
+    }
+
     function extendBounds(bounds, coordinate) {
       if (!Array.isArray(coordinate) || coordinate.length < 2) return bounds;
       if (!bounds) return new maplibregl.LngLatBounds(coordinate, coordinate);
@@ -183,6 +193,17 @@ permalink: /trip-tracker/
       var bounds = routeBounds(geojson);
       if (!bounds || bounds.isEmpty()) return;
       map.resize();
+
+      if (!routeHasArea(geojson)) {
+        map.easeTo({
+          center: bounds.getCenter(),
+          zoom: 6,
+          duration: 0
+        });
+        fittedOnce = true;
+        return;
+      }
+
       map.fitBounds(bounds, {
         padding: 40,
         maxZoom: 11,
