@@ -178,19 +178,43 @@ details.resume-details summary {
 }
 
 .nhr-figure.full-width img {
-  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+}
+
+.nhr-figure.nhr-map {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 700px;
+}
+
+.nhr-figure.nhr-map img {
+  max-height: 460px;
+  object-fit: contain;
+}
+
+.nhr-figure.nhr-chart {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 560px;
+}
+
+.nhr-figure.nhr-chart img {
+  max-height: 420px;
+  object-fit: contain;
 }
 
 .float-right-tight {
   float: right;
   margin: 0.2rem 0 1rem 1.25rem;
-  width: min(260px, 38vw);
+  width: min(230px, 34vw);
 }
 
 .float-left-tight {
   float: left;
   margin: 0.2rem 1.25rem 1rem 0;
-  width: min(320px, 42vw);
+  width: min(280px, 38vw);
 }
 
 .protected-image {
@@ -213,10 +237,14 @@ details.resume-details summary {
 }
 
 .protected-logo {
+  background-color: #FFFDD0;
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  min-height: 180px;
+  border: 2px solid #00FF00;
+  border-radius: 8px;
+  min-height: 145px;
+  padding: 10px;
 }
 
 .visually-hidden {
@@ -329,7 +357,18 @@ details.resume-details summary {
     width: 100%;
   }
 
+  .nhr-figure.nhr-map,
+  .nhr-figure.nhr-chart {
+    max-width: 100%;
+  }
+
+  .nhr-figure.nhr-map img,
+  .nhr-figure.nhr-chart img {
+    max-height: none;
+    width: 100%;
+  }
+
   .protected-logo {
-    min-height: 140px;
+    min-height: 130px;
   }
 }

@@ -25,7 +25,7 @@ Before I leave, I wanted to take a little time to explain what this project is, 
 
 Northern hardwood forests are one of the defining forest types across the Lake States, the Northeast, and parts of eastern Canada. Under the definition we are using for this project, these forests are generally built around major maple, birch, and beech components, often with basswood, black cherry, and sometimes oak mixed in, depending on where you are in the range. These forests are familiar to many people, even if they may not use the term “northern hardwoods” every day, and they are a significant resource for the people who live where they are found. They are the sugar maple stands tapped for maple syrup, the mixed-species slopes of the Adirondacks, the county and state forests of the northern Lake States, the diverse ridges and valleys of northern Pennsylvania and New Jersey, and the managed private and Crown lands of Ontario, Québec, and New Brunswick, where sugar maple is proudly featured as a national symbol on pretty much anything related to Canada.
 
-<figure class="nhr-figure full-width protected-image" oncontextmenu="return false;">
+<figure class="nhr-figure full-width nhr-map protected-image" oncontextmenu="return false;">
   <img
     src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/regeneration-across-range.jpg"
     alt="Map showing range-wide northern hardwood regeneration patterns across the Lake States, Northeast, Ontario, Quebec, and New Brunswick"
@@ -39,7 +39,7 @@ They are also working forests, community forests, wildlife habitat, recreation s
 
 The Northern Hardwoods Resilience Project is trying to understand those differences in a range-wide way. The larger goal is to enhance the resiliency of the Northern Hardwood resource by learning what is working, what is challenging, and where managers see gaps between silvicultural intent, implementation, and long-term forest outcomes. A lot of good work has already been done on northern hardwood silviculture, but there is still a major opportunity to learn from those actively managing these forests under real-world constraints.
 
-<figure class="nhr-figure full-width protected-image" oncontextmenu="return false;">
+<figure class="nhr-figure full-width nhr-map protected-image" oncontextmenu="return false;">
   <img
     src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/northern-hardwood-plot-points.png"
     alt="Map of northern hardwood plot point locations across the project region with state and province region codes"
@@ -53,7 +53,7 @@ That is where this trip comes in.
 
 The “mega trip” will take me through 14 of the 15 political units covered by the project. That includes all 12 U.S. states in the project area, plus New Brunswick and Ontario. I will loop back to Québec later for a separate set of conversations focused on the Northern Hardwood resource there. In general, my goal is to go to the places where these forests are being managed, talk to the people who are managing them, and listen carefully to what they have learned.
 
-<figure class="nhr-figure full-width protected-image" oncontextmenu="return false;">
+<figure class="nhr-figure full-width nhr-map protected-image" oncontextmenu="return false;">
   <img
     src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/northern-hardwood-megatrip-map.png"
     alt="Working route map for the Northern Hardwood Megatrip across the Lake States, Northeast, Ontario, and New Brunswick"
@@ -69,7 +69,7 @@ One important aspect of the project is that we are trying to sample management p
 
 We’ve grouped it this way, because each of those groups operates in a different context. In the United States, national-level management includes national forests and other federally managed lands. State and local management includes state forests, state DNR lands, wildlife areas, municipal forests, and county forests, especially in parts of the Lake States where county forests are a major part of the landscape. On the Canadian side, Ontario, Québec, and New Brunswick all have large areas of Crown land, which are held publicly and managed at the provincial level. NGOs, including land trusts and organizations such as The Nature Conservancy and the Appalachian Mountain Club, often manage land with strong conservation goals. Private ownership is the largest and most diverse owner and manager of northern hardwood forests, and includes family forest landowners, consulting foresters working with those landowners, hunting clubs, larger industrial owners, timber investment management organizations, and real estate investment trusts. Tribal and First Nations managers have another set of governance structures, responsibilities, values, and long-term relationships with forested land.
 
-<figure class="nhr-figure full-width protected-image" oncontextmenu="return false;">
+<figure class="nhr-figure full-width nhr-map protected-image" oncontextmenu="return false;">
   <img
     src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-land-ownership-map.png"
     alt="Land ownership and management context map for the Northern Hardwoods Resilience Project region with jurisdiction-level pie charts"
@@ -85,7 +85,7 @@ That also means each state or province has its own management context. Maine, fo
 
 The sampling strategy for the interviews is built around that idea. Across the full project, we aim to conduct more than 100 interviews with northern hardwood managers. Within each political unit, we want the interview sample to reflect the management context of that jurisdiction as much as possible. If a large share of the Northern Hardwood resource in a state or province is managed by a certain group, then that group should be represented in the conversations. We break down the interviews for a given state into a proportionally-representative set for that state. If we were to do three interviews in Michigan, and it was a third owned by private land owners, a third by the state forest service, and a third by the US Forest Service, then we would do one interview with each group. At the same time, we also want diversity across the entire range. That means talking with consulting foresters, public land managers, procurement foresters, industrial private landowners, NGO managers, family forest landowner-facing professionals, Tribal and First Nations forestry staff, and others who can speak to different parts of the management picture. So if we were in Michigan again with the same hypothetical breakdown but now six interviews, we would look to interview managers at two different levels of the state forest in two different management units (like a field forester and a lead silviculturalist), two different levels and two different units of the forest service (try to interview a manager in the lower peninsula and upper peninsula), and, for private lands, a consulting forester working with family forest land owners and a representative from a larger forest-owning firm.
 
-<figure class="nhr-figure full-width protected-image" oncontextmenu="return false;">
+<figure class="nhr-figure full-width nhr-chart protected-image" oncontextmenu="return false;">
   <img
     src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/regeneration-across-nh.png"
     alt="Preliminary northern hardwood regeneration and seedling pattern summary figure"
