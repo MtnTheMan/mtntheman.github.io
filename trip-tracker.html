@@ -5,9 +5,7 @@ permalink: /trip-tracker/
 ---
 <link
   rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIINfQ8i8ea6Vr5cEXb7Je4tYhJ85QTwvAk="
-  crossorigin=""
+  href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.css"
 />
 
 <h1>Trip Tracker</h1>
@@ -34,9 +32,7 @@ permalink: /trip-tracker/
 </p>
 
 <script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-  crossorigin=""
+  src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.js"
 ></script>
 <script>
   (function () {
@@ -46,45 +42,154 @@ permalink: /trip-tracker/
     var refreshMs = 60000;
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
     var fittedOnce = false;
-    var latestLatLng = null;
+    var latestLngLat = null;
 
-    var map = L.map("trip-map", {
-      scrollWheelZoom: false
-    }).setView([39.5, -98.35], 4);
+    var emptyGeoJson = {
+      type: "FeatureCollection",
+      features: []
+    };
+
+    var map = new maplibregl.Map({
+      container: "trip-map",
+      center: [-98.35, 39.5],
+      zoom: 3,
+      attributionControl: false,
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: "raster",
+            tiles: [
+              "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            ],
+            tileSize: 256,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+        },
+        layers: [
+          {
+            id: "osm",
+            type: "raster",
+            source: "osm"
+          }
+        ]
+      }
+    });
+
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+
+    map.on("load", function () {
+      map.addSource("tracker", {
+        type: "geojson",
+        data: emptyGeoJson
+      });
+
+      map.addLayer({
+        id: "tracker-route",
+        type: "line",
+        source: "tracker",
+        filter: ["==", ["get", "kind"], "route"],
+        paint: {
+          "line-color": "#00ff00",
+          "line-width": 4,
+          "line-opacity": 0.9
+        }
+      });
+
+      map.addLayer({
+        id: "tracker-latest",
+        type: "circle",
+        source: "tracker",
+        filter: ["==", ["get", "kind"], "latest"],
+        paint: {
+          "circle-radius": 8,
+          "circle-color": "#ffff00",
+          "circle-stroke-color": "#333300",
+          "circle-stroke-width": 2
+        }
+      });
+
+      map.on("click", "tracker-latest", function (event) {
+        var feature = event.features && event.features[0];
+        if (!feature) return;
+        new maplibregl.Popup()
+          .setLngLat(feature.geometry.coordinates)
+          .setText("Latest published location")
+          .addTo(map);
+      });
+
+      map.on("mouseenter", "tracker-latest", function () {
+        map.getCanvas().style.cursor = "pointer";
+      });
+
+      map.on("mouseleave", "tracker-latest", function () {
+        map.getCanvas().style.cursor = "";
+      });
+
+      loadTracker();
+      window.setInterval(loadTracker, refreshMs);
+    });
 
     window.setTimeout(function () {
-      map.invalidateSize();
+      map.resize();
     }, 0);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    function updateTrackerSource(geojson) {
+      var source = map.getSource("tracker");
+      if (!source) return;
+      source.setData(geojson || emptyGeoJson);
+    }
 
-    var routeLayer = L.geoJSON(null, {
-      style: {
-        color: "#00FF00",
-        weight: 4,
-        opacity: 0.85
-      },
-      pointToLayer: function (feature, latlng) {
-        var isLatest = feature.properties && feature.properties.kind === "latest";
-        return L.circleMarker(latlng, {
-          radius: isLatest ? 8 : 4,
-          color: isLatest ? "#FFFF00" : "#00FF00",
-          fillColor: isLatest ? "#FFFF00" : "#333300",
-          fillOpacity: 0.9,
-          weight: 2
-        });
-      },
-      onEachFeature: function (feature, layer) {
-        if (!feature.properties) return;
-        if (feature.properties.kind === "latest") {
-          latestLatLng = layer.getLatLng();
-          layer.bindPopup("Latest published location");
+    function getLatestLngLat(geojson) {
+      var features = geojson && geojson.features ? geojson.features : [];
+      for (var i = 0; i < features.length; i += 1) {
+        if (features[i].properties && features[i].properties.kind === "latest") {
+          return features[i].geometry.coordinates;
         }
       }
-    }).addTo(map);
+      return null;
+    }
+
+    function routeBounds(geojson) {
+      var features = geojson && geojson.features ? geojson.features : [];
+      var bounds = null;
+
+      features.forEach(function (feature) {
+        if (!feature.geometry) return;
+        if (feature.geometry.type === "LineString") {
+          feature.geometry.coordinates.forEach(function (coordinate) {
+            bounds = extendBounds(bounds, coordinate);
+          });
+        } else if (feature.geometry.type === "Point") {
+          bounds = extendBounds(bounds, feature.geometry.coordinates);
+        }
+      });
+
+      return bounds;
+    }
+
+    function extendBounds(bounds, coordinate) {
+      if (!Array.isArray(coordinate) || coordinate.length < 2) return bounds;
+      if (!bounds) return new maplibregl.LngLatBounds(coordinate, coordinate);
+      bounds.extend(coordinate);
+      return bounds;
+    }
+
+    function fitRouteOnce(geojson) {
+      if (fittedOnce) return;
+      var bounds = routeBounds(geojson);
+      if (!bounds || bounds.isEmpty()) return;
+      map.resize();
+      map.fitBounds(bounds, {
+        padding: 40,
+        maxZoom: 11,
+        duration: 0
+      });
+      fittedOnce = true;
+    }
 
     function setText(id, value) {
       var el = document.getElementById(id);
@@ -134,17 +239,10 @@ permalink: /trip-tracker/
           return response.json();
         })
         .then(function (geojson) {
-          latestLatLng = null;
-          routeLayer.clearLayers();
-          routeLayer.addData(geojson);
+          latestLngLat = getLatestLngLat(geojson);
+          updateTrackerSource(geojson);
           updateStatus(geojson.metadata || {});
-
-          var bounds = routeLayer.getBounds();
-          if (!fittedOnce && bounds.isValid()) {
-            map.invalidateSize();
-            map.fitBounds(bounds.pad(0.2));
-            fittedOnce = true;
-          }
+          fitRouteOnce(geojson);
         })
         .catch(function (error) {
           setText("tracker-feed-status", "unavailable");
@@ -155,15 +253,17 @@ permalink: /trip-tracker/
     }
 
     document.getElementById("tracker-recenter").addEventListener("click", function () {
-      if (latestLatLng) {
-        map.setView(latestLatLng, Math.max(map.getZoom(), 9));
+      if (latestLngLat) {
+        map.easeTo({
+          center: latestLngLat,
+          zoom: Math.max(map.getZoom(), 9),
+          duration: 500
+        });
       }
     });
 
-    loadTracker();
-    window.setInterval(loadTracker, refreshMs);
     window.addEventListener("resize", function () {
-      map.invalidateSize();
+      map.resize();
     });
   })();
 </script>

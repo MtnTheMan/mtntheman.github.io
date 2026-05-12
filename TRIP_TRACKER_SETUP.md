@@ -5,7 +5,7 @@ Temporary OwnTracks road-trip tracker for mtntheman.com, active May 17, 2026 thr
 Architecture:
 
 ```text
-OwnTracks mobile app -> Cloudflare Worker POST /api/tracker/ingest -> Cloudflare D1 -> GET /api/tracker/geojson -> Leaflet map page
+OwnTracks mobile app -> Cloudflare Worker POST /api/tracker/ingest -> Cloudflare D1 -> GET /api/tracker/geojson -> MapLibre map page
 ```
 
 ## Files

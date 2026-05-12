@@ -201,19 +201,23 @@ details.resume-details summary {
   font-size: 0.95em;
 }
 
-.leaflet-container {
+.maplibregl-map {
   background: #b8d7ef;
   font-family: 'Open Sans', sans-serif;
   height: 100%;
   width: 100%;
 }
 
-.leaflet-container img {
+.maplibregl-canvas {
+  display: block;
+}
+
+.maplibregl-map img {
   border: 0;
   max-width: none;
 }
 
-.leaflet-control-attribution a {
+.maplibregl-ctrl-attrib a {
   color: #006600;
 }
 
