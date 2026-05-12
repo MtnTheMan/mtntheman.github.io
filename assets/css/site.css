@@ -156,6 +156,81 @@ details.resume-details summary {
   margin-top: 2em;
 }
 
+/* 10a. Northern Hardwoods blog figures */
+.nhr-figure {
+  box-sizing: border-box;
+  margin: 1.75rem 0;
+}
+
+.nhr-figure img {
+  border: 2px solid #00FF00;
+  border-radius: 8px;
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.nhr-figure figcaption {
+  color: #FFDDA0;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  margin-top: 0.5rem;
+}
+
+.nhr-figure.full-width img {
+  width: 100%;
+}
+
+.float-right-tight {
+  float: right;
+  margin: 0.2rem 0 1rem 1.25rem;
+  width: min(260px, 38vw);
+}
+
+.float-left-tight {
+  float: left;
+  margin: 0.2rem 1.25rem 1rem 0;
+  width: min(320px, 42vw);
+}
+
+.protected-image {
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.protected-image img {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.protected-image::after {
+  background: transparent;
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.protected-logo {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  min-height: 180px;
+}
+
+.visually-hidden {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute !important;
+  white-space: nowrap;
+  width: 1px;
+}
+
 /* 11. Trip Tracker */
 .tracker-status {
   border: 2px dotted #00FF00;
@@ -245,5 +320,16 @@ details.resume-details summary {
   #trip-map.maplibregl-map {
     height: 420px;
     min-height: 420px;
+  }
+
+  .float-right-tight,
+  .float-left-tight {
+    float: none;
+    margin: 1.25rem 0;
+    width: 100%;
+  }
+
+  .protected-logo {
+    min-height: 140px;
   }
 }
