@@ -134,46 +134,52 @@ wrangler deploy
 
 ## 8. Attach the Worker
 
-Option A, route under the main site:
+Production uses routes under both apex and www:
 
 ```toml
+workers_dev = true
+preview_urls = true
+
 routes = [
-  { pattern = "mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" }
+  { pattern = "mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" },
+  { pattern = "www.mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" }
 ]
 ```
 
-The frontend default API URL is then:
+The website page fetches the relative public feed:
 
 ```text
-https://mtntheman.com/api/tracker/geojson
+/api/tracker/geojson
 ```
 
-Option B, custom domain:
+Production OwnTracks ingest can use either:
 
 ```text
-tracker-api.mtntheman.com
+https://mtntheman.com/api/tracker/ingest
+https://www.mtntheman.com/api/tracker/ingest
 ```
 
-In Cloudflare, attach that custom domain to the Worker. Then set this before the tracker script runs in `trip-tracker.html`:
+The workers.dev URL remains useful for debugging:
+
+```text
+https://mtntheman-trip-tracker.mtntheman.workers.dev
+```
+
+For local debugging only, you can set an override before the tracker script runs in `trip-tracker.html`:
 
 ```html
 <script>
-  window.TRIP_TRACKER_API_BASE_URL = "https://tracker-api.mtntheman.com";
+  window.TRIP_TRACKER_API_BASE_URL = "https://mtntheman-trip-tracker.mtntheman.workers.dev";
 </script>
-```
-
-The frontend will fetch:
-
-```text
-https://tracker-api.mtntheman.com/api/tracker/geojson
 ```
 
 ## 9. OwnTracks iOS HTTP Configuration
 
 Use HTTP mode.
 
-- Endpoint URL for same-domain route: `https://mtntheman.com/api/tracker/ingest`
-- Endpoint URL for custom domain: `https://tracker-api.mtntheman.com/api/tracker/ingest`
+- Endpoint URL for apex domain: `https://mtntheman.com/api/tracker/ingest`
+- Endpoint URL for www domain: `https://www.mtntheman.com/api/tracker/ingest`
+- Debug endpoint URL: `https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/ingest`
 - Authentication: username/password with `TRACKER_USERNAME` and `TRACKER_PASSWORD`.
 - If using Bearer auth, send `Authorization: Bearer <TRACKER_TOKEN>`.
 - Location permissions: Always.
@@ -188,7 +194,7 @@ Use HTTP mode.
 Basic Auth ingest test:
 
 ```powershell
-curl.exe -X POST "https://tracker-api.mtntheman.com/api/tracker/ingest" `
+curl.exe -X POST "https://mtntheman.com/api/tracker/ingest" `
   -u "parker:REPLACE_WITH_PASSWORD" `
   -H "Content-Type: application/json" `
   -d '{"_type":"location","lat":42.7221,"lon":-84.4784,"acc":4,"alt":260,"batt":88,"tst":1779048000}'
@@ -197,7 +203,7 @@ curl.exe -X POST "https://tracker-api.mtntheman.com/api/tracker/ingest" `
 Bearer token ingest test:
 
 ```powershell
-curl.exe -X POST "https://tracker-api.mtntheman.com/api/tracker/ingest" `
+curl.exe -X POST "https://mtntheman.com/api/tracker/ingest" `
   -H "Authorization: Bearer REPLACE_WITH_TOKEN" `
   -H "Content-Type: application/json" `
   -d '{"_type":"location","lat":42.7221,"lon":-84.4784,"acc":4,"alt":260,"batt":88,"vel":13,"tst":1779048000}'
@@ -206,24 +212,26 @@ curl.exe -X POST "https://tracker-api.mtntheman.com/api/tracker/ingest" `
 Public GeoJSON:
 
 ```powershell
-curl.exe "https://tracker-api.mtntheman.com/api/tracker/geojson"
+curl.exe "https://mtntheman.com/api/tracker/geojson"
 ```
 
 Health:
 
 ```powershell
-curl.exe "https://tracker-api.mtntheman.com/api/tracker/health"
+curl.exe "https://mtntheman.com/api/tracker/health"
 ```
 
 Authenticated CSV export:
 
 ```powershell
-curl.exe "https://tracker-api.mtntheman.com/api/tracker/export.csv" `
+curl.exe "https://mtntheman.com/api/tracker/export.csv" `
   -u "parker:REPLACE_WITH_PASSWORD" `
   -o trip-tracker-location-points.csv
 ```
 
 Because the default privacy delay is 30 minutes, a freshly ingested test point will not appear in public GeoJSON immediately. Temporarily set `PUBLIC_DELAY_MINUTES = "0"` only for local testing.
+
+If `/health` shows `point_count` increasing but `/geojson` has no public features, the 30-minute privacy delay is likely working as intended.
 
 ## 11. Sample OwnTracks Payload
 
@@ -259,7 +267,7 @@ Then trigger a manual publish/location update. The Worker should return:
 Check health:
 
 ```powershell
-curl.exe "https://tracker-api.mtntheman.com/api/tracker/health"
+curl.exe "https://mtntheman.com/api/tracker/health"
 ```
 
 ## 13. Trip Completion
@@ -274,10 +282,11 @@ After June 22, 2026, the page still shows the completed route and displays `Trip
 ## Troubleshooting
 
 - `401`: credentials or Bearer token are wrong, or the relevant secret was not set.
+- Rotate credentials immediately if they are exposed in screenshots, exports, chat logs, or copied command history.
 - `404`: Worker route/custom domain/path is wrong.
 - No map points: default 30-minute privacy delay may be hiding recent test points.
 - No map points: D1 migration may not have been applied.
 - No map points: Worker may not be bound to `DB`.
 - OwnTracks background gaps: check iOS Always location permission, Precise Location, Background App Refresh, Low Power Mode, and whether the app was force-closed.
 - CORS errors: include `https://mtntheman.com` and local dev origins in `CORS_ALLOWED_ORIGINS`.
-- OwnTracks points hitting the wrong host: `mtntheman.com/api/tracker/ingest` only works if the Worker route exists there. Use `tracker-api.mtntheman.com/api/tracker/ingest` if you only configured the custom domain.
+- OwnTracks points hitting the wrong host: `mtntheman.com/api/tracker/ingest` and `www.mtntheman.com/api/tracker/ingest` require the Worker routes in `worker/wrangler.toml`. Use `https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/ingest` only as a debugging fallback.
