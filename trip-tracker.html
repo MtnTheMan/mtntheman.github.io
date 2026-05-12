@@ -36,7 +36,7 @@ permalink: /trip-tracker/
 ></script>
 <script>
   (function () {
-    var defaultApiBaseUrl = "";
+    var defaultApiBaseUrl = "https://mtntheman-trip-tracker.mtntheman.workers.dev";
     var configuredApiBaseUrl = window.TRIP_TRACKER_API_BASE_URL || defaultApiBaseUrl;
     var apiUrl = configuredApiBaseUrl.replace(/\/$/, "") + "{{ '/api/tracker/geojson' | relative_url }}";
     var refreshMs = 60000;

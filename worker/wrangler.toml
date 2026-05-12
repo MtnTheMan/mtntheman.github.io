@@ -1,0 +1,35 @@
+name = "mtntheman-trip-tracker"
+main = "tracker-worker.js"
+compatibility_date = "2026-05-11"
+workers_dev = true
+preview_urls = true
+
+# Routes are intentionally disabled for now because mtntheman.com is not a
+# Cloudflare zone in the active Wrangler account. The website uses workers.dev
+# as a temporary API fallback.
+# routes = [
+#   { pattern = "mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" },
+#   { pattern = "www.mtntheman.com/api/tracker/*", zone_name = "mtntheman.com" }
+# ]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mtntheman-trip-tracker"
+database_id = "98537864-3f60-4e29-a512-bcc4568ef220"
+migrations_dir = "migrations"
+
+[vars]
+PUBLIC_DELAY_MINUTES = "30"
+COORDINATE_DECIMALS = "3"
+MAX_PUBLIC_POINTS = "5000"
+STALE_MINUTES = "180"
+CORS_ALLOWED_ORIGINS = "https://mtntheman.com,https://www.mtntheman.com,http://localhost:4000,http://127.0.0.1:4000"
+
+# Optional broad trip bounds. Set all four or omit all four.
+# MIN_LAT = "18"
+# MAX_LAT = "72"
+# MIN_LON = "-170"
+# MAX_LON = "-50"
+
+# Do not put TRACKER_USERNAME, TRACKER_PASSWORD, or TRACKER_TOKEN here.
+# Set them with wrangler secret put.
