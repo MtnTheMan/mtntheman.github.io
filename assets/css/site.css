@@ -185,12 +185,14 @@ details.resume-details summary {
   color: #FFFF00;
 }
 
-.trip-map {
+#trip-map.trip-map,
+#trip-map.maplibregl-map {
   border: 3px dashed #00FF00;
   box-sizing: border-box;
   height: 520px;
   margin: 1em 0;
   max-width: 100%;
+  min-height: 520px;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -239,7 +241,9 @@ details.resume-details summary {
     margin: 10px auto;
   }
 
-  .trip-map {
+  #trip-map.trip-map,
+  #trip-map.maplibregl-map {
     height: 420px;
+    min-height: 420px;
   }
 }
