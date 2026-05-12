@@ -7,6 +7,23 @@ permalink: /trip-tracker/
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.css"
 />
+<style>
+  #trip-map,
+  #trip-map.trip-map,
+  #trip-map.maplibregl-map {
+    height: 520px;
+    min-height: 520px;
+  }
+
+  @media (max-width: 860px) {
+    #trip-map,
+    #trip-map.trip-map,
+    #trip-map.maplibregl-map {
+      height: 420px;
+      min-height: 420px;
+    }
+  }
+</style>
 
 <h1>Trip Tracker</h1>
 

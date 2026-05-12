@@ -4,6 +4,8 @@ const DEFAULT_MAX_PUBLIC_POINTS = 5000;
 const DEFAULT_STALE_MINUTES = 180;
 const TRIP_START_DATE = "2026-05-17";
 const TRIP_END_DATE = "2026-06-22";
+const PUBLIC_WINDOW_START = "2026-05-17T08:00:00-04:00";
+const PUBLIC_WINDOW_END = "2026-06-22T19:00:00-04:00";
 
 export default {
   async fetch(request, env) {
@@ -97,14 +99,22 @@ async function ingestOwnTracks(request, env) {
 async function publicGeoJson(env) {
   const config = publicConfig(env);
   const cutoff = epochSeconds() - config.publicDelayMinutes * 60;
+  const windowStart = epochFromIso(PUBLIC_WINDOW_START);
+  const windowEnd = epochFromIso(PUBLIC_WINDOW_END);
+  const publicEnd = Math.min(cutoff, windowEnd);
+
+  if (publicEnd < windowStart) {
+    return json(buildFeatureCollection([], config));
+  }
 
   const rows = await env.DB.prepare(
     `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
      FROM location_points
-     WHERE recorded_at <= ?
+     WHERE recorded_at >= ?
+       AND recorded_at <= ?
      ORDER BY recorded_at ASC
      LIMIT ?`
-  ).bind(cutoff, config.maxPublicPoints).all();
+  ).bind(windowStart, publicEnd, config.maxPublicPoints).all();
 
   return json(buildFeatureCollection(rows.results || [], config));
 }
@@ -129,7 +139,9 @@ async function health(env) {
       bounding_box: configuredBounds(env),
       cors_allowed_origins: allowedOrigins(env),
       trip_start_date: TRIP_START_DATE,
-      trip_end_date: TRIP_END_DATE
+      trip_end_date: TRIP_END_DATE,
+      public_window_start: PUBLIC_WINDOW_START,
+      public_window_end: PUBLIC_WINDOW_END
     }
   });
 }
@@ -181,7 +193,9 @@ function buildFeatureCollection(rows, config) {
     public_delay_minutes: config.publicDelayMinutes,
     coordinate_decimals: config.coordinateDecimals,
     point_count: roundedRows.length,
-    privacy_mode: privacyMode(config)
+    privacy_mode: privacyMode(config),
+    public_window_start: PUBLIC_WINDOW_START,
+    public_window_end: PUBLIC_WINDOW_END
   };
 
   const features = [];
@@ -230,14 +244,16 @@ function buildFeatureCollection(rows, config) {
       privacyMode: privacyMode(config),
       feedStatus: status,
       tripStartDate: TRIP_START_DATE,
-      tripEndDate: TRIP_END_DATE
+      tripEndDate: TRIP_END_DATE,
+      publicWindowStart: PUBLIC_WINDOW_START,
+      publicWindowEnd: PUBLIC_WINDOW_END
     },
     features
   };
 }
 
 function tripStatus(latest, config) {
-  const tripEnd = new Date(`${TRIP_END_DATE}T23:59:59-04:00`).getTime();
+  const tripEnd = new Date(PUBLIC_WINDOW_END).getTime();
   if (Date.now() > tripEnd) return "trip_complete";
   if (!latest) return "stale";
 
@@ -424,6 +440,10 @@ function roundCoordinate(value, decimals) {
 
 function epochSeconds() {
   return Math.floor(Date.now() / 1000);
+}
+
+function epochFromIso(value) {
+  return Math.floor(new Date(value).getTime() / 1000);
 }
 
 function epochToIso(value) {

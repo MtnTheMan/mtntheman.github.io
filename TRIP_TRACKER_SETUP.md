@@ -22,6 +22,7 @@ OwnTracks mobile app -> Cloudflare Worker POST /api/tracker/ingest -> Cloudflare
 - Public endpoint is unauthenticated, but only returns delayed/generalized data.
 - `PUBLIC_DELAY_MINUTES = "30"` by default.
 - `COORDINATE_DECIMALS = "3"` by default.
+- Public GeoJSON is masked to the trip window: May 17, 2026 at 8:00 AM Eastern through June 22, 2026 at 7:00 PM Eastern.
 - Raw current exact location is never returned unless those settings are intentionally changed.
 - The page displays a visible privacy note and reports the active privacy mode.
 
@@ -218,6 +219,7 @@ curl.exe "https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/expor
 Because the default privacy delay is 30 minutes, a freshly ingested test point will not appear in public GeoJSON immediately. Temporarily set `PUBLIC_DELAY_MINUTES = "0"` only for local testing.
 
 If `/health` shows `point_count` increasing but `/geojson` has no public features, the 30-minute privacy delay is likely working as intended.
+Points outside the public trip window are also intentionally masked from `/geojson`.
 
 ## 11. Sample OwnTracks Payload
 
