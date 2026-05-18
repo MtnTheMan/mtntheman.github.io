@@ -1,0 +1,307 @@
+---
+layout: default
+title: Trip Tracker
+permalink: /trip-tracker/
+---
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.css"
+/>
+<style>
+  #trip-map,
+  #trip-map.trip-map,
+  #trip-map.maplibregl-map {
+    height: 520px;
+    min-height: 520px;
+  }
+
+  @media (max-width: 860px) {
+    #trip-map,
+    #trip-map.trip-map,
+    #trip-map.maplibregl-map {
+      height: 420px;
+      min-height: 420px;
+    }
+  }
+</style>
+
+<h1>Trip Tracker</h1>
+
+<p>
+  Temporary road-trip tracker for May 17-June 22, 2026. For privacy, the map
+  intentionally shows a delayed and generalized location rather than an exact
+  real-time position.
+</p>
+
+<section class="tracker-status" aria-live="polite">
+  <p><strong>Status:</strong> <span id="tracker-feed-status">Loading...</span></p>
+  <p><strong>Last update:</strong> <span id="tracker-last-update">Loading...</span></p>
+  <p><strong>Privacy mode:</strong> <span id="tracker-privacy-mode">Loading...</span></p>
+  <p><strong>Points shown:</strong> <span id="tracker-point-count">Loading...</span></p>
+  <button id="tracker-recenter" class="tracker-button" type="button">Recenter on latest</button>
+</section>
+
+<div id="trip-map" class="trip-map" role="application" aria-label="Trip tracker map"></div>
+
+<p class="tracker-note">
+  If the feed appears stale, the tracker may be offline, intentionally delayed,
+  or outside cell coverage.
+</p>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.js"
+></script>
+<script>
+  (function () {
+    var defaultApiBaseUrl = "https://mtntheman-trip-tracker.mtntheman.workers.dev";
+    var configuredApiBaseUrl = window.TRIP_TRACKER_API_BASE_URL || defaultApiBaseUrl;
+    var apiUrl = configuredApiBaseUrl.replace(/\/$/, "") + "{{ '/api/tracker/geojson' | relative_url }}";
+    var refreshMs = 60000;
+    var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
+    var fittedOnce = false;
+    var latestLngLat = null;
+
+    var emptyGeoJson = {
+      type: "FeatureCollection",
+      features: []
+    };
+
+    var map = new maplibregl.Map({
+      container: "trip-map",
+      center: [-98.35, 39.5],
+      zoom: 3,
+      attributionControl: false,
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: "raster",
+            tiles: [
+              "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            ],
+            tileSize: 256,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+        },
+        layers: [
+          {
+            id: "osm",
+            type: "raster",
+            source: "osm"
+          }
+        ]
+      }
+    });
+
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+
+    map.on("load", function () {
+      map.addSource("tracker", {
+        type: "geojson",
+        data: emptyGeoJson
+      });
+
+      map.addLayer({
+        id: "tracker-route",
+        type: "line",
+        source: "tracker",
+        filter: ["==", ["get", "kind"], "route"],
+        paint: {
+          "line-color": "#00ff00",
+          "line-width": 4,
+          "line-opacity": 0.9
+        }
+      });
+
+      map.addLayer({
+        id: "tracker-latest",
+        type: "circle",
+        source: "tracker",
+        filter: ["==", ["get", "kind"], "latest"],
+        paint: {
+          "circle-radius": 8,
+          "circle-color": "#ffff00",
+          "circle-stroke-color": "#333300",
+          "circle-stroke-width": 2
+        }
+      });
+
+      map.on("click", "tracker-latest", function (event) {
+        var feature = event.features && event.features[0];
+        if (!feature) return;
+        new maplibregl.Popup()
+          .setLngLat(feature.geometry.coordinates)
+          .setText("Latest published location")
+          .addTo(map);
+      });
+
+      map.on("mouseenter", "tracker-latest", function () {
+        map.getCanvas().style.cursor = "pointer";
+      });
+
+      map.on("mouseleave", "tracker-latest", function () {
+        map.getCanvas().style.cursor = "";
+      });
+
+      loadTracker();
+      window.setInterval(loadTracker, refreshMs);
+    });
+
+    window.setTimeout(function () {
+      map.resize();
+    }, 0);
+
+    function updateTrackerSource(geojson) {
+      var source = map.getSource("tracker");
+      if (!source) return;
+      source.setData(geojson || emptyGeoJson);
+    }
+
+    function getLatestLngLat(geojson) {
+      var features = geojson && geojson.features ? geojson.features : [];
+      for (var i = 0; i < features.length; i += 1) {
+        if (features[i].properties && features[i].properties.kind === "latest") {
+          return features[i].geometry.coordinates;
+        }
+      }
+      return null;
+    }
+
+    function routeBounds(geojson) {
+      var features = geojson && geojson.features ? geojson.features : [];
+      var bounds = null;
+
+      features.forEach(function (feature) {
+        if (!feature.geometry) return;
+        if (feature.geometry.type === "LineString") {
+          feature.geometry.coordinates.forEach(function (coordinate) {
+            bounds = extendBounds(bounds, coordinate);
+          });
+        } else if (feature.geometry.type === "Point") {
+          bounds = extendBounds(bounds, feature.geometry.coordinates);
+        }
+      });
+
+      return bounds;
+    }
+
+    function routeHasArea(geojson) {
+      var bounds = routeBounds(geojson);
+      if (!bounds || bounds.isEmpty()) return false;
+      var west = bounds.getWest();
+      var east = bounds.getEast();
+      var south = bounds.getSouth();
+      var north = bounds.getNorth();
+      return Math.abs(east - west) > 0.01 || Math.abs(north - south) > 0.01;
+    }
+
+    function extendBounds(bounds, coordinate) {
+      if (!Array.isArray(coordinate) || coordinate.length < 2) return bounds;
+      if (!bounds) return new maplibregl.LngLatBounds(coordinate, coordinate);
+      bounds.extend(coordinate);
+      return bounds;
+    }
+
+    function fitRouteOnce(geojson) {
+      if (fittedOnce) return;
+      var bounds = routeBounds(geojson);
+      if (!bounds || bounds.isEmpty()) return;
+      map.resize();
+
+      if (!routeHasArea(geojson)) {
+        map.easeTo({
+          center: bounds.getCenter(),
+          zoom: 6,
+          duration: 0
+        });
+        fittedOnce = true;
+        return;
+      }
+
+      map.fitBounds(bounds, {
+        padding: 40,
+        maxZoom: 11,
+        duration: 0
+      });
+      fittedOnce = true;
+    }
+
+    function setText(id, value) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    function relativeTime(isoTime) {
+      if (!isoTime) return "No published points yet";
+      var then = new Date(isoTime).getTime();
+      if (Number.isNaN(then)) return isoTime;
+      var seconds = Math.max(0, Math.round((Date.now() - then) / 1000));
+      if (seconds < 90) return "about a minute ago";
+      var minutes = Math.round(seconds / 60);
+      if (minutes < 90) return minutes + " minutes ago";
+      var hours = Math.round(minutes / 60);
+      if (hours < 48) return hours + " hours ago";
+      var days = Math.round(hours / 24);
+      return days + " days ago";
+    }
+
+    function updateStatus(metadata) {
+      setText("tracker-feed-status", statusLabel(metadata.feedStatus));
+      setText("tracker-last-update", metadata.lastRecordedAt ? relativeTime(metadata.lastRecordedAt) : "No published points yet");
+      setText("tracker-privacy-mode", metadata.privacyMode || privacyLabel(metadata));
+      setText("tracker-point-count", String(metadata.pointCount || 0));
+    }
+
+    function statusLabel(status) {
+      if (Date.now() > tripEnd || status === "trip_complete") return "Trip complete";
+      if (status === "delayed") return "Live, delayed for privacy";
+      if (status === "live") return "Live";
+      if (status === "stale") return "Stale or waiting for delayed points";
+      return status || "unknown";
+    }
+
+    function privacyLabel(metadata) {
+      var delay = metadata.publicDelayMinutes;
+      var decimals = metadata.coordinateDecimals;
+      if (delay === undefined || decimals === undefined) return "delayed and generalized";
+      return "delayed " + delay + " minutes, rounded to " + decimals + " decimals";
+    }
+
+    function loadTracker() {
+      fetch(apiUrl, { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Tracker API returned " + response.status);
+          return response.json();
+        })
+        .then(function (geojson) {
+          latestLngLat = getLatestLngLat(geojson);
+          updateTrackerSource(geojson);
+          updateStatus(geojson.metadata || {});
+          fitRouteOnce(geojson);
+        })
+        .catch(function (error) {
+          setText("tracker-feed-status", "unavailable");
+          setText("tracker-last-update", error.message);
+          setText("tracker-privacy-mode", "unknown");
+          setText("tracker-point-count", "0");
+        });
+    }
+
+    document.getElementById("tracker-recenter").addEventListener("click", function () {
+      if (latestLngLat) {
+        map.easeTo({
+          center: latestLngLat,
+          zoom: Math.max(map.getZoom(), 9),
+          duration: 500
+        });
+      }
+    });
+
+    window.addEventListener("resize", function () {
+      map.resize();
+    });
+  })();
+</script>

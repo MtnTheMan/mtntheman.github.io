@@ -1,223 +1,634 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Parker A. Hopkins (mtntheman)</title>
-    <style>
-      /* 1. Import Fonts */
-      @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
-      @import url('https://fonts.cdnfonts.com/css/rockwell-nova');
+---
+layout: default
+title: Home
+---
+<img
+  id="profile-photo"
+  src="{{ '/assets/images/TaquamenonPhoto_phopkins.jpeg' | relative_url }}"
+  alt="Parker A. Hopkins"
+/>
 
-      /* 2. Base Styles */
-      body {
-        background-color: #556B2F;             /* Deep dark olive green */
-        color: #FFFDD0;                        /* Cream text */
-        font-family: 'Open Sans', sans-serif;  /* Open Sans for body text */
-        margin: 0;
-        padding: 0;
-      }
+<h1 id="about">About Me</h1>
 
-      /* 3. Link Styles (90s Neon & Blinking) */
-      a:link {
-        color: #FFFDD0;                        /* Cream unvisited links */
-        text-decoration: underline blink;      /* Blink effect typical of 90s */
-      }
-      a:visited {
-        color: #FFDDA0;                        /* Slightly darker cream for visited */
-      }
-      a:hover {
-        color: #FFFF00;                        /* Neon yellow on hover */
-        text-decoration: none;
-      }
+<p>
+  My professional goal is to advance stewardship of natural resources with cognizant and coherent science-informed policy, with the utility and application of findings as a focal point of work.
+</p>
 
-      /* 4. Header Styles (Rockwell Nova, Cream, Uppercase) */
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Rockwell Nova', Rockwell, serif;  /* Rockwell Nova or fallback */
-        color: #FFFDD0;                                  /* Cream headers */
-        margin-top: 1.5em;
-        margin-bottom: 0.5em;
-        line-height: 1.2;
-        text-transform: uppercase;                       /* 90s-style uppercase */
-      }
+<details>
+  <summary>Read more about me</summary>
 
-      /* 5. Content Box (90s Dashed Neon Border) */
-      #content {
-        border: 3px dashed #00FF00; /* Dashed neon green border */
-        background-color: #333300;   /* Darker olive for content box */
-        padding: 15px;
-        margin: 20px auto;
-        max-width: 800px;
-      }
+  <p>
+    I am driven by a vision of natural resource stewardship that bridges rigorous science with community-centered practice. My ambition is to foster resilient landscapes by integrating high-resolution spatial analysis, stakeholder engagement, and policy insight into land management. I approach every project as a systems thinker, seeking to understand how ecological patterns interact with human values. By emphasizing applied research and inclusive collaboration, I aim to inform decision-making processes that support sustainable resource use across diverse landscapes.
+  </p>
 
-      /* 6. Navigation Row */
-      #nav td {
-        background-color: #333300;   /* Darker olive for nav background */
-        padding: 10px;
-        text-align: center;
-      }
-      /* 7. Profile Photo */
-      #profile-photo {
-        display: block;
-        margin: 10px auto 20px;
-        max-width: 200px;
-        border: 2px solid #00FF00;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Main Table Wrapper -->
-    <table
-      width="800"
-      align="center"
-      cellpadding="10"
-      cellspacing="0"
-      border="2"
-      bordercolor="#00FF00"
-    >
-      <!-- Navigation Bar Row -->
-      <tr id="nav">
-        <td>
-          <a href="index.html">Home</a> |
-          <a href="#about">About</a> |
-          <a href="projects.html">Projects</a> |
-          <a href="resume.html">Resume/CV</a> |
-          <a href="blog.html">Pro Blog</a> |
-          <a href="#links">Links</a> |
-          <a
-            href="https://www.massadona.co"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Creative Things</a
-          > |
-          <a
-            href="https://www.cochetopa.co"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Games/Hobby Things</a
-          >
-        </td>
-      </tr>
+  <p>
+    Since joining Michigan State University's Human Dimensions of Natural Resources Lab in May 2023, I have played a part in an expansive agroforestry research initiative across the Great Lakes states. Drawing on advanced machine learning and GIS methods, I developed an ultra-high-resolution land cover map for Michigan that underpins precision conservation across 35 counties. Building on this foundation, I designed a new riparian buffer index and have presented findings at national forums, including the Society of American Foresters conference. Collaborating with the U.S. Forest Service, Ohio State University, and the University of Wisconsin-Madison, I have examined how individual landowner choices shape agroforestry adoption-and my five-chapter master's thesis on this topic was successfully defended in March 2025.
+  </p>
 
-      <!-- About Me Section Row -->
-      <tr>
-        <td>
-          <div id="content">
-            <!-- Profile Photo -->
-            <img
-              id="profile-photo"
-              src="/assets/images/TaquamenonPhoto_phopkins.jpeg"
-              alt="Parker A. Hopkins"
-            />
+  <p>
+    Prior to MSU, I held forestry technician and natural resource specialist roles with the U.S. Forest Service and National Park Service, where I managed over 400 miles of trails, developed recreation infrastructure, and coordinated citizen science integration across park units. At NOAA's Halocarbons and Trace Species group, I built airborne sampling tools and analyzed greenhouse gas distributions. During legislative internships in Washington, D.C. and Denver, I researched environmental policy, drafted briefs for congressional representatives, and honed my ability to navigate complex regulatory environments. Through these experiences, I cultivated expertise in stakeholder outreach, data-driven decision making, and collaborative leadership.
+  </p>
 
-            <h1 id="about">About Me</h1>
-
-            <!-- short description always visible -->
+  <p>
+    I hold a B.A. in Environmental Studies (magna cum laude) and Atmospheric/Oceanic Sciences from the University of Colorado at Boulder, where my honors thesis on citizen science informed early detection of invasive species. At MSU, I have maintained a 4.0 GPA, served as president of the Forestry Graduate Student Organization, and contributed to interdisciplinary work on agroforestry in the Great Lakes states. I look forward to continuing my professional journey by pursuing doctoral research focused on mapping timber management strategies across North American hardwood forests.
+  </p>
+  <details class="resume-details">
+    <summary>Resume/CV</summary>
+<!-- Name and Contact Info -->
+            <h1 id="experience">Parker A. Hopkins</h1>
             <p>
-              My professional goal is to advance stewardship of natural resources with cognizant and coherent science-informed policy, with the utility and application of findings as a focal point of work.
+              <a href="https://www.linkedin.com/in/parkerhopkins"
+                >www.linkedin.com/in/parkerhopkins</a
+              >
             </p>
+            <!-- Experience -->
+            <h2>Experience</h2>
 
-            <!-- long bio tucked into a dropdown -->
-            <details>
-              <summary>Read more about me</summary>
-
-              <p>
-                I am driven by a vision of natural resource stewardship that bridges rigorous science with community-centered practice. My ambition is to foster resilient landscapes by integrating high-resolution spatial analysis, stakeholder engagement, and policy insight into land management. I approach every project as a systems thinker, seeking to understand how ecological patterns interact with human values. By emphasizing applied research and inclusive collaboration, I aim to inform decision-making processes that support sustainable resource use across diverse landscapes.
-              </p>
-
-              <p>
-                Since joining Michigan State University’s Human Dimensions of Natural Resources Lab in May 2023, I have played a part in an expansive agroforestry research initiative across the Great Lakes states. Drawing on advanced machine learning and GIS methods, I developed an ultra-high-resolution land cover map for Michigan that underpins precision conservation across 35 counties. Building on this foundation, I designed a new riparian buffer index and have presented findings at national forums, including the Society of American Foresters conference. Collaborating with the U.S. Forest Service, Ohio State University, and the University of Wisconsin–Madison, I have examined how individual landowner choices shape agroforestry adoption—and my five-chapter master’s thesis on this topic was successfully defended in March 2025.
-              </p>
-
-              <p>
-                Prior to MSU, I held forestry technician and natural resource specialist roles with the U.S. Forest Service and National Park Service, where I managed over 400 miles of trails, developed recreation infrastructure, and coordinated citizen science integration across park units. At NOAA’s Halocarbons and Trace Species group, I built airborne sampling tools and analyzed greenhouse gas distributions. During legislative internships in Washington, D.C. and Denver, I researched environmental policy, drafted briefs for congressional representatives, and honed my ability to navigate complex regulatory environments. Through these experiences, I cultivated expertise in stakeholder outreach, data-driven decision making, and collaborative leadership.
-              </p>
-
-              <p>
-                I hold a B.A. in Environmental Studies (magna cum laude) and Atmospheric/Oceanic Sciences from the University of Colorado at Boulder, where my honors thesis on citizen science informed early detection of invasive species. At MSU, I have maintained a 4.0 GPA, served as president of the Forestry Graduate Student Organization, and contributed to interdisciplinary work on agroforestry in the Great Lakes states. I look forward to continuing my professional journey by pursuing doctoral research focused on mapping timber management strategies across North American hardwood forests.
-              </p>
-
-            </details>
-
-
-            <!-- External Links List -->
-
-            <p>
-               
-            </p>
-
-            <!-- Links Photo -->
-            <img
-              id="links-photo"
-              src="/assets/images/Rotating_earth_(large).gif"
-              alt="Rotating Earth"
-            />
-
-            <h1 id="links">Links to my Stuff</h1>
-
+            <h3>Michigan State University â€“ Department of Forestry</h3>
+            <p><em>East Lansing, MI</em></p>
+            <h4>Research Assistant (Part-time) â€“ Human Dimensions of Natural Resources Lab</h4>
+            <p>5/17/2023 â€“ present</p>
+            <p><strong>Supervisor:</strong> Emily Silver</p>
             <ul>
               <li>
-                <a
-                  href="https://instagram.com/mtntheman"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Instagram: mtntheman</a
-                >
+                Conduct research on agroforestry in Lake States, using surveys and
+                interviews to examine stakeholder engagement and decision-making
+                processes for landowners, interest groups, and governance systems
               </li>
               <li>
-                <a
-                  href="https://www.inaturalist.org/people/parker_hopkins"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >iNaturalist: parker_hopkins</a
-                >
+                Collaborate within the department, lab, and affiliated universities
+                to organize, draft, and administer surveys, events, publications,
+                and meetings
               </li>
               <li>
-                <a
-                  href="https://github.com/mtntheman"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >GitHub: MtnTheMan</a
-                >
-              <li>
-                <a
-                  href="https://www.linkedin.com/in/parkerhopkins"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >LinkedIn</a
-                >
+                Perform spatial analyses of agroforestry geographic features
+                (windbreaks, riparian buffers) using advanced machine
+                learning/AI methods and GIS (ArcGIS Pro, QGIS, etc.)
               </li>
               <li>
-                <a
-                  href="https://orcid.org/0000-0002-7970-1998"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >ORCID: 0000-0002-7970-1998</a
-                >
+                Assist in teaching coursework and labs, including grading
+                exercises and providing technical support for students
               </li>
             </ul>
 
-            <p>(Less commonly-used platforms)</p>
+            <h4>Teaching Assistant (Part-time) â€“ Introduction to Forestry and the History of MichiganÊ¼s Forests</h4>
+            <p>8/21/2023 â€“ 12/17/2023</p>
             <ul>
               <li>
-                <a
-                  href="https://x.com/mtntheman"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >X: @mtntheman</a
-                >
+                Led weekly discussion sections, graded assignments, and assisted
+                with field labs in forest ecosystem history and management
               </li>
               <li>
-                <a
-                  href="https://mtntheman.bsky.social"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Bluesky: @mtntheman.bsky.social</a
-                >
+                Provided technical support in GIS exercises and research methods
+                for undergraduate students
               </li>
             </ul>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
+
+            <h3>United States Forest Service â€“ Ashley National Forest</h3>
+            <p><em>Vernal, UT</em></p>
+            <h4>Forestry Technician (Recreation) (Full-time) â€“ Vernal Ranger District</h4>
+            <p>8/14/2021 â€“ 9/8/2023</p>
+            <p><strong>Supervisor:</strong> Joseph Ellsworth</p>
+            <ul>
+              <li>
+                Managed and maintained 400+ miles of motorized/non-motorized trails,
+                several caves, eight campgrounds, three historic ranger cabins, and
+                three yurts in collaboration with internal and external partners
+              </li>
+              <li>
+                Researched, documented, and protected forest resources while
+                developing recreation infrastructure
+              </li>
+              <li>
+                Hired, trained, supervised, supported, and mentored seasonal staff
+              </li>
+            </ul>
+
+            <h4>Customer Service Representative (Full-time) â€“ Vernal Ranger District</h4>
+            <p>10/12/2020 â€“ 8/14/2021</p>
+            <p><strong>Supervisor:</strong> Tom Parrack</p>
+            <ul>
+              <li>
+                Provided customer service and information to park visitors,
+                handled permitting, and managed fee collection
+              </li>
+            </ul>
+
+            <h3>National Park Service â€“ Natural Resource Stewardship and Science Directorate</h3>
+            <p><em>Fort Collins, CO</em></p>
+            <h4>Natural Resources Specialist/Biological Science Trainee (Full-time) â€“ BioDiscovery Program</h4>
+            <p>12/11/2018 â€“ 10/15/2020</p>
+            <p><strong>Supervisor:</strong> Terri Hogan</p>
+            <ul>
+              <li>
+                Coordinated and consulted on national efforts to utilize citizen
+                science platforms (e.g., iNaturalist) across all National Park
+                Service units; provided technical expertise on best practices and
+                engagement
+              </li>
+              <li>
+                Contributed to biological, physical, and social science projects
+                addressing air quality, climate change, invasive species, geology,
+                hydrology, auditory and night sky preservation, paleontology,
+                communication, and outreach
+              </li>
+              <li>
+                Established biodiversity education events and outreach for park
+                leadership, organizing 400+ individual park projects nationally
+              </li>
+            </ul>
+
+            <h4>Geoscientists-in-the-Parks Intern (Part-time) â€“ Landscape Restoration and Adaptation Branch</h4>
+            <p>3/27/2018 â€“ 12/10/2018</p>
+            <ul>
+              <li>
+                Assisted with landscape restoration planning and adaptation
+                projects, including field data collection and GIS mapping
+              </li>
+            </ul>
+
+            <h3>Colorado House of Representatives</h3>
+            <p><em>Denver, CO</em></p>
+            <h4>Legislative Intern (Part-time)</h4>
+            <p>12/26/2017 â€“ 3/26/2018</p>
+            <ul>
+              <li>
+                Researched and prepared talking points on political issues before
+                the Colorado State Legislature
+              </li>
+              <li>
+                Organized schedules and communicated on behalf of the
+                representative
+              </li>
+              <li>
+                Wrote summary briefs and managed email outreach for constituent
+                updates on legislative action
+              </li>
+            </ul>
+
+            <h3>United States House of Representatives</h3>
+            <p><em>Washington, DC</em></p>
+            <h4>Legislative Intern (Full-time)</h4>
+            <p>8/21/2017 â€“ 12/20/2017</p>
+            <ul>
+              <li>
+                Facilitated advocacy and legislation support for the
+                representative, submitted bills, and compiled endorsements
+              </li>
+              <li>
+                Prepared daily news reports, briefs, memos, and packets on
+                environmental, natural resource, defense, and technology bills
+              </li>
+              <li>
+                Wrote summary briefs and managed incoming calls to report
+                constituent concerns
+              </li>
+            </ul>
+
+            <h3>United States Forest Service â€“ Rio Grande National Forest</h3>
+            <p><em>Saguache, CO</em></p>
+            <h4>Forestry Aid (Recreation) (Full-time), Saguache Ranger District</h4>
+            <p>6/19/2017 â€“ 8/15/2017</p>
+            <ul>
+              <li>
+                Gathered and analyzed information on forest and trail conditions
+              </li>
+              <li>
+                Educated visitors on forest policies and regulations
+              </li>
+              <li>
+                Maintained, developed, and improved recreational infrastructure
+              </li>
+            </ul>
+
+            <h3>National Oceanic and Atmospheric Administration (NOAA)</h3>
+            <p><em>Boulder, CO</em></p>
+            <h4>Pulse of the Planet Intern (Part-time), Global Monitoring Laboratory, Halocarbons and Trace Species</h4>
+            <p>5/2013 â€“ 5/2017</p>
+            <p><strong>Supervisor:</strong> James William Elkins III, PhD</p>
+            <ul>
+              <li>
+                Built airborne scientific collection tools and analyzed data to
+                quantify distributions, magnitudes, and sources of ozone-depleting
+                trace gases and greenhouse gases with the HATS group
+              </li>
+            </ul>
+
+            <h3>National Park Service â€“ Greening Youth Foundation (contract)</h3>
+            <p><em>Estes Park, CO &amp; other locations</em></p>
+            <h4>Biodiversity Youth Ambassador (Part-time)</h4>
+            <p>7/2012 â€“ 5/2016</p>
+            <ul>
+              <li>
+                Led and participated in NPS and local community events to cultivate
+                awareness of biodiversity and environmental conservation
+              </li>
+              <li>
+                Planned and collaborated with diverse groups to organize educational
+                outreach programs and citizen science initiatives
+              </li>
+            </ul>
+
+            <!-- Education -->
+            <h2>Education</h2>
+
+            <h3>Masters of Science â€“ Michigan State University</h3>
+            <p>Fall 2023 â€“ Spring 2025 (expected)</p>
+            <ul>
+              <li>
+                Department of Forestry
+                <ul>
+                  <li>
+                    Thesis on agroforestry and private landowner decision-making
+                    processes, institutionsâ€™ roles in supporting sustainable land
+                    management
+                  </li>
+                  <li>
+                    Coursework: natural resources science, governance, and
+                    management
+                  </li>
+                </ul>
+              </li>
+              <li>President of the Forestry Graduate Student Organization, Fall 2023 â€“ present</li>
+              <li>Society of American Foresters involvement; MSU Forestry Club participation</li>
+              <li>Selected for Forest Policy Institute experience, Spring 2024</li>
+              <li>Maintained a 4.0 GPA through Summer 2024</li>
+            </ul>
+
+            <h3>Bachelor of Arts and Sciences â€“ University of Colorado at Boulder</h3>
+            <p>Graduated May 2019</p>
+            <ul>
+              <li>Magna Cum Laude Honors and Distinction</li>
+              <li>Major: Environmental Studies (ENVS); Minor: Atmospheric/Oceanic Sciences (ATOC)</li>
+              <li>
+                Honors Thesis: â€œUsing citizen science to approach invasive species:
+                a case study of an early detection and rapid response program in the
+                National Park Serviceâ€
+              </li>
+              <li>Phi Sigma Pi National Honor Fraternity, Delta Sigma Chapter (leadership roles)</li>
+              <li>3.63 GPA â€“ Deanâ€™s List throughout final two years of coursework</li>
+            </ul>
+
+            <!-- Publications/Features -->
+            <h2>Publications / Features</h2>
+            <ul>
+              <li>
+                Part of ongoing studies on Agroforestry in the Great Lakes Region;
+                defense on 3/18/25:
+                â€œAgroforestry Extent around the Lake States Region: Novel Spatial
+                Methods Combined with Survey Evidence to Analyze Agroforestry Adoption
+                Across Michigan, Ohio, and Wisconsin, USAâ€ (other publishing forthcoming)
+              </li>
+              <li>
+                Christopher Baish, Alanna Post, Ashton Shortridge, Randall J. Schaetzl,
+                Parker Hopkins, Anthony Bowman, Isabella Rabac, Bernard Frantz, Andrew
+                Finley. â€œThousands of Shallow, Relict Gullies Indicate Thermo-erosion on
+                the Sandy Uplands of Northern Lower Michigan during the Late Pleistocene,â€
+                <em>Geomorphology</em> (15 Dec 2024)
+              </li>
+              <li>
+                Bruce E. Young, Michael T. Lee, Mark Frey, Kris Barnes, Parker Hopkins.
+                â€œUsing Citizen Science Observations to Develop Managed Area Watch Lists,â€
+                <em>Natural Areas Journal</em>, 41(4), 307-314 (18 Oct 2021)
+              </li>
+              <li>
+                Parker Hopkins. â€œUsing Citizen Science to Approach Invasive Species: a Case
+                Study of an Early Detection and Rapid Response Invasion Program in the NPSâ€
+                (15 Apr 2019)
+              </li>
+              <li>Part of ongoing BromeCast study; publishing pending</li>
+              <li>
+                E.O. Wilson BioDiversity Foundation, Featured on CBS Sunday Morning
+                â€œInspired by Natureâ€
+                <a
+                  href="https://eowilsonfoundation.org/nps-biodiversity-youth-ambassadors/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >https://eowilsonfoundation.org/nps-biodiversity-youth-ambassadors/</a
+                > (2014)
+              </li>
+              <li>
+                GeoAdo Magazine â€œExplore LÌ“Amerique Sauvageâ€ feature article on exploring
+                biodiversity in American National Parks (Nov. 2012)
+              </li>
+            </ul>
+
+            <!-- Presentations -->
+            <h2>Presentations</h2>
+            <ul>
+              <li>
+                Presenter and Lead Author: â€œAgroforestry in the Great Lakes: A Remote
+                Sensing Perspective on Intentionality and Land Useâ€ (Science Flash),
+                Society of American Foresters National Conference (20 Sept 2024)
+              </li>
+              <li>
+                Panel Discussion Moderator: Student Meetup Event, Society of American
+                Foresters National Conference (18 Sept 2024) â€“ Focus on early career
+                soft skills and long-term goal setting
+              </li>
+              <li>
+                Presenter and Lead Author: â€œCharacterizing Agroforestry in Lake Statesâ€
+                (Poster), Forest Landowners National Conference (June 2024)
+              </li>
+              <li>
+                Presenter: â€œGoPollinators: a citizen science and technology approach to
+                pollinator studies in the Greater Yellowstone Ecosystem,â€ Ecological
+                Society of America Conference (Aug 2018)
+              </li>
+              <li>
+                Presenter and Lead Author: â€œCitizen Science in the National Parks,â€
+                Ecological Society of America Conference (Aug 2017)
+              </li>
+              <li>
+                Presenter and Lead Author: â€œBioBlitzes: Linking Ecosystem Services and
+                Citizen Science in 24 Hours,â€ Ecological Society of America Conference
+                (Aug 2017)
+              </li>
+            </ul>
+
+            <!-- Honors and Awards -->
+            <h2>Honors and Awards</h2>
+            <ul>
+              <li>
+                Multiple Performance and Appreciation Awards for excellent work as a Civil Servant
+                â€“ Awarded at both NPS and USFS
+              </li>
+              <li>
+                2nd place (2021) &amp; 3rd place (2022) â€“ Ashley National Forest Photo Contest
+                (Carhartt Beanie Hat Award included)
+              </li>
+              <li>
+                â€œBest Senatorâ€ (May 2017) â€“ Residence Hall Association (CU Boulder),
+                Baker Hall Council
+              </li>
+              <li>
+                â€œMeritorious Awardâ€ (May 2017) â€“ Residence Hall Association (CU Boulder),
+                Baker Hall Council
+              </li>
+              <li>
+                NOAAâ€™s Pulse of the Planet Award, Texas Regional Science Fair (Sept 2012) â€“
+                Recognized for outstanding climate science project; led to funded NOAA internship
+              </li>
+            </ul>
+
+            <!-- Notable Additional Volunteer / Leadership Experience -->
+            <h2>Notable Additional Volunteer / Leadership Experience</h2>
+            <ul>
+              <li>
+                <strong>National Park Service â€“ Natural Resource Stewardship &amp; Science Directorate
+                &amp; Rocky Mountain NP</strong> â€“ Citizen Science Assistant (Volunteer)
+                10/16/2020 â€“ present
+                <ul>
+                  <li>
+                    Continued assistance, consultation, support, and project management for
+                    citizen science efforts in NPS
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>Volunteer-in-Parks â€“ Rocky Mountain National Park</strong>
+                4/2012 â€“ 12/2014
+                <ul>
+                  <li>
+                    Assisted with volunteer projects: educational/outreach programs, road/trail
+                    work, landscape restoration, and natural resource protection
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>Society of American Foresters â€“ Student Executive Committee</strong>
+                <ul>
+                  <li>
+                    Vice-Chair, National Student Executive Committee (SEC)
+                    9/2024 â€“ present
+                  </li>
+                  <li>
+                    SEC Representative for District 4 (IA, MI, MN, WI)
+                    7/2024 â€“ present
+                    <ul>
+                      <li>
+                        Coordinate with local SAF chapters, plan national events, facilitate
+                        communication between students and SAF leadership, promote forestry careers
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>Forestry Graduate Student Organization â€“ MSU, Department of Forestry</strong> â€“ President
+                11/2023 â€“ present
+                <ul>
+                  <li>
+                    Re-established the Graduate Student Organization, focusing on professional
+                    skill development, diversity, equity, inclusion, and hosting community events
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>Forest Policy Institute â€“ Organized by Forest Landowners Foundation</strong>
+                2/2024
+                <ul>
+                  <li>
+                    Explored forest landownership dynamics, policy influences, and management approaches
+                    through interactions with policymakers and forestry leaders in Washington, DC
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>University of Colorado at Boulder â€“ Athletic Department, Football Program</strong>
+                <p>8/2018 â€“ 1/2019</p>
+                <ul>
+                  <li>
+                    Social Media and Photography Assistant
+                  </li>
+                  <li>
+                    Managed live broadcasts, produced multimedia content, and drove social media engagement
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>University of Colorado at Boulder â€“ Recreation and Club Sports</strong> â€“ Head Photographer, Videographer, and Social Media Manager
+                12/2015 â€“ 3/2019
+                <ul>
+                  <li>
+                    Captured and produced multimedia content; increased engagement for club sports
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>Rocky Mountain Sustainability and Science Network</strong> â€“ Student Researcher
+                5/2016 â€“ 9/2017
+                <ul>
+                  <li>
+                    Contributed to climate change research; drafted protocols, conducted field studies on
+                    pollinator biodiversity, and managed data collection/analysis
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>University of Colorado at Boulder â€“ Housing and Dining Services</strong> â€“ Eco-Rep
+                8/2016 â€“ 5/2017
+                <ul>
+                  <li>
+                    Promoted sustainability initiatives, pioneered composting and zero-waste programs,
+                    created educational programming, and engaged with diverse student populations
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <!-- Certifications / Training / Additional Proficiencies -->
+            <h2>Certifications / Training / Additional Proficiencies</h2>
+            <ul>
+              <li><strong>Leadership Training</strong>
+                <ul>
+                  <li>
+                    USFS Foundations of Leadership Program (Spring 2021 cohort)
+                    <ul>
+                      <li>This Is Who We Are, Our AgencyÊ¼s Values, Our AgencyÊ¼s Voice</li>
+                      <li>Setting Goals and Managing Your Time</li>
+                      <li>Problem-Solving and Decision-Making</li>
+                      <li>Code and Commitment â€“ Learning from Mistakes</li>
+                      <li>Finding Your Voice</li>
+                      <li>Interpersonal Communication</li>
+                      <li>LeaderÊ¼s Habit â€“ Nurturing the Relationship Loop</li>
+                      <li>Oral Communication</li>
+                      <li>LeaderÊ¼s Habit â€“ Communicating the Big Why</li>
+                      <li>Effective Written Communication</li>
+                      <li>Influencing Others</li>
+                      <li>Code and Commitment â€“ Treating Everyone with Respect</li>
+                      <li>Resolving Workplace Differences</li>
+                      <li>Code and Commitment â€“ Protecting One Another</li>
+                      <li>Developing a Customer Service Mindset</li>
+                      <li>Code and Commitment â€“ Empowering One Another</li>
+                      <li>Building a Team</li>
+                      <li>LeaderÊ¼s Stance â€“ Stares Leadership</li>
+                      <li>Exploring Leadership Styles</li>
+                      <li>Continue Developing Leadership Skills</li>
+                      <li>Developing a Growth Mindset</li>
+                    </ul>
+                  </li>
+                  <li>
+                    National Park Service Fundamentals (June 2019 cohort) â€“ Two-week federal training on NPS
+                    organization, teamwork, leadership, diversity, and inclusive operations
+                  </li>
+                </ul>
+              </li>
+              <li><strong>Fire Certifications</strong>
+                <ul>
+                  <li>Firefighter Type 2 (FFT2)
+                    <ul>
+                      <li>S-190 Introduction to Wildland Fire Behavior (NWCG, May 2020)</li>
+                      <li>S-130 Firefighting Training (NWCG, April 2021)</li>
+                      <li>L-180 Human Factors in The Wildland Fire Service (NWCG, May 2021)</li>
+                      <li>Work Capacity Test (WCT) completed 2021, 2022, 2023</li>
+                      <li>Field Day and Shelter Deployment (June 2021, April 2022, April 2023)</li>
+                    </ul>
+                  </li>
+                  <li>Resource Advisor (READ) â€“ N-9042 (April 2021)</li>
+                  <li>S-212 Chainsaw/Sawyer Training (completed 2022, renewed 2023)</li>
+                  <li>Fireline Resource Advisor (REAF)</li>
+                  <li>SEC2 Security Detail for Fires (Road Guard, IC camp, etc.) â€“ FPO combined with FFT2</li>
+                  <li>Incident Command Training:
+                    <ul>
+                      <li>IS-100 (April 2021)</li>
+                      <li>IS-200 (April 2021)</li>
+                      <li>IS-700 (April 2021)</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li><strong>Forest Protection Officer (FPO) Training</strong> â€“ Region 4 USFS FPO law enforcement training completed April 29, 2021 (renewed 2022, 2023)</li>
+              <li><strong>Contracting Officer Representative (COR) Level 1 Training</strong> â€“ Completed January 20, 2022</li>
+              <li><strong>Forest Collection Officer Training</strong> â€“ October 2020</li>
+              <li><strong>Adobe Creative Suite (Photoshop, InDesign, Illustrator)</strong>
+                <ul>
+                  <li>Create, modify, and improve media (photos, graphics, GIFs) for intended purpose</li>
+                  <li>Conduct 508 compliance work in InDesign</li>
+                </ul>
+              </li>
+              <li><strong>Social Media Communication</strong>
+                <ul>
+                  <li>Create, write, and revise posts for public outreach on social media</li>
+                  <li>Admin privileges on Ashley National Forest Facebook page (2021â€“2023)</li>
+                  <li>Coordinated content verification and formatting with forest staff</li>
+                  <li>Produced over half of all Ashley National Forest posts (2021â€“2023)</li>
+                </ul>
+              </li>
+              <li><strong>Programming &amp; GIS</strong>
+                <ul>
+                  <li>Python, Java, HTML â€“ Self-machine code writing and agent-based modeling proficiency</li>
+                  <li>RStudio &amp; R â€“ Statistical/data analysis, regression methods</li>
+                  <li>ArcGIS Pro for Desktop, QGIS â€“ Spatial/temporal analysis, image classification, GIS file management</li>
+                  <li>ENVI â€“ Satellite image analysis and classification</li>
+                </ul>
+              </li>
+              <li><strong>Microsoft Suite (Office, Word, PowerPoint, Outlook, Excel, Access)</strong> â€“ General proficiency; certified for 508 compliance in Word</li>
+              <li><strong>Wildfire Preparedness / Behavior</strong>
+                <ul>
+                  <li>Experience building defensible spaces with manual tools; advise on best practices</li>
+                </ul>
+              </li>
+              <li><strong>Taxonomic Identification</strong> â€“ Use of dichotomous keys, field guides, and taxonomic tools</li>
+              <li><strong>iNaturalist</strong> â€“ Extensive background with the nonprofit platform for ecological observations</li>
+              <li><strong>Fieldwork</strong> â€“ Scientific data collection following established protocols across methodologies</li>
+              <li><strong>Law Review &amp; Policy Analysis</strong> â€“ Legislative research, court proceeding searches, policy support</li>
+              <li><strong>Literature Review &amp; Academic Searches</strong> â€“ Research article collection for land management policy and studies</li>
+              <li><strong>Recreational Skills</strong> â€“ Expert in downhill skiing; backcountry navigation in winter environments</li>
+              <li><strong>First Aid / CPR Certification</strong> â€“ Renewed March 2023</li>
+              <li><strong>ATV Online Training</strong> â€“ Current May 2021</li>
+              <li><strong>National Wilderness Skills Institute (May 2021)</strong>
+                <ul>
+                  <li>Crosscut training (4-part USDA-FS official training)</li>
+                  <li>Wilderness Ethics; History of Wilderness/Public Lands; Visitor Use Management</li>
+                  <li>Trail Maintenance Basics; Backpacking &amp; Backcountry Nutrition; Wilderness Character Monitoring</li>
+                  <li>Field Leadership Development (Leaderâ€™s Intent; Field Briefings)</li>
+                </ul>
+              </li>
+              <li><strong>Water Operator Training</strong> â€“ Rural Water Association of Utah (Nov 2021)</li>
+              <li><strong>USFS Sign Training</strong> â€“ October 2021</li>
+              <li><strong>Sawyer Training</strong> â€“ A feller, B bucker (2022; renewed 2023)</li>
+              <li><strong>Responsible Conduct of Research Program (MSU, 2024â€“present)</strong>
+                <ul>
+                  <li>Authorship, Plagiarism, Research Misconduct, Collaborative Research, Conflicts of Interest, Peer Review, Mentoring, plus six hours of discussion-based training</li>
+                </ul>
+              </li>
+            </ul>
+  </details>
+</details>
+
+<img
+  id="links-photo"
+  src="{{ '/assets/images/Rotating_earth_(large).gif' | relative_url }}"
+  alt="Rotating Earth"
+/>
+
+<h1 id="links">Links to my Stuff</h1>
+
+<ul>
+  <li>
+    <a href="https://instagram.com/mtntheman" target="_blank" rel="noopener noreferrer">Instagram: mtntheman</a>
+  </li>
+  <li>
+    <a href="https://www.inaturalist.org/people/parker_hopkins" target="_blank" rel="noopener noreferrer">iNaturalist: parker_hopkins</a>
+  </li>
+  <li>
+    <a href="https://github.com/mtntheman" target="_blank" rel="noopener noreferrer">GitHub: MtnTheMan</a>
+  </li>
+  <li>
+    <a href="https://www.linkedin.com/in/parkerhopkins" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+  </li>
+  <li>
+    <a href="https://orcid.org/0000-0002-7970-1998" target="_blank" rel="noopener noreferrer">ORCID: 0000-0002-7970-1998</a>
+  </li>
+</ul>
+
+<p>(Less commonly-used platforms)</p>
+<ul>
+  <li>
+    <a href="https://x.com/mtntheman" target="_blank" rel="noopener noreferrer">X: @mtntheman</a>
+  </li>
+  <li>
+    <a href="https://mtntheman.bsky.social" target="_blank" rel="noopener noreferrer">Bluesky: @mtntheman.bsky.social</a>
+  </li>
+</ul>

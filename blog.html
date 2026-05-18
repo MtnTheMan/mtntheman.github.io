@@ -1,33 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Blog - Under Construction</title>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        background-color: #556B2F; /* Deep dark olive green */
-        color: #FFFDD0;            /* Cream text */
-        font-family: 'Open Sans', sans-serif; /* Open Sans */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div>
-      <h1>Blog</h1>
-    <div class="under-construction">
-      <!-- Reference the under construction GIF -->
-      <img
-        src="/assets/images/Under_construction_graphic.gif"
-        alt="Under Construction"
-      />
-      <p>This page is under construction. Blog coming soon!</p>
-    </div>
-  </body>
-</html>
+---
+layout: default
+title: Blog
+---
+<h1>Pro Blog</h1>
+<p>Notes, field updates, research reflections, and occasional web ephemera.</p>
+
+{% if site.posts.size > 0 %}
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li class="post-list-item">
+        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        <p class="post-meta">
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+        </p>
+        {% if post.categories.size > 0 or post.tags.size > 0 %}
+          <p class="post-tags">
+            {% if post.categories.size > 0 %}Categories: {{ post.categories | join: ", " }}{% endif %}
+            {% if post.categories.size > 0 and post.tags.size > 0 %} | {% endif %}
+            {% if post.tags.size > 0 %}Tags: {{ post.tags | join: ", " }}{% endif %}
+          </p>
+        {% endif %}
+        <div class="post-excerpt">
+          {{ post.excerpt | strip_html | truncatewords: 40 }}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No posts yet. Check back soon.</p>
+{% endif %}
