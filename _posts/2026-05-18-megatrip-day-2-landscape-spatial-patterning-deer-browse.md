@@ -33,7 +33,15 @@ The surrounding agricultural matrix changes how deer forage and disconnects thei
 
 Edge effects in these isolated patches speed up the loss of understory structure and diversity. White-tailed deer naturally prefer forest edges for traveling and feeding, concentrating their impacts right along the boundaries where woodlots meet fields. Even moderate deer numbers can completely halt the growth of important young hardwoods like sugar maple and oak (Alverson et al., 1988). Long-term regional studies reveal that chronic deer browsing accounts for nearly half of all observed vegetation changes in Upper Midwest forests over the last several decades (Waller et al., 2014). This relentless pressure stunts seedling heights, strips away preferred browse species, and pushes the plant community toward unpalatable species like ferns and grasses (Horsley et al., 2003; Waller et al., 2014). As a result, fragmented woodlots often turn into open, park-like spaces under an old canopy, leaving no young trees to replace the overstory as it ages.
 
-<!-- Future image slot: add a ground-level or aerial image at assets/images/NHR%20Blog/blog_day_two_images/day-two-woodlot-field-edge.jpeg showing the abrupt edge where a small isolated forest woodlot meets an open agricultural field. Once the image is uploaded, replace this comment with a full nhr-photo figure block. -->
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/NHR%20Blog/blog_day_two_images/day-two-woodlot-field-edge.jpeg"
+    alt="Abrupt edge where a small forest woodlot meets an open agricultural field"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A sharp edge between an isolated woodlot and surrounding agricultural fields.</figcaption>
+</figure>
 
 Field observations across Ontario and the Great Lakes states confirm these localized structural collapses. For example, an assessment of the Sifton Bog woodland in London, Ontario, describes an upland forest where everything from fifteen centimeters up to the deer line is completely stripped, leaving behind only invasive, browse-resistant species like buckthorn (Thames River Conservation Authority, 2011). This pattern matches what I am seeing on this trip, where small woodlots surrounded by fields show zero successful hardwood regeneration after a canopy disturbance. While the broad impacts of deer are well known, there is still a clear gap in formal literature when it comes to direct, landscape-scale comparisons that measure the exact relationship between patch size, connectivity, and browse severity. Gathering what we do know suggests that small forest patches embedded in farm country require active management, such as controlled hunting or physical fencing, if they are to keep their capacity to regenerate and remain resilient over the long term.
 
