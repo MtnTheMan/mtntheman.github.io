@@ -21,7 +21,7 @@ PUBLIC_DELAY_MINUTES = "30"
 COORDINATE_DECIMALS = "3"
 MAX_PUBLIC_POINTS = "5000"
 STALE_MINUTES = "180"
-CORS_ALLOWED_ORIGINS = "https://mtntheman.com,https://www.mtntheman.com,http://localhost:4000,http://127.0.0.1:4000"
+CORS_ALLOWED_ORIGINS = "https://mtntheman.com,https://www.mtntheman.com,http://mtntheman.com,http://www.mtntheman.com,https://mtntheman.github.io,http://localhost:4000,http://127.0.0.1:4000"
 
 # Optional broad trip bounds. Set all four or omit all four.
 # MIN_LAT = "18"

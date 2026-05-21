@@ -108,7 +108,7 @@ PUBLIC_DELAY_MINUTES = "30"
 COORDINATE_DECIMALS = "3"
 MAX_PUBLIC_POINTS = "5000"
 STALE_MINUTES = "180"
-CORS_ALLOWED_ORIGINS = "https://mtntheman.com,https://www.mtntheman.com,http://localhost:4000,http://127.0.0.1:4000"
+CORS_ALLOWED_ORIGINS = "https://mtntheman.com,https://www.mtntheman.com,http://mtntheman.com,http://www.mtntheman.com,https://mtntheman.github.io,http://localhost:4000,http://127.0.0.1:4000"
 ```
 
 Optional broad trip bounds. Set all four or omit all four:
@@ -276,5 +276,5 @@ After June 22, 2026, the page still shows the completed route and displays `Trip
 - No map points: D1 migration may not have been applied.
 - No map points: Worker may not be bound to `DB`.
 - OwnTracks background gaps: check iOS Always location permission, Precise Location, Background App Refresh, Low Power Mode, and whether the app was force-closed.
-- CORS errors: include `https://mtntheman.com` and local dev origins in `CORS_ALLOWED_ORIGINS`.
+- CORS errors: include `https://mtntheman.com`, `https://www.mtntheman.com`, redirected `http://www.mtntheman.com`, and local dev origins in `CORS_ALLOWED_ORIGINS`.
 - OwnTracks points hitting the wrong host: production currently uses `https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/ingest`. The `mtntheman.com/api/tracker/*` routes should stay disabled until the domain is available in the active Cloudflare account.
