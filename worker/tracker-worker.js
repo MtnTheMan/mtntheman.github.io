@@ -2,6 +2,8 @@ const DEFAULT_PUBLIC_DELAY_MINUTES = 30;
 const DEFAULT_COORDINATE_DECIMALS = 3;
 const DEFAULT_MAX_PUBLIC_POINTS = 5000;
 const DEFAULT_STALE_MINUTES = 180;
+const DEFAULT_MAX_SPIKE_DISTANCE_KM = 75;
+const DEFAULT_MAX_SPIKE_POINT_COUNT = 5;
 const TRIP_START_DATE = "2026-05-17";
 const TRIP_END_DATE = "2026-06-22";
 const PUBLIC_WINDOW_START = "2026-05-17T08:00:00-04:00";
@@ -174,11 +176,11 @@ async function exportCsv(request, env) {
 }
 
 function buildFeatureCollection(rows, config) {
-  const roundedRows = rows.map((row) => ({
+  const roundedRows = filterRouteSpikes(rows.map((row) => ({
     ...row,
     lat: roundCoordinate(row.lat, config.coordinateDecimals),
     lon: roundCoordinate(row.lon, config.coordinateDecimals)
-  }));
+  })), config);
 
   const latest = roundedRows[roundedRows.length - 1] || null;
   const coordinates = roundedRows.map((row) => [row.lon, row.lat]);
@@ -335,6 +337,8 @@ function publicConfig(env) {
     coordinateDecimals: clamp(integerEnv(env.COORDINATE_DECIMALS, DEFAULT_COORDINATE_DECIMALS), 0, 6),
     maxPublicPoints: integerEnv(env.MAX_PUBLIC_POINTS, DEFAULT_MAX_PUBLIC_POINTS),
     staleMinutes: integerEnv(env.STALE_MINUTES, DEFAULT_STALE_MINUTES),
+    maxSpikeDistanceKm: numberEnv(env.MAX_SPIKE_DISTANCE_KM, DEFAULT_MAX_SPIKE_DISTANCE_KM),
+    maxSpikePointCount: integerEnv(env.MAX_SPIKE_POINT_COUNT, DEFAULT_MAX_SPIKE_POINT_COUNT),
     allowZeroCoords: booleanEnv(env.ALLOW_ZERO_COORDS)
   };
 }
@@ -420,6 +424,11 @@ function integerEnv(value, fallback) {
   return integer === null ? fallback : integer;
 }
 
+function numberEnv(value, fallback) {
+  const number = numberOrNull(value);
+  return number === null ? fallback : number;
+}
+
 function stringOrNull(value) {
   if (value === undefined || value === null || value === "") return null;
   return String(value);
@@ -436,6 +445,55 @@ function clamp(value, min, max) {
 function roundCoordinate(value, decimals) {
   const multiplier = 10 ** decimals;
   return Math.round(Number(value) * multiplier) / multiplier;
+}
+
+function filterRouteSpikes(rows, config) {
+  if (rows.length < 3 || config.maxSpikeDistanceKm <= 0) return rows;
+
+  const filtered = [rows[0]];
+  const maxSpikePointCount = Math.max(1, config.maxSpikePointCount);
+
+  for (let index = 1; index < rows.length - 1; index += 1) {
+    const previous = filtered[filtered.length - 1];
+    const lastCandidateIndex = Math.min(rows.length - 2, index + maxSpikePointCount - 1);
+    let skippedSpike = false;
+
+    for (let endIndex = index; endIndex <= lastCandidateIndex; endIndex += 1) {
+      const next = rows[endIndex + 1];
+      const candidates = rows.slice(index, endIndex + 1);
+      const isSpike = distanceKm(previous, next) <= config.maxSpikeDistanceKm
+        && candidates.every((candidate) => {
+          return distanceKm(previous, candidate) > config.maxSpikeDistanceKm
+            && distanceKm(candidate, next) > config.maxSpikeDistanceKm;
+        });
+
+      if (isSpike) {
+        index = endIndex;
+        skippedSpike = true;
+        break;
+      }
+    }
+
+    if (!skippedSpike) filtered.push(rows[index]);
+  }
+
+  filtered.push(rows[rows.length - 1]);
+  return filtered;
+}
+
+function distanceKm(first, second) {
+  const earthRadiusKm = 6371;
+  const lat1 = degreesToRadians(first.lat);
+  const lat2 = degreesToRadians(second.lat);
+  const deltaLat = degreesToRadians(second.lat - first.lat);
+  const deltaLon = degreesToRadians(second.lon - first.lon);
+  const a = Math.sin(deltaLat / 2) ** 2
+    + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLon / 2) ** 2;
+  return 2 * earthRadiusKm * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function degreesToRadians(value) {
+  return value * Math.PI / 180;
 }
 
 function epochSeconds() {
