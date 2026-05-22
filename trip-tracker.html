@@ -29,8 +29,8 @@ permalink: /trip-tracker/
 
 <p>
   Temporary road-trip tracker for May 17-June 22, 2026. For privacy, the map
-  intentionally shows a delayed and generalized location rather than an exact
-  real-time position.
+  intentionally shows a location delayed by about 10 hours and generalized
+  rather than an exact real-time position.
 </p>
 
 <section class="tracker-status" aria-live="polite">
@@ -44,8 +44,8 @@ permalink: /trip-tracker/
 <div id="trip-map" class="trip-map" role="application" aria-label="Trip tracker map"></div>
 
 <p class="tracker-note">
-  If the feed appears stale, the tracker may be offline, intentionally delayed,
-  or outside cell coverage.
+  If the feed appears stale, the tracker may be offline, waiting on the 10-hour
+  privacy delay, or outside cell coverage.
 </p>
 
 <script
@@ -249,17 +249,18 @@ permalink: /trip-tracker/
     }
 
     function updateStatus(metadata) {
-      setText("tracker-feed-status", statusLabel(metadata.feedStatus));
+      setText("tracker-feed-status", statusLabel(metadata.feedStatus, metadata));
       setText("tracker-last-update", metadata.lastRecordedAt ? relativeTime(metadata.lastRecordedAt) : "No published points yet");
-      setText("tracker-privacy-mode", metadata.privacyMode || privacyLabel(metadata));
+      setText("tracker-privacy-mode", privacyLabel(metadata));
       setText("tracker-point-count", String(metadata.pointCount || 0));
     }
 
-    function statusLabel(status) {
+    function statusLabel(status, metadata) {
+      var delayLabel = formatDuration(metadata && metadata.publicDelayMinutes);
       if (Date.now() > tripEnd || status === "trip_complete") return "Trip complete";
-      if (status === "delayed") return "Live, delayed for privacy";
+      if (status === "delayed") return delayLabel ? "Live, delayed " + delayLabel + " for privacy" : "Live, delayed for privacy";
       if (status === "live") return "Live";
-      if (status === "stale") return "Stale or waiting for delayed points";
+      if (status === "stale") return delayLabel ? "Stale or waiting for " + delayLabel + " delayed points" : "Stale or waiting for delayed points";
       return status || "unknown";
     }
 
@@ -267,7 +268,20 @@ permalink: /trip-tracker/
       var delay = metadata.publicDelayMinutes;
       var decimals = metadata.coordinateDecimals;
       if (delay === undefined || decimals === undefined) return "delayed and generalized";
-      return "delayed " + delay + " minutes, rounded to " + decimals + " decimals";
+      return "delayed " + formatDuration(delay) + ", rounded to " + decimals + " decimals";
+    }
+
+    function formatDuration(minutes) {
+      if (minutes === undefined || minutes === null) return "";
+      if (minutes > 0 && minutes % 1440 === 0) {
+        var days = minutes / 1440;
+        return days + " " + (days === 1 ? "day" : "days");
+      }
+      if (minutes > 0 && minutes % 60 === 0) {
+        var hours = minutes / 60;
+        return hours + " " + (hours === 1 ? "hour" : "hours");
+      }
+      return minutes + " " + (minutes === 1 ? "minute" : "minutes");
     }
 
     function loadTracker() {

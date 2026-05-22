@@ -348,7 +348,21 @@ function recognizedBattery(payload) {
 }
 
 function privacyMode(config) {
-  return `delayed ${config.publicDelayMinutes} minutes, rounded to ${config.coordinateDecimals} decimals`;
+  return `delayed ${formatDuration(config.publicDelayMinutes)}, rounded to ${config.coordinateDecimals} decimals`;
+}
+
+function formatDuration(minutes) {
+  if (minutes > 0 && minutes % 1440 === 0) {
+    const days = minutes / 1440;
+    return `${days} ${days === 1 ? "day" : "days"}`;
+  }
+
+  if (minutes > 0 && minutes % 60 === 0) {
+    const hours = minutes / 60;
+    return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+  }
+
+  return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
 }
 
 function withCors(response, request, env) {
