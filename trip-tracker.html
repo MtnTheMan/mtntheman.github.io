@@ -35,7 +35,8 @@ permalink: /trip-tracker/
 
 <section class="tracker-status" aria-live="polite">
   <p><strong>Status:</strong> <span id="tracker-feed-status">Loading...</span></p>
-  <p><strong>Last update:</strong> <span id="tracker-last-update">Loading...</span></p>
+  <p><strong>Last published location:</strong> <span id="tracker-last-update">Loading...</span></p>
+  <p><strong>Last report received:</strong> <span id="tracker-last-received">Loading...</span></p>
   <p><strong>Privacy mode:</strong> <span id="tracker-privacy-mode">Loading...</span></p>
   <p><strong>Points shown:</strong> <span id="tracker-point-count">Loading...</span></p>
   <button id="tracker-recenter" class="tracker-button" type="button">Recenter on latest</button>
@@ -55,7 +56,9 @@ permalink: /trip-tracker/
   (function () {
     var defaultApiBaseUrl = "https://mtntheman-trip-tracker.mtntheman.workers.dev";
     var configuredApiBaseUrl = window.TRIP_TRACKER_API_BASE_URL || defaultApiBaseUrl;
-    var apiUrl = configuredApiBaseUrl.replace(/\/$/, "") + "{{ '/api/tracker/geojson' | relative_url }}";
+    var apiBaseUrl = configuredApiBaseUrl.replace(/\/$/, "");
+    var apiUrl = apiBaseUrl + "{{ '/api/tracker/geojson' | relative_url }}";
+    var healthUrl = apiBaseUrl + "{{ '/api/tracker/health' | relative_url }}";
     var refreshMs = 60000;
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
     var fittedOnce = false;
@@ -147,7 +150,9 @@ permalink: /trip-tracker/
       });
 
       loadTracker();
+      loadHealth();
       window.setInterval(loadTracker, refreshMs);
+      window.setInterval(loadHealth, refreshMs);
     });
 
     window.setTimeout(function () {
@@ -248,6 +253,10 @@ permalink: /trip-tracker/
       return days + " days ago";
     }
 
+    function epochRelativeTime(epochSeconds, emptyLabel) {
+      return epochSeconds ? relativeTime(new Date(epochSeconds * 1000).toISOString()) : emptyLabel;
+    }
+
     function updateStatus(metadata) {
       setText("tracker-feed-status", statusLabel(metadata.feedStatus, metadata));
       setText("tracker-last-update", metadata.lastRecordedAt ? relativeTime(metadata.lastRecordedAt) : "No published points yet");
@@ -301,6 +310,20 @@ permalink: /trip-tracker/
           setText("tracker-last-update", error.message);
           setText("tracker-privacy-mode", "unknown");
           setText("tracker-point-count", "0");
+        });
+    }
+
+    function loadHealth() {
+      fetch(healthUrl, { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Tracker health returned " + response.status);
+          return response.json();
+        })
+        .then(function (health) {
+          setText("tracker-last-received", epochRelativeTime(health.latest_received_at, "No reports received yet"));
+        })
+        .catch(function (error) {
+          setText("tracker-last-received", error.message);
         });
     }
 
