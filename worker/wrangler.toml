@@ -19,7 +19,7 @@ database_id = "98537864-3f60-4e29-a512-bcc4568ef220"
 migrations_dir = "migrations"
 
 [vars]
-PUBLIC_DELAY_MINUTES = "30"
+PUBLIC_DELAY_MINUTES = "600"
 COORDINATE_DECIMALS = "3"
 MAX_PUBLIC_POINTS = "5000"
 STALE_MINUTES = "180"

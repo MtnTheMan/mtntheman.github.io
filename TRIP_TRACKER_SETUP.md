@@ -20,7 +20,7 @@ OwnTracks mobile app -> Cloudflare Worker POST /api/tracker/ingest -> Cloudflare
 ## Public Privacy Defaults
 
 - Public endpoint is unauthenticated, but only returns delayed/generalized data.
-- `PUBLIC_DELAY_MINUTES = "30"` by default.
+- `PUBLIC_DELAY_MINUTES = "600"` by default.
 - `COORDINATE_DECIMALS = "3"` by default.
 - Public GeoJSON is masked to the trip window: May 17, 2026 at 8:00 AM Eastern through June 22, 2026 at 7:00 PM Eastern.
 - Raw current exact location is never returned unless those settings are intentionally changed.
@@ -104,7 +104,7 @@ In `worker/wrangler.toml`:
 
 ```toml
 [vars]
-PUBLIC_DELAY_MINUTES = "30"
+PUBLIC_DELAY_MINUTES = "600"
 COORDINATE_DECIMALS = "3"
 MAX_PUBLIC_POINTS = "5000"
 STALE_MINUTES = "180"
@@ -216,9 +216,9 @@ curl.exe "https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/expor
   -o trip-tracker-location-points.csv
 ```
 
-Because the default privacy delay is 30 minutes, a freshly ingested test point will not appear in public GeoJSON immediately. Temporarily set `PUBLIC_DELAY_MINUTES = "0"` only for local testing.
+Because the default privacy delay is 10 hours, a freshly ingested test point will not appear in public GeoJSON immediately. Temporarily set `PUBLIC_DELAY_MINUTES = "0"` only for local testing.
 
-If `/health` shows `point_count` increasing but `/geojson` has no public features, the 30-minute privacy delay is likely working as intended.
+If `/health` shows `point_count` increasing but `/geojson` has no public features, the 10-hour privacy delay is likely working as intended.
 Points outside the public trip window are also intentionally masked from `/geojson`.
 
 ## 11. Sample OwnTracks Payload
@@ -272,7 +272,7 @@ After June 22, 2026, the page still shows the completed route and displays `Trip
 - `401`: credentials or Bearer token are wrong, or the relevant secret was not set.
 - Rotate credentials immediately if they are exposed in screenshots, exports, chat logs, or copied command history.
 - `404`: Worker route/custom domain/path is wrong.
-- No map points: default 30-minute privacy delay may be hiding recent test points.
+- No map points: default 10-hour privacy delay may be hiding recent test points.
 - No map points: D1 migration may not have been applied.
 - No map points: Worker may not be bound to `DB`.
 - OwnTracks background gaps: check iOS Always location permission, Precise Location, Background App Refresh, Low Power Mode, and whether the app was force-closed.
