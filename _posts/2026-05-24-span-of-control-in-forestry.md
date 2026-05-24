@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Span of Control in Forestry"
+title: "NHR Log 4: Span of Control in Forestry"
 date: 2026-05-24
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, span of control, staffing]

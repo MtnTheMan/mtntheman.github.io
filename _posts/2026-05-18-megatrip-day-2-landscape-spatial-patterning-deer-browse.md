@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Megatrip Day 2: Landscape Spatial Patterning and the Scaling of Deer Browse"
+title: "NHR Log 2: Landscape Spatial Patterning and the Scaling of Deer Browse"
 date: 2026-05-18
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, Ontario, deer browse, forest fragmentation]

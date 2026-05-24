@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Day One: Crossing into the Carolinian Fringe"
+title: "NHR Log 1: Crossing into the Carolinian Fringe"
 date: 2026-05-17
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, Ontario]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Incrementalism in Forestry Certifications"
+title: "NHR Log 3: Incrementalism in Forestry Certifications"
 date: 2026-05-24
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, Ontario, certification, licensure]

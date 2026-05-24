@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Log 3: What Does an Experimental Forest Make?"
+title: "NHR Log 5: What Does an Experimental Forest Make?"
 date: 2026-05-24 12:25:47 -0400
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, Ontario, experimental forests, adaptive management]
