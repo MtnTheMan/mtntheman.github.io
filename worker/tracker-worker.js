@@ -109,6 +109,14 @@ async function publicGeoJson(env) {
     return json(buildFeatureCollection([], config));
   }
 
+  const statsRows = await env.DB.prepare(
+    `SELECT recorded_at, lat, lon
+     FROM location_points
+     WHERE recorded_at >= ?
+       AND recorded_at <= ?
+     ORDER BY recorded_at ASC`
+  ).bind(windowStart, publicEnd).all();
+
   const rows = await env.DB.prepare(
     `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
      FROM location_points
@@ -118,7 +126,11 @@ async function publicGeoJson(env) {
      LIMIT ?`
   ).bind(windowStart, publicEnd, config.maxPublicPoints).all();
 
-  return json(buildFeatureCollection((rows.results || []).reverse(), config));
+  return json(buildFeatureCollection(
+    (rows.results || []).reverse(),
+    config,
+    routeStats(publicRows(statsRows.results || [], config))
+  ));
 }
 
 async function health(env) {
@@ -175,12 +187,17 @@ async function exportCsv(request, env) {
   });
 }
 
-function buildFeatureCollection(rows, config) {
-  const roundedRows = filterRouteSpikes(rows.map((row) => ({
+function publicRows(rows, config) {
+  return filterRouteSpikes(rows.map((row) => ({
     ...row,
     lat: roundCoordinate(row.lat, config.coordinateDecimals),
     lon: roundCoordinate(row.lon, config.coordinateDecimals)
   })), config);
+}
+
+function buildFeatureCollection(rows, config, stats = null) {
+  const roundedRows = publicRows(rows, config);
+  const routeStatsSummary = stats || routeStats(roundedRows);
 
   const latest = roundedRows[roundedRows.length - 1] || null;
   const coordinates = roundedRows.map((row) => [row.lon, row.lat]);
@@ -195,6 +212,10 @@ function buildFeatureCollection(rows, config) {
     public_delay_minutes: config.publicDelayMinutes,
     coordinate_decimals: config.coordinateDecimals,
     point_count: roundedRows.length,
+    total_distance_miles: routeStatsSummary.totalDistanceMiles,
+    total_distance_kilometers: routeStatsSummary.totalDistanceKilometers,
+    foot_distance_miles: routeStatsSummary.footDistanceMiles,
+    foot_distance_kilometers: routeStatsSummary.footDistanceKilometers,
     privacy_mode: privacyMode(config),
     public_window_start: PUBLIC_WINDOW_START,
     public_window_end: PUBLIC_WINDOW_END
@@ -243,6 +264,10 @@ function buildFeatureCollection(rows, config) {
       pointCount: roundedRows.length,
       publicDelayMinutes: config.publicDelayMinutes,
       coordinateDecimals: config.coordinateDecimals,
+      totalDistanceMiles: routeStatsSummary.totalDistanceMiles,
+      totalDistanceKilometers: routeStatsSummary.totalDistanceKilometers,
+      footDistanceMiles: routeStatsSummary.footDistanceMiles,
+      footDistanceKilometers: routeStatsSummary.footDistanceKilometers,
       privacyMode: privacyMode(config),
       feedStatus: status,
       tripStartDate: TRIP_START_DATE,
@@ -251,6 +276,33 @@ function buildFeatureCollection(rows, config) {
       publicWindowEnd: PUBLIC_WINDOW_END
     },
     features
+  };
+}
+
+function routeStats(rows) {
+  let totalDistanceKilometers = 0;
+  let footDistanceKilometers = 0;
+
+  for (let index = 1; index < rows.length; index += 1) {
+    const previous = rows[index - 1];
+    const current = rows[index];
+    const segmentKilometers = distanceKm(previous, current);
+    totalDistanceKilometers += segmentKilometers;
+
+    const elapsedHours = (current.recorded_at - previous.recorded_at) / 3600;
+    if (elapsedHours > 0) {
+      const segmentMiles = kilometersToMiles(segmentKilometers);
+      if (segmentMiles / elapsedHours < 7) {
+        footDistanceKilometers += segmentKilometers;
+      }
+    }
+  }
+
+  return {
+    totalDistanceMiles: roundStat(kilometersToMiles(totalDistanceKilometers)),
+    totalDistanceKilometers: roundStat(totalDistanceKilometers),
+    footDistanceMiles: roundStat(kilometersToMiles(footDistanceKilometers)),
+    footDistanceKilometers: roundStat(footDistanceKilometers)
   };
 }
 
@@ -507,6 +559,14 @@ function distanceKm(first, second) {
   const a = Math.sin(deltaLat / 2) ** 2
     + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLon / 2) ** 2;
   return 2 * earthRadiusKm * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function kilometersToMiles(kilometers) {
+  return kilometers * 0.621371;
+}
+
+function roundStat(value) {
+  return Math.round(value * 10) / 10;
 }
 
 function degreesToRadians(value) {

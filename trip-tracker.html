@@ -23,6 +23,34 @@ permalink: /trip-tracker/
       min-height: 420px;
     }
   }
+
+  .tracker-ticker {
+    border: 2px dotted #00FF00;
+    box-sizing: border-box;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    margin: 1rem 0;
+    padding: 0.75rem;
+  }
+
+  .tracker-ticker p {
+    background-color: #252504;
+    margin: 0;
+    padding: 0.75rem;
+  }
+
+  .tracker-ticker strong,
+  .tracker-ticker span {
+    display: block;
+  }
+
+  .tracker-ticker span {
+    color: #FFDDA0;
+    font-family: "Rockwell Nova", Rockwell, serif;
+    font-size: 1.25rem;
+    margin-top: 0.35rem;
+  }
 </style>
 
 <h1>Trip Tracker</h1>
@@ -49,6 +77,12 @@ permalink: /trip-tracker/
   privacy delay, or outside cell coverage.
 </p>
 
+<section class="tracker-ticker" aria-label="Trip tracker counters">
+  <p><strong>Total distance covered</strong> <span id="tracker-total-distance">Loading...</span></p>
+  <p><strong>Miles on foot</strong> <span id="tracker-foot-distance">Loading...</span></p>
+  <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">12</span></p>
+</section>
+
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.js"
 ></script>
@@ -60,6 +94,7 @@ permalink: /trip-tracker/
     var apiUrl = apiBaseUrl + "{{ '/api/tracker/geojson' | relative_url }}";
     var healthUrl = apiBaseUrl + "{{ '/api/tracker/health' | relative_url }}";
     var refreshMs = 60000;
+    var ticksIntercepted = 12;
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
     var fittedOnce = false;
     var latestLngLat = null;
@@ -293,6 +328,18 @@ permalink: /trip-tracker/
       return minutes + " " + (minutes === 1 ? "minute" : "minutes");
     }
 
+    function formatDistance(miles, kilometers) {
+      if (!Number.isFinite(miles) || !Number.isFinite(kilometers)) return "Calculating...";
+      return miles.toLocaleString(undefined, { maximumFractionDigits: 1 }) + " mi ("
+        + kilometers.toLocaleString(undefined, { maximumFractionDigits: 1 }) + " km)";
+    }
+
+    function updateTicker(metadata) {
+      setText("tracker-total-distance", formatDistance(metadata.totalDistanceMiles, metadata.totalDistanceKilometers));
+      setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers));
+      setText("tracker-tick-count", String(ticksIntercepted));
+    }
+
     function loadTracker() {
       fetch(apiUrl, { cache: "no-store" })
         .then(function (response) {
@@ -303,6 +350,7 @@ permalink: /trip-tracker/
           latestLngLat = getLatestLngLat(geojson);
           updateTrackerSource(geojson);
           updateStatus(geojson.metadata || {});
+          updateTicker(geojson.metadata || {});
           fitRouteOnce(geojson);
         })
         .catch(function (error) {
@@ -310,6 +358,8 @@ permalink: /trip-tracker/
           setText("tracker-last-update", error.message);
           setText("tracker-privacy-mode", "unknown");
           setText("tracker-point-count", "0");
+          setText("tracker-total-distance", "unavailable");
+          setText("tracker-foot-distance", "unavailable");
         });
     }
 
