@@ -364,15 +364,16 @@ permalink: /trip-tracker/
       return minutes + " " + (minutes === 1 ? "minute" : "minutes");
     }
 
-    function formatDistance(miles, kilometers) {
+    function formatDistance(miles, kilometers, digits) {
       if (!Number.isFinite(miles) || !Number.isFinite(kilometers)) return "Calculating...";
-      return miles.toLocaleString(undefined, { maximumFractionDigits: 1 }) + " mi ("
-        + kilometers.toLocaleString(undefined, { maximumFractionDigits: 1 }) + " km)";
+      var options = { minimumFractionDigits: digits, maximumFractionDigits: digits };
+      return miles.toLocaleString(undefined, options) + " mi ("
+        + kilometers.toLocaleString(undefined, options) + " km)";
     }
 
     function updateTicker(metadata) {
-      setText("tracker-total-distance", formatDistance(metadata.totalDistanceMiles, metadata.totalDistanceKilometers));
-      setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers));
+      setText("tracker-total-distance", formatDistance(metadata.totalDistanceMiles, metadata.totalDistanceKilometers, 1));
+      setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers, 2));
       setText("tracker-tick-count", String(ticksIntercepted));
       setText("tracker-fiance-call-count", String(fianceCallCount()));
       updateTripProgressTicker();
@@ -380,8 +381,8 @@ permalink: /trip-tracker/
 
     function updateLiveTicker(stats) {
       if (!stats) return;
-      setText("tracker-total-distance", formatDistance(stats.total_distance_miles, stats.total_distance_kilometers));
-      setText("tracker-foot-distance", formatDistance(stats.foot_distance_miles, stats.foot_distance_kilometers));
+      setText("tracker-total-distance", formatDistance(stats.total_distance_miles, stats.total_distance_kilometers, 1));
+      setText("tracker-foot-distance", formatDistance(stats.foot_distance_miles, stats.foot_distance_kilometers, 2));
       setText("tracker-tick-count", String(ticksIntercepted));
       setText("tracker-fiance-call-count", String(fianceCallCount()));
       updateTripProgressTicker();
