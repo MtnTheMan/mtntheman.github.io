@@ -82,6 +82,8 @@ permalink: /trip-tracker/
   <p><strong>Miles on foot</strong> <span id="tracker-foot-distance">Loading...</span></p>
   <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">12</span></p>
   <p><strong>Calls to my fiancé</strong> <span id="tracker-fiance-call-count">Loading...</span></p>
+  <p><strong>Trip completed</strong> <span id="tracker-trip-percent">Loading...</span></p>
+  <p><strong>Trip day</strong> <span id="tracker-trip-day">Loading...</span></p>
 </section>
 
 <script
@@ -100,6 +102,7 @@ permalink: /trip-tracker/
     var fianceCallsPerDay = 2.5;
     var tripStart = new Date("2026-05-17T00:00:00-04:00").getTime();
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
+    var tripTotalDays = 36;
     var fittedOnce = false;
     var latestLngLat = null;
     var archivedGeoJson = null;
@@ -372,6 +375,7 @@ permalink: /trip-tracker/
       setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers));
       setText("tracker-tick-count", String(ticksIntercepted));
       setText("tracker-fiance-call-count", String(fianceCallCount()));
+      updateTripProgressTicker();
     }
 
     function updateLiveTicker(stats) {
@@ -380,6 +384,7 @@ permalink: /trip-tracker/
       setText("tracker-foot-distance", formatDistance(stats.foot_distance_miles, stats.foot_distance_kilometers));
       setText("tracker-tick-count", String(ticksIntercepted));
       setText("tracker-fiance-call-count", String(fianceCallCount()));
+      updateTripProgressTicker();
     }
 
     function fianceCallCount() {
@@ -387,6 +392,23 @@ permalink: /trip-tracker/
       var now = Math.min(Date.now(), tripEnd);
       var daysElapsed = Math.max(0, Math.floor((now - tripStart) / dayMs) + 1);
       return Math.round(daysElapsed * fianceCallsPerDay);
+    }
+
+    function tripProgress() {
+      var now = Math.min(Math.max(Date.now(), tripStart), tripEnd);
+      var percent = ((now - tripStart) / (tripEnd - tripStart)) * 100;
+      var dayMs = 24 * 60 * 60 * 1000;
+      var day = Math.min(tripTotalDays, Math.max(1, Math.floor((now - tripStart) / dayMs) + 1));
+      return {
+        percent: Math.round(percent * 10) / 10,
+        day: day
+      };
+    }
+
+    function updateTripProgressTicker() {
+      var progress = tripProgress();
+      setText("tracker-trip-percent", progress.percent.toLocaleString(undefined, { maximumFractionDigits: 1 }) + "%");
+      setText("tracker-trip-day", "Day " + progress.day + " of " + tripTotalDays);
     }
 
     function loadTracker() {
