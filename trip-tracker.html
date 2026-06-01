@@ -93,11 +93,14 @@ permalink: /trip-tracker/
     var apiBaseUrl = configuredApiBaseUrl.replace(/\/$/, "");
     var apiUrl = apiBaseUrl + "{{ '/api/tracker/geojson' | relative_url }}";
     var healthUrl = apiBaseUrl + "{{ '/api/tracker/health' | relative_url }}";
+    var archiveUrl = "{{ '/assets/data/trip-route-archive.geojson' | relative_url }}";
     var refreshMs = 60000;
     var ticksIntercepted = 12;
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
     var fittedOnce = false;
     var latestLngLat = null;
+    var archivedGeoJson = null;
+    var liveGeoJson = null;
 
     var emptyGeoJson = {
       type: "FeatureCollection",
@@ -185,6 +188,7 @@ permalink: /trip-tracker/
       });
 
       loadTracker();
+      loadArchivedRoute();
       loadHealth();
       window.setInterval(loadTracker, refreshMs);
       window.setInterval(loadHealth, refreshMs);
@@ -194,10 +198,21 @@ permalink: /trip-tracker/
       map.resize();
     }, 0);
 
-    function updateTrackerSource(geojson) {
+    function updateTrackerSource() {
       var source = map.getSource("tracker");
       if (!source) return;
-      source.setData(geojson || emptyGeoJson);
+      source.setData(combinedTrackerGeoJson());
+    }
+
+    function combinedTrackerGeoJson() {
+      var archivedFeatures = archivedGeoJson && archivedGeoJson.features ? archivedGeoJson.features : [];
+      var liveFeatures = liveGeoJson && liveGeoJson.features ? liveGeoJson.features : [];
+      return {
+        type: "FeatureCollection",
+        properties: liveGeoJson && liveGeoJson.properties ? liveGeoJson.properties : {},
+        metadata: liveGeoJson && liveGeoJson.metadata ? liveGeoJson.metadata : {},
+        features: archivedFeatures.concat(liveFeatures)
+      };
     }
 
     function getLatestLngLat(geojson) {
@@ -347,11 +362,12 @@ permalink: /trip-tracker/
           return response.json();
         })
         .then(function (geojson) {
-          latestLngLat = getLatestLngLat(geojson);
-          updateTrackerSource(geojson);
-          updateStatus(geojson.metadata || {});
-          updateTicker(geojson.metadata || {});
-          fitRouteOnce(geojson);
+          liveGeoJson = geojson || emptyGeoJson;
+          latestLngLat = getLatestLngLat(liveGeoJson);
+          updateTrackerSource();
+          updateStatus(liveGeoJson.metadata || {});
+          updateTicker(liveGeoJson.metadata || {});
+          fitRouteOnce(combinedTrackerGeoJson());
         })
         .catch(function (error) {
           setText("tracker-feed-status", "unavailable");
@@ -360,6 +376,23 @@ permalink: /trip-tracker/
           setText("tracker-point-count", "0");
           setText("tracker-total-distance", "unavailable");
           setText("tracker-foot-distance", "unavailable");
+        });
+    }
+
+    function loadArchivedRoute() {
+      fetch(archiveUrl, { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Archived route returned " + response.status);
+          return response.json();
+        })
+        .then(function (geojson) {
+          archivedGeoJson = geojson || emptyGeoJson;
+          updateTrackerSource();
+          fitRouteOnce(combinedTrackerGeoJson());
+        })
+        .catch(function () {
+          archivedGeoJson = emptyGeoJson;
+          updateTrackerSource();
         });
     }
 

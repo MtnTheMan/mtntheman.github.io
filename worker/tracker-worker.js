@@ -8,6 +8,7 @@ const TRIP_START_DATE = "2026-05-17";
 const TRIP_END_DATE = "2026-06-22";
 const PUBLIC_WINDOW_START = "2026-05-17T08:00:00-04:00";
 const PUBLIC_WINDOW_END = "2026-06-22T19:00:00-04:00";
+const STATIC_ROUTE_CUTOFF = "2026-05-29T21:35:17Z";
 
 export default {
   async fetch(request, env) {
@@ -104,6 +105,7 @@ async function publicGeoJson(env) {
   const windowStart = epochFromIso(PUBLIC_WINDOW_START);
   const windowEnd = epochFromIso(PUBLIC_WINDOW_END);
   const publicEnd = Math.min(cutoff, windowEnd);
+  const recentWindowStart = Math.max(windowStart, epochFromIso(STATIC_ROUTE_CUTOFF));
 
   if (publicEnd < windowStart) {
     return json(buildFeatureCollection([], config));
@@ -124,7 +126,7 @@ async function publicGeoJson(env) {
        AND recorded_at <= ?
      ORDER BY recorded_at DESC
      LIMIT ?`
-  ).bind(windowStart, publicEnd, config.maxPublicPoints).all();
+  ).bind(recentWindowStart, publicEnd, config.maxPublicPoints).all();
 
   return json(buildFeatureCollection(
     (rows.results || []).reverse(),
@@ -155,7 +157,8 @@ async function health(env) {
       trip_start_date: TRIP_START_DATE,
       trip_end_date: TRIP_END_DATE,
       public_window_start: PUBLIC_WINDOW_START,
-      public_window_end: PUBLIC_WINDOW_END
+      public_window_end: PUBLIC_WINDOW_END,
+      static_route_cutoff: STATIC_ROUTE_CUTOFF
     }
   });
 }
@@ -218,7 +221,8 @@ function buildFeatureCollection(rows, config, stats = null) {
     foot_distance_kilometers: routeStatsSummary.footDistanceKilometers,
     privacy_mode: privacyMode(config),
     public_window_start: PUBLIC_WINDOW_START,
-    public_window_end: PUBLIC_WINDOW_END
+    public_window_end: PUBLIC_WINDOW_END,
+    static_route_cutoff: STATIC_ROUTE_CUTOFF
   };
 
   const features = [];
@@ -273,7 +277,8 @@ function buildFeatureCollection(rows, config, stats = null) {
       tripStartDate: TRIP_START_DATE,
       tripEndDate: TRIP_END_DATE,
       publicWindowStart: PUBLIC_WINDOW_START,
-      publicWindowEnd: PUBLIC_WINDOW_END
+      publicWindowEnd: PUBLIC_WINDOW_END,
+      staticRouteCutoff: STATIC_ROUTE_CUTOFF
     },
     features
   };
