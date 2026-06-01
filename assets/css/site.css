@@ -247,6 +247,260 @@ details.resume-details summary {
   padding: 10px;
 }
 
+/* 10b. Northern Hardwoods equations and interactive tools */
+.nhr-equation {
+  background-color: #252504;
+  border: 2px dotted #00FF00;
+  box-sizing: border-box;
+  color: #FFFDD0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  padding: 1rem;
+  text-align: center;
+}
+
+.nhr-equation .frac {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  line-height: 1.2;
+  margin: 0 0.15rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.nhr-equation .frac > span:first-child {
+  border-bottom: 1px solid currentColor;
+  padding: 0 0.25rem 0.12rem;
+}
+
+.nhr-equation .frac > span:last-child {
+  padding: 0.12rem 0.25rem 0;
+}
+
+.nhr-calculator {
+  background-color: #252504;
+  border: 2px solid #00FF00;
+  box-sizing: border-box;
+  margin: 1.75rem 0;
+  padding: 1rem;
+}
+
+.nhr-calculator h3 {
+  margin-top: 0;
+}
+
+.nhr-calc-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.nhr-calc-control {
+  background-color: #333300;
+  border: 1px dotted #00FF00;
+  box-sizing: border-box;
+  padding: 0.75rem;
+}
+
+.nhr-calc-control label {
+  display: block;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.nhr-calc-control output {
+  color: #FFDDA0;
+  display: block;
+  font-weight: 700;
+  margin: 0.35rem 0;
+}
+
+.nhr-calc-control input[type="range"] {
+  accent-color: #00FF00;
+  width: 100%;
+}
+
+.nhr-calc-results {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-top: 1rem;
+}
+
+.nhr-calc-result {
+  background-color: #3d3d08;
+  border: 1px solid #00FF00;
+  padding: 0.75rem;
+}
+
+.nhr-calc-result strong {
+  color: #FFDDA0;
+  display: block;
+  font-size: 0.85rem;
+  line-height: 1.25;
+}
+
+.nhr-calc-result span {
+  display: block;
+  font-family: "Rockwell Nova", Rockwell, serif;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  margin-top: 0.3rem;
+}
+
+.nhr-calc-note {
+  color: #FFDDA0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 1rem 0 0;
+}
+
+.nhr-calc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.nhr-calc-button {
+  background-color: #333300;
+  border: 2px outset #00FF00;
+  color: #FFFDD0;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.45rem 0.65rem;
+}
+
+.nhr-calc-button:hover,
+.nhr-calc-button:focus {
+  color: #FFFF00;
+}
+
+.nhr-calc-control input[type="number"] {
+  background-color: #FFFDD0;
+  border: 1px solid #00FF00;
+  box-sizing: border-box;
+  color: #333300;
+  font: inherit;
+  margin-top: 0.35rem;
+  padding: 0.35rem;
+  width: 100%;
+}
+
+.nhr-calc-control--wide {
+  grid-column: 1 / -1;
+}
+
+.nhr-calc-modules {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.nhr-calc-module {
+  background-color: #333300;
+  border: 1px dotted #00FF00;
+  box-sizing: border-box;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(175px, 1fr) repeat(2, minmax(130px, 0.75fr));
+  padding: 0.75rem;
+}
+
+.nhr-calc-module label {
+  font-weight: 700;
+}
+
+.nhr-calc-module small {
+  color: #FFDDA0;
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 400;
+  line-height: 1.35;
+  margin-top: 0.25rem;
+}
+
+.nhr-calc-module input[type="checkbox"] {
+  accent-color: #00FF00;
+  margin-right: 0.4rem;
+}
+
+.nhr-calc-module input[type="number"] {
+  background-color: #FFFDD0;
+  border: 1px solid #00FF00;
+  box-sizing: border-box;
+  color: #333300;
+  font: inherit;
+  margin-top: 0.25rem;
+  padding: 0.35rem;
+  width: 100%;
+}
+
+.nhr-calc-module input[type="text"]:disabled {
+  background-color: #252504;
+  border: 1px solid #00FF00;
+  box-sizing: border-box;
+  color: #FFDDA0;
+  font: inherit;
+  margin-top: 0.25rem;
+  padding: 0.35rem;
+  width: 100%;
+}
+
+.nhr-calc-breakdown {
+  border-collapse: collapse;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.nhr-calc-breakdown th,
+.nhr-calc-breakdown td {
+  border: 1px dotted #00FF00;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.nhr-calc-breakdown td:last-child,
+.nhr-calc-breakdown th:last-child {
+  text-align: right;
+}
+
+.nhr-calc-bars {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+.nhr-calc-bar-row {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: minmax(130px, 0.8fr) minmax(140px, 1.2fr) minmax(70px, 0.4fr);
+  line-height: 1.25;
+}
+
+.nhr-calc-bar-track {
+  background-color: #333300;
+  border: 1px solid #00FF00;
+  min-height: 0.85rem;
+}
+
+.nhr-calc-bar-fill {
+  background-color: #00FF00;
+  display: block;
+  min-height: 0.85rem;
+  width: 0;
+}
+
+@media (max-width: 640px) {
+  .nhr-calc-module,
+  .nhr-calc-bar-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .visually-hidden {
   border: 0;
   clip: rect(0, 0, 0, 0);
