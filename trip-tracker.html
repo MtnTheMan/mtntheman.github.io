@@ -81,6 +81,7 @@ permalink: /trip-tracker/
   <p><strong>Total distance covered</strong> <span id="tracker-total-distance">Loading...</span></p>
   <p><strong>Miles on foot</strong> <span id="tracker-foot-distance">Loading...</span></p>
   <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">12</span></p>
+  <p><strong>Calls to my fiance</strong> <span id="tracker-fiance-call-count">Loading...</span></p>
 </section>
 
 <script
@@ -96,6 +97,8 @@ permalink: /trip-tracker/
     var archiveUrl = "{{ '/assets/data/trip-route-archive.geojson' | relative_url }}";
     var refreshMs = 60000;
     var ticksIntercepted = 12;
+    var fianceCallsPerDay = 2.5;
+    var tripStart = new Date("2026-05-17T00:00:00-04:00").getTime();
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
     var fittedOnce = false;
     var latestLngLat = null;
@@ -368,6 +371,14 @@ permalink: /trip-tracker/
       setText("tracker-total-distance", formatDistance(metadata.totalDistanceMiles, metadata.totalDistanceKilometers));
       setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers));
       setText("tracker-tick-count", String(ticksIntercepted));
+      setText("tracker-fiance-call-count", String(fianceCallCount()));
+    }
+
+    function fianceCallCount() {
+      var dayMs = 24 * 60 * 60 * 1000;
+      var now = Math.min(Date.now(), tripEnd);
+      var daysElapsed = Math.max(0, Math.floor((now - tripStart) / dayMs) + 1);
+      return Math.round(daysElapsed * fianceCallsPerDay);
     }
 
     function loadTracker() {
