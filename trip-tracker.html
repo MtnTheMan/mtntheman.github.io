@@ -307,11 +307,26 @@ permalink: /trip-tracker/
       return epochSeconds ? relativeTime(new Date(epochSeconds * 1000).toISOString()) : emptyLabel;
     }
 
+    function routePointCount(geojson) {
+      var features = geojson && geojson.features ? geojson.features : [];
+      for (var i = 0; i < features.length; i += 1) {
+        if (features[i].properties && features[i].properties.kind === "route") {
+          var coordinates = features[i].geometry && features[i].geometry.coordinates;
+          if (Array.isArray(coordinates)) return coordinates.length;
+        }
+      }
+      return 0;
+    }
+
+    function displayedPointCount() {
+      return routePointCount(archivedGeoJson) + routePointCount(liveGeoJson);
+    }
+
     function updateStatus(metadata) {
       setText("tracker-feed-status", statusLabel(metadata.feedStatus, metadata));
       setText("tracker-last-update", metadata.lastRecordedAt ? relativeTime(metadata.lastRecordedAt) : "No published points yet");
       setText("tracker-privacy-mode", privacyLabel(metadata));
-      setText("tracker-point-count", String(metadata.pointCount || 0));
+      setText("tracker-point-count", String(displayedPointCount() || metadata.pointCount || 0));
     }
 
     function statusLabel(status, metadata) {
@@ -388,6 +403,7 @@ permalink: /trip-tracker/
         .then(function (geojson) {
           archivedGeoJson = geojson || emptyGeoJson;
           updateTrackerSource();
+          if (liveGeoJson && liveGeoJson.metadata) updateStatus(liveGeoJson.metadata);
           fitRouteOnce(combinedTrackerGeoJson());
         })
         .catch(function () {

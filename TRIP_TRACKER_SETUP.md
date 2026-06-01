@@ -267,6 +267,14 @@ The page has constants for:
 
 After June 22, 2026, the page still shows the completed route and displays `Trip complete` instead of `Live`. Data is not deleted automatically.
 
+After the trip window has ended and the 10-hour privacy delay has elapsed, merge the final public-safe route into the static archive:
+
+```powershell
+node scripts/finalize-trip-route.js
+```
+
+Then commit `assets/data/trip-route-archive.geojson`. This leaves the finished trip as one static route file while keeping the Worker/D1 database available for export or backup.
+
 ## Troubleshooting
 
 - `401`: credentials or Bearer token are wrong, or the relevant secret was not set.
