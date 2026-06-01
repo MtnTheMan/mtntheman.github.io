@@ -374,6 +374,14 @@ permalink: /trip-tracker/
       setText("tracker-fiance-call-count", String(fianceCallCount()));
     }
 
+    function updateLiveTicker(stats) {
+      if (!stats) return;
+      setText("tracker-total-distance", formatDistance(stats.total_distance_miles, stats.total_distance_kilometers));
+      setText("tracker-foot-distance", formatDistance(stats.foot_distance_miles, stats.foot_distance_kilometers));
+      setText("tracker-tick-count", String(ticksIntercepted));
+      setText("tracker-fiance-call-count", String(fianceCallCount()));
+    }
+
     function fianceCallCount() {
       var dayMs = 24 * 60 * 60 * 1000;
       var now = Math.min(Date.now(), tripEnd);
@@ -431,6 +439,7 @@ permalink: /trip-tracker/
         })
         .then(function (health) {
           setText("tracker-last-received", epochRelativeTime(health.latest_received_at, "No reports received yet"));
+          updateLiveTicker(health.live_stats);
         })
         .catch(function (error) {
           setText("tracker-last-received", error.message);

@@ -141,11 +141,29 @@ async function health(env) {
   ).first();
 
   const config = publicConfig(env);
+  const windowStart = epochFromIso(PUBLIC_WINDOW_START);
+  const windowEnd = epochFromIso(PUBLIC_WINDOW_END);
+  const liveEnd = Math.min(epochSeconds(), windowEnd);
+  const statsRows = await env.DB.prepare(
+    `SELECT recorded_at, lat, lon
+     FROM location_points
+     WHERE recorded_at >= ?
+       AND recorded_at <= ?
+     ORDER BY recorded_at ASC`
+  ).bind(windowStart, liveEnd).all();
+  const liveStats = routeStats(statsRows.results || []);
+
   return json({
     ok: true,
     service: "trip-tracker",
     point_count: countResult?.point_count ?? 0,
     latest_received_at: countResult?.latest_received_at ?? null,
+    live_stats: {
+      total_distance_miles: liveStats.totalDistanceMiles,
+      total_distance_kilometers: liveStats.totalDistanceKilometers,
+      foot_distance_miles: liveStats.footDistanceMiles,
+      foot_distance_kilometers: liveStats.footDistanceKilometers
+    },
     config: {
       public_delay_minutes: config.publicDelayMinutes,
       coordinate_decimals: config.coordinateDecimals,
