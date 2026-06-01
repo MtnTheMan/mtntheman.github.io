@@ -114,11 +114,11 @@ async function publicGeoJson(env) {
      FROM location_points
      WHERE recorded_at >= ?
        AND recorded_at <= ?
-     ORDER BY recorded_at ASC
+     ORDER BY recorded_at DESC
      LIMIT ?`
   ).bind(windowStart, publicEnd, config.maxPublicPoints).all();
 
-  return json(buildFeatureCollection(rows.results || [], config));
+  return json(buildFeatureCollection((rows.results || []).reverse(), config));
 }
 
 async function health(env) {
