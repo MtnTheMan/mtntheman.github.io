@@ -80,7 +80,7 @@ permalink: /trip-tracker/
 <section class="tracker-ticker" aria-label="Trip tracker counters">
   <p><strong>Total distance covered</strong> <span id="tracker-total-distance">Loading...</span></p>
   <p><strong>Miles on foot</strong> <span id="tracker-foot-distance">Loading...</span></p>
-  <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">13</span></p>
+  <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">14</span></p>
   <p><strong>Calls to my fiancé</strong> <span id="tracker-fiance-call-count">Loading...</span></p>
   <p><strong>Trip completed</strong> <span id="tracker-trip-percent">Loading...</span></p>
   <p><strong>Trip day</strong> <span id="tracker-trip-day">Loading...</span></p>
@@ -98,7 +98,7 @@ permalink: /trip-tracker/
     var healthUrl = apiBaseUrl + "{{ '/api/tracker/health' | relative_url }}";
     var archiveUrl = "{{ '/assets/data/trip-route-archive.geojson' | relative_url }}";
     var refreshMs = 60000;
-    var ticksIntercepted = 13;
+    var ticksIntercepted = 14;
     var fianceCallsPerDay = 2.5;
     var tripStart = new Date("2026-05-17T00:00:00-04:00").getTime();
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
