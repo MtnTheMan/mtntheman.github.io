@@ -1,6 +1,6 @@
 const DEFAULT_PUBLIC_DELAY_MINUTES = 600;
 const DEFAULT_COORDINATE_DECIMALS = 3;
-const DEFAULT_MAX_PUBLIC_POINTS = 5000;
+const DEFAULT_MAX_PUBLIC_POINTS = 20000;
 const DEFAULT_STALE_MINUTES = 180;
 const DEFAULT_MAX_SPIKE_DISTANCE_KM = 75;
 const DEFAULT_MAX_SPIKE_POINT_COUNT = 5;
@@ -8,7 +8,7 @@ const TRIP_START_DATE = "2026-05-17";
 const TRIP_END_DATE = "2026-06-22";
 const PUBLIC_WINDOW_START = "2026-05-17T08:00:00-04:00";
 const PUBLIC_WINDOW_END = "2026-06-22T19:00:00-04:00";
-const STATIC_ROUTE_CUTOFF = "2026-05-29T21:35:17Z";
+const STATIC_ROUTE_CUTOFF = "2026-06-09T15:39:56Z";
 
 export default {
   async fetch(request, env) {
@@ -111,14 +111,6 @@ async function publicGeoJson(env) {
     return json(buildFeatureCollection([], config));
   }
 
-  const statsRows = await env.DB.prepare(
-    `SELECT recorded_at, lat, lon
-     FROM location_points
-     WHERE recorded_at >= ?
-       AND recorded_at <= ?
-     ORDER BY recorded_at ASC`
-  ).bind(windowStart, publicEnd).all();
-
   const rows = await env.DB.prepare(
     `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
      FROM location_points
@@ -128,11 +120,7 @@ async function publicGeoJson(env) {
      LIMIT ?`
   ).bind(recentWindowStart, publicEnd, config.maxPublicPoints).all();
 
-  return json(buildFeatureCollection(
-    (rows.results || []).reverse(),
-    config,
-    routeStats(publicRows(statsRows.results || [], config))
-  ));
+  return json(buildFeatureCollection((rows.results || []).reverse(), config));
 }
 
 async function health(env) {
