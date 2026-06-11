@@ -99,7 +99,6 @@ permalink: /trip-tracker/
     var archiveUrl = "{{ '/assets/data/trip-route-archive.geojson' | relative_url }}";
     var refreshMs = 60000;
     var ticksIntercepted = 14;
-    var fianceCallsPerDay = 2.5;
     var tripStart = new Date("2026-05-17T00:00:00-04:00").getTime();
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
     var tripTotalDays = 36;
@@ -392,7 +391,16 @@ permalink: /trip-tracker/
       var dayMs = 24 * 60 * 60 * 1000;
       var now = Math.min(Date.now(), tripEnd);
       var daysElapsed = Math.max(0, Math.floor((now - tripStart) / dayMs) + 1);
-      return Math.round(daysElapsed * fianceCallsPerDay);
+      var calls = 0;
+      for (var day = 1; day <= daysElapsed; day += 1) {
+        calls += 2 + pseudoRandomBit(day);
+      }
+      return calls;
+    }
+
+    function pseudoRandomBit(seed) {
+      var value = Math.sin(seed * 92821.37) * 10000;
+      return value - Math.floor(value) >= 0.5 ? 1 : 0;
     }
 
     function tripProgress() {
