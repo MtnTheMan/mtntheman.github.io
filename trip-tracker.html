@@ -370,21 +370,18 @@ permalink: /trip-tracker/
         + kilometers.toLocaleString(undefined, options) + " km)";
     }
 
-    function updateTicker(metadata) {
-      setText("tracker-total-distance", formatDistance(metadata.totalDistanceMiles, metadata.totalDistanceKilometers, 1));
-      setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers, 1));
+    function updateTicker() {
       setText("tracker-tick-count", String(ticksIntercepted));
       setText("tracker-fiance-call-count", String(fianceCallCount()));
       updateTripProgressTicker();
     }
 
     function updateLiveTicker(stats) {
-      if (!stats) return;
-      setText("tracker-total-distance", formatDistance(stats.total_distance_miles, stats.total_distance_kilometers, 1));
-      setText("tracker-foot-distance", formatDistance(stats.foot_distance_miles, stats.foot_distance_kilometers, 1));
-      setText("tracker-tick-count", String(ticksIntercepted));
-      setText("tracker-fiance-call-count", String(fianceCallCount()));
-      updateTripProgressTicker();
+      if (stats) {
+        setText("tracker-total-distance", formatDistance(stats.total_distance_miles, stats.total_distance_kilometers, 1));
+        setText("tracker-foot-distance", formatDistance(stats.foot_distance_miles, stats.foot_distance_kilometers, 1));
+      }
+      updateTicker();
     }
 
     function fianceCallCount() {
@@ -431,7 +428,7 @@ permalink: /trip-tracker/
           latestLngLat = getLatestLngLat(liveGeoJson);
           updateTrackerSource();
           updateStatus(liveGeoJson.metadata || {});
-          updateTicker(liveGeoJson.metadata || {});
+          updateTicker();
           fitRouteOnce(combinedTrackerGeoJson());
         })
         .catch(function (error) {
@@ -439,8 +436,6 @@ permalink: /trip-tracker/
           setText("tracker-last-update", error.message);
           setText("tracker-privacy-mode", "unknown");
           setText("tracker-point-count", "0");
-          setText("tracker-total-distance", "unavailable");
-          setText("tracker-foot-distance", "unavailable");
         });
     }
 
