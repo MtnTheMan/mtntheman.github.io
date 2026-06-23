@@ -10,6 +10,16 @@ const feedUrl = process.argv[2] || defaultFeedUrl;
 const healthUrl = process.argv[3] || defaultHealthUrl;
 const exclusionCenter = { lat: 42.742557, lon: -84.452255 };
 const exclusionRadiusMeters = 100;
+const finalStats = {
+  ticksIntercepted: 16,
+  fianceCalls: 88,
+  tripCompleted: "100%",
+  tripDay: "Day 36 of 36",
+  bearsEncountered: 3,
+  interviewsConducted: 42,
+  trees: "Countless",
+  carLockouts: 1
+};
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -153,7 +163,8 @@ async function main() {
     publicWindowStart: live.metadata?.publicWindowStart ?? null,
     publicWindowEnd: live.metadata?.publicWindowEnd ?? null,
     exclusionCenter: exclusionCenter,
-    exclusionRadiusMeters: exclusionRadiusMeters
+    exclusionRadiusMeters: exclusionRadiusMeters,
+    finalStats
   };
 
   const routeProperties = {
@@ -165,6 +176,12 @@ async function main() {
     total_distance_kilometers: metadata.totalDistanceKilometers,
     foot_distance_miles: metadata.footDistanceMiles,
     foot_distance_kilometers: metadata.footDistanceKilometers,
+    ticks_intercepted: finalStats.ticksIntercepted,
+    fiance_calls: finalStats.fianceCalls,
+    bears_encountered: finalStats.bearsEncountered,
+    interviews_conducted: finalStats.interviewsConducted,
+    trees: finalStats.trees,
+    car_lockouts: finalStats.carLockouts,
     privacy_mode: "final static route with home-area points removed"
   };
 

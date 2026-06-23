@@ -79,10 +79,14 @@ permalink: /trip-tracker/
 <section class="tracker-ticker" aria-label="Trip tracker counters">
   <p><strong>Total distance covered</strong> <span id="tracker-total-distance">Loading...</span></p>
   <p><strong>Miles on foot</strong> <span id="tracker-foot-distance">Loading...</span></p>
-  <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">14</span></p>
-  <p><strong>Calls to my fiancé</strong> <span id="tracker-fiance-call-count">Loading...</span></p>
-  <p><strong>Trip completed</strong> <span id="tracker-trip-percent">Loading...</span></p>
-  <p><strong>Trip day</strong> <span id="tracker-trip-day">Loading...</span></p>
+  <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">16</span></p>
+  <p><strong>Calls to my fiancé</strong> <span id="tracker-fiance-call-count">88</span></p>
+  <p><strong>Trip completed</strong> <span id="tracker-trip-percent">100%</span></p>
+  <p><strong>Trip day</strong> <span id="tracker-trip-day">Day 36 of 36</span></p>
+  <p><strong>Bears encountered</strong> <span id="tracker-bear-count">3</span></p>
+  <p><strong>Interviews conducted</strong> <span id="tracker-interview-count">42</span></p>
+  <p><strong>Trees</strong> <span id="tracker-tree-count">Countless</span></p>
+  <p><strong>Locked out of car</strong> <span id="tracker-lockout-count">1</span></p>
 </section>
 
 <script
@@ -91,8 +95,16 @@ permalink: /trip-tracker/
 <script>
   (function () {
     var archiveUrl = "{{ '/assets/data/trip-route-final.geojson' | relative_url }}";
-    var ticksIntercepted = 14;
-    var tripStart = new Date("2026-05-17T00:00:00-04:00").getTime();
+    var finalStats = {
+      ticksIntercepted: 16,
+      fianceCalls: 88,
+      tripCompleted: "100%",
+      tripDay: "Day 36 of 36",
+      bearsEncountered: 3,
+      interviewsConducted: 42,
+      trees: "Countless",
+      carLockouts: 1
+    };
     var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
     var tripTotalDays = 36;
     var fittedOnce = false;
@@ -340,10 +352,6 @@ permalink: /trip-tracker/
       return days + " days ago";
     }
 
-    function epochRelativeTime(epochSeconds, emptyLabel) {
-      return epochSeconds ? relativeTime(new Date(epochSeconds * 1000).toISOString()) : emptyLabel;
-    }
-
     function routePointCount(geojson) {
       var features = geojson && geojson.features ? geojson.features : [];
       for (var i = 0; i < features.length; i += 1) {
@@ -403,9 +411,14 @@ permalink: /trip-tracker/
     }
 
     function updateTicker() {
-      setText("tracker-tick-count", String(ticksIntercepted));
-      setText("tracker-fiance-call-count", String(fianceCallCount()));
-      updateTripProgressTicker();
+      setText("tracker-tick-count", String(finalStats.ticksIntercepted));
+      setText("tracker-fiance-call-count", String(finalStats.fianceCalls));
+      setText("tracker-trip-percent", finalStats.tripCompleted);
+      setText("tracker-trip-day", finalStats.tripDay);
+      setText("tracker-bear-count", String(finalStats.bearsEncountered));
+      setText("tracker-interview-count", String(finalStats.interviewsConducted));
+      setText("tracker-tree-count", finalStats.trees);
+      setText("tracker-lockout-count", String(finalStats.carLockouts));
     }
 
     function updateFinalTicker(metadata) {
@@ -414,39 +427,6 @@ permalink: /trip-tracker/
         setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers, 1));
       }
       updateTicker();
-    }
-
-    function fianceCallCount() {
-      var dayMs = 24 * 60 * 60 * 1000;
-      var now = Math.min(Date.now(), tripEnd);
-      var daysElapsed = Math.max(0, Math.floor((now - tripStart) / dayMs) + 1);
-      var calls = 0;
-      for (var day = 1; day <= daysElapsed; day += 1) {
-        calls += 2 + pseudoRandomBit(day);
-      }
-      return calls;
-    }
-
-    function pseudoRandomBit(seed) {
-      var value = Math.sin(seed * 92821.37) * 10000;
-      return value - Math.floor(value) >= 0.5 ? 1 : 0;
-    }
-
-    function tripProgress() {
-      var now = Math.min(Math.max(Date.now(), tripStart), tripEnd);
-      var percent = ((now - tripStart) / (tripEnd - tripStart)) * 100;
-      var dayMs = 24 * 60 * 60 * 1000;
-      var day = Math.min(tripTotalDays, Math.max(1, Math.floor((now - tripStart) / dayMs) + 1));
-      return {
-        percent: Math.round(percent * 10) / 10,
-        day: day
-      };
-    }
-
-    function updateTripProgressTicker() {
-      var progress = tripProgress();
-      setText("tracker-trip-percent", progress.percent.toLocaleString(undefined, { maximumFractionDigits: 1 }) + "%");
-      setText("tracker-trip-day", "Day " + progress.day + " of " + tripTotalDays);
     }
 
     function loadArchivedRoute() {
