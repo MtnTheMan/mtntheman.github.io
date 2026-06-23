@@ -140,6 +140,7 @@ permalink: /trip-tracker/
     map.on("load", function () {
       map.addSource("tracker", {
         type: "geojson",
+        lineMetrics: true,
         data: emptyGeoJson
       });
 
@@ -148,8 +149,12 @@ permalink: /trip-tracker/
         type: "line",
         source: "tracker",
         filter: ["==", ["get", "kind"], "route"],
+        layout: {
+          "line-cap": "round",
+          "line-join": "round"
+        },
         paint: {
-          "line-color": "#00ff00",
+          "line-gradient": routeGradientExpression(),
           "line-width": 4,
           "line-opacity": 0.9
         }
@@ -196,6 +201,44 @@ permalink: /trip-tracker/
       var source = map.getSource("tracker");
       if (!source) return;
       source.setData(combinedTrackerGeoJson());
+    }
+
+    function routeGradientExpression() {
+      var expression = ["interpolate", ["linear"], ["line-progress"]];
+      var dayLength = 1 / tripTotalDays;
+      var epsilon = 0.00001;
+
+      for (var day = 0; day < tripTotalDays; day += 1) {
+        var start = day * dayLength;
+        var end = day === tripTotalDays - 1 ? 1 : (day + 1) * dayLength;
+        var colors = dayColorRange(day);
+
+        if (day === 0) {
+          expression.push(0, colors.light);
+        } else {
+          expression.push(Math.min(start + epsilon, end), colors.light);
+        }
+
+        expression.push(end, colors.dark);
+      }
+
+      return expression;
+    }
+
+    function dayColorRange(dayIndex) {
+      var hueFamilies = [
+        [118, 132, 146, 160],
+        [43, 48, 53, 58],
+        [198, 208, 218, 228]
+      ];
+      var hues = hueFamilies[dayIndex % hueFamilies.length];
+      var hue = hues[Math.floor(dayIndex / hueFamilies.length) % hues.length];
+      var saturation = dayIndex % 3 === 1 ? 82 : 70;
+      var lightnessOffset = Math.floor(dayIndex / hueFamilies.length) % 3;
+      return {
+        light: "hsl(" + hue + ", " + saturation + "%, " + (71 - lightnessOffset * 3) + "%)",
+        dark: "hsl(" + hue + ", " + saturation + "%, " + (31 - lightnessOffset * 2) + "%)"
+      };
     }
 
     function combinedTrackerGeoJson() {
