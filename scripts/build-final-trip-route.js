@@ -9,15 +9,15 @@ const csvPath = process.argv[2] || defaultCsvPath;
 
 const publicWindowStart = "2026-05-17T08:00:00-04:00";
 const publicWindowEnd = "2026-06-22T19:00:00-04:00";
-const tripStart = "2026-05-17T00:00:00-04:00";
-const tripEnd = "2026-06-22T23:59:59-04:00";
-const tripTotalDays = 36;
+const tripStartDate = "2026-05-17";
+const tripEndDate = "2026-06-22";
+const tripCalendarDayCount = calendarDayDifference(tripStartDate, tripEndDate) + 1;
 const coordinateDecimals = 3;
 const publicDelayMinutes = 600;
 const maxSpikeDistanceKm = 75;
 const maxSpikePointCount = 5;
 const exclusionCenter = { lat: 42.742557, lon: -84.452255 };
-const exclusionRadiusMeters = 100;
+const exclusionRadiusMeters = 200;
 const finalStats = {
   ticksIntercepted: 16,
   fianceCalls: 88,
@@ -253,9 +253,20 @@ function localSecondsIntoDay(epoch) {
   return hour * 3600 + value("minute") * 60 + value("second");
 }
 
+function calendarDayDifference(firstDate, secondDate) {
+  const first = dateOnlyUtc(firstDate);
+  const second = dateOnlyUtc(secondDate);
+  return Math.round((second - first) / 86400000);
+}
+
+function dateOnlyUtc(dateLabel) {
+  const [year, month, day] = dateLabel.split("-").map(Number);
+  return Date.UTC(year, month - 1, day);
+}
+
 function segmentDayNumber(epoch) {
-  const elapsedDays = Math.floor((epoch - epochFromIso(tripStart)) / 86400);
-  return Math.min(tripTotalDays, Math.max(1, elapsedDays + 1));
+  const localDate = localDateLabel(epoch);
+  return Math.min(tripCalendarDayCount, Math.max(1, calendarDayDifference(tripStartDate, localDate) + 1));
 }
 
 function segmentColor(epoch) {
@@ -379,9 +390,9 @@ function main() {
     footDistanceMiles: stats.footDistanceMiles,
     footDistanceKilometers: stats.footDistanceKilometers,
     feedStatus: "trip_complete",
-    tripStartDate: "2026-05-17",
-    tripEndDate: "2026-06-22",
-    tripTotalDays,
+    tripStartDate,
+    tripEndDate,
+    tripCalendarDayCount,
     publicWindowStart,
     publicWindowEnd,
     exclusionCenter,
