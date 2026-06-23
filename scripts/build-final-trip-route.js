@@ -1,13 +1,21 @@
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
 const repoRoot = path.resolve(__dirname, "..");
-const archivePath = path.join(repoRoot, "assets", "data", "trip-route-archive.geojson");
 const finalPath = path.join(repoRoot, "assets", "data", "trip-route-final.geojson");
-const defaultFeedUrl = "https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/geojson";
-const defaultHealthUrl = "https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/health";
-const feedUrl = process.argv[2] || defaultFeedUrl;
-const healthUrl = process.argv[3] || defaultHealthUrl;
+const defaultCsvPath = path.join(os.homedir(), "trip-tracker-location-points.csv");
+const csvPath = process.argv[2] || defaultCsvPath;
+
+const publicWindowStart = "2026-05-17T08:00:00-04:00";
+const publicWindowEnd = "2026-06-22T19:00:00-04:00";
+const tripStart = "2026-05-17T00:00:00-04:00";
+const tripEnd = "2026-06-22T23:59:59-04:00";
+const tripTotalDays = 36;
+const coordinateDecimals = 3;
+const publicDelayMinutes = 600;
+const maxSpikeDistanceKm = 75;
+const maxSpikePointCount = 5;
 const exclusionCenter = { lat: 42.742557, lon: -84.452255 };
 const exclusionRadiusMeters = 100;
 const finalStats = {
@@ -21,117 +29,331 @@ const finalStats = {
   carLockouts: 1
 };
 
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let quoted = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1];
+
+    if (quoted) {
+      if (char === "\"" && next === "\"") {
+        cell += "\"";
+        index += 1;
+      } else if (char === "\"") {
+        quoted = false;
+      } else {
+        cell += char;
+      }
+    } else if (char === "\"") {
+      quoted = true;
+    } else if (char === ",") {
+      row.push(cell);
+      cell = "";
+    } else if (char === "\n") {
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else if (char !== "\r") {
+      cell += char;
+    }
+  }
+
+  if (cell.length || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows;
 }
 
-function routeFeature(geojson) {
-  return (geojson.features || []).find((feature) => {
-    return feature.properties && feature.properties.kind === "route";
+function readTrackerRows(filePath) {
+  const rows = parseCsv(fs.readFileSync(filePath, "utf8"));
+  const header = rows.shift();
+  const columns = Object.fromEntries(header.map((name, index) => [name, index]));
+
+  return rows.map((row) => ({
+    id: integerOrNull(row[columns.id]),
+    recorded_at: integerOrNull(row[columns.recorded_at]),
+    received_at: integerOrNull(row[columns.received_at]),
+    lat: numberOrNull(row[columns.lat]),
+    lon: numberOrNull(row[columns.lon]),
+    acc: numberOrNull(row[columns.acc]),
+    alt: numberOrNull(row[columns.alt]),
+    batt: numberOrNull(row[columns.batt]),
+    velocity: numberOrNull(row[columns.velocity]),
+    raw_type: row[columns.raw_type] || null,
+    source: row[columns.source] || null
+  })).filter((row) => {
+    return row.recorded_at !== null && Number.isFinite(row.lat) && Number.isFinite(row.lon);
   });
 }
 
-function lastCoordinate(coordinates) {
-  return coordinates.length ? coordinates[coordinates.length - 1] : null;
+function integerOrNull(value) {
+  if (value === undefined || value === null || value === "") return null;
+  const number = Number(value);
+  return Number.isInteger(number) ? number : null;
 }
 
-function sameCoordinate(first, second) {
-  return Boolean(first && second && first[0] === second[0] && first[1] === second[1]);
+function numberOrNull(value) {
+  if (value === undefined || value === null || value === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
 }
 
-function mergedCoordinates(archiveCoordinates, feedCoordinates) {
-  const merged = [...(archiveCoordinates || [])];
-  const next = [...(feedCoordinates || [])];
-  if (sameCoordinate(lastCoordinate(merged), next[0])) next.shift();
-  return merged.concat(next);
+function epochFromIso(iso) {
+  return Math.floor(new Date(iso).getTime() / 1000);
+}
+
+function epochToIso(epoch) {
+  return epoch ? new Date(epoch * 1000).toISOString() : null;
+}
+
+function roundCoordinate(value) {
+  const multiplier = 10 ** coordinateDecimals;
+  return Math.round(Number(value) * multiplier) / multiplier;
+}
+
+function publicRows(rows) {
+  const start = epochFromIso(publicWindowStart);
+  const end = epochFromIso(publicWindowEnd);
+  const rounded = rows
+    .filter((row) => row.recorded_at >= start && row.recorded_at <= end)
+    .sort((first, second) => first.recorded_at - second.recorded_at || first.id - second.id)
+    .map((row) => ({
+      ...row,
+      lat: roundCoordinate(row.lat),
+      lon: roundCoordinate(row.lon)
+    }));
+
+  return filterRouteSpikes(rounded);
+}
+
+function filterRouteSpikes(rows) {
+  if (rows.length < 3 || maxSpikeDistanceKm <= 0) return rows;
+
+  const filtered = [rows[0]];
+  const maxCount = Math.max(1, maxSpikePointCount);
+
+  for (let index = 1; index < rows.length - 1; index += 1) {
+    const previous = filtered[filtered.length - 1];
+    const lastCandidateIndex = Math.min(rows.length - 2, index + maxCount - 1);
+    let skippedSpike = false;
+
+    for (let endIndex = index; endIndex <= lastCandidateIndex; endIndex += 1) {
+      const next = rows[endIndex + 1];
+      const candidates = rows.slice(index, endIndex + 1);
+      const isSpike = distanceKm(previous, next) <= maxSpikeDistanceKm
+        && candidates.every((candidate) => {
+          return distanceKm(previous, candidate) > maxSpikeDistanceKm
+            && distanceKm(candidate, next) > maxSpikeDistanceKm;
+        });
+
+      if (isSpike) {
+        index = endIndex;
+        skippedSpike = true;
+        break;
+      }
+    }
+
+    if (!skippedSpike) filtered.push(rows[index]);
+  }
+
+  filtered.push(rows[rows.length - 1]);
+  return filtered;
+}
+
+function filterExclusion(rows) {
+  return rows.filter((row) => {
+    return distanceMeters(row, exclusionCenter) > exclusionRadiusMeters;
+  });
+}
+
+function rowCoordinate(row) {
+  return [row.lon, row.lat];
 }
 
 function distanceMeters(first, second) {
-  const earthRadiusMeters = 6371000;
+  return distanceKm(first, second) * 1000;
+}
+
+function distanceKm(first, second) {
+  const earthRadiusKm = 6371;
   const lat1 = toRadians(first.lat);
   const lat2 = toRadians(second.lat);
   const deltaLat = toRadians(second.lat - first.lat);
   const deltaLon = toRadians(second.lon - first.lon);
   const a = Math.sin(deltaLat / 2) ** 2
     + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLon / 2) ** 2;
-  return earthRadiusMeters * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return 2 * earthRadiusKm * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function toRadians(degrees) {
   return degrees * Math.PI / 180;
 }
 
-function coordinateToPoint(coordinate) {
-  return { lon: coordinate[0], lat: coordinate[1] };
-}
-
-function filterExclusion(coordinates) {
-  return coordinates.filter((coordinate) => {
-    return distanceMeters(coordinateToPoint(coordinate), exclusionCenter) > exclusionRadiusMeters;
-  });
-}
-
 function kilometersToMiles(kilometers) {
   return kilometers * 0.621371;
-}
-
-function routeDistanceKilometers(coordinates) {
-  let totalMeters = 0;
-  for (let index = 1; index < coordinates.length; index += 1) {
-    totalMeters += distanceMeters(coordinateToPoint(coordinates[index - 1]), coordinateToPoint(coordinates[index]));
-  }
-  return totalMeters / 1000;
 }
 
 function roundStat(value) {
   return Math.round(value * 10) / 10;
 }
 
-function latestPointFeature(coordinates, metadata) {
-  const latest = lastCoordinate(coordinates);
-  if (!latest) return null;
+function routeStats(rows) {
+  let totalDistanceKilometers = 0;
+  let footDistanceKilometers = 0;
+
+  for (let index = 1; index < rows.length; index += 1) {
+    const previous = rows[index - 1];
+    const current = rows[index];
+    const segmentKilometers = distanceKm(previous, current);
+    totalDistanceKilometers += segmentKilometers;
+
+    const elapsedHours = (current.recorded_at - previous.recorded_at) / 3600;
+    if (elapsedHours > 0) {
+      const segmentMiles = kilometersToMiles(segmentKilometers);
+      if (segmentMiles / elapsedHours < 7) {
+        footDistanceKilometers += segmentKilometers;
+      }
+    }
+  }
+
+  return {
+    totalDistanceMiles: roundStat(kilometersToMiles(totalDistanceKilometers)),
+    totalDistanceKilometers: roundStat(totalDistanceKilometers),
+    footDistanceMiles: roundStat(kilometersToMiles(footDistanceKilometers)),
+    footDistanceKilometers: roundStat(footDistanceKilometers)
+  };
+}
+
+function localDateLabel(epoch) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date(epoch * 1000));
+}
+
+function localSecondsIntoDay(epoch) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  }).formatToParts(new Date(epoch * 1000));
+  const value = (type) => Number(parts.find((part) => part.type === type)?.value || 0);
+  const hour = value("hour") % 24;
+  return hour * 3600 + value("minute") * 60 + value("second");
+}
+
+function segmentDayNumber(epoch) {
+  const elapsedDays = Math.floor((epoch - epochFromIso(tripStart)) / 86400);
+  return Math.min(tripTotalDays, Math.max(1, elapsedDays + 1));
+}
+
+function segmentColor(epoch) {
+  const dayNumber = segmentDayNumber(epoch);
+  const dayProgress = localSecondsIntoDay(epoch) / 86400;
+  const colors = dayColorRange(dayNumber - 1);
+  return hslString(colors.hue, colors.saturation, colors.light - (colors.light - colors.dark) * dayProgress);
+}
+
+function dayColorRange(dayIndex) {
+  const hueFamilies = [
+    [118, 132, 146, 160],
+    [43, 48, 53, 58],
+    [198, 208, 218, 228]
+  ];
+  const hues = hueFamilies[dayIndex % hueFamilies.length];
+  const hue = hues[Math.floor(dayIndex / hueFamilies.length) % hues.length];
+  const saturation = dayIndex % 3 === 1 ? 82 : 70;
+  const lightnessOffset = Math.floor(dayIndex / hueFamilies.length) % 3;
+  return {
+    hue,
+    saturation,
+    light: 71 - lightnessOffset * 3,
+    dark: 31 - lightnessOffset * 2
+  };
+}
+
+function hslString(hue, saturation, lightness) {
+  return `hsl(${hue}, ${saturation}%, ${Math.round(lightness * 10) / 10}%)`;
+}
+
+function segmentFeatures(rows) {
+  const features = [];
+  for (let index = 1; index < rows.length; index += 1) {
+    const previous = rows[index - 1];
+    const current = rows[index];
+    const midpointEpoch = Math.round((previous.recorded_at + current.recorded_at) / 2);
+    features.push({
+      type: "Feature",
+      geometry: {
+        type: "LineString",
+        coordinates: [rowCoordinate(previous), rowCoordinate(current)]
+      },
+      properties: {
+        name: "Final trip route segment",
+        kind: "route-segment",
+        segment_index: index,
+        day_number: segmentDayNumber(midpointEpoch),
+        local_date: localDateLabel(midpointEpoch),
+        recorded_at_start: previous.recorded_at,
+        recorded_at_end: current.recorded_at,
+        recorded_at_start_iso: epochToIso(previous.recorded_at),
+        recorded_at_end_iso: epochToIso(current.recorded_at),
+        color: segmentColor(midpointEpoch)
+      }
+    });
+  }
+  return features;
+}
+
+function latestPointFeature(row, metadata) {
+  if (!row) return null;
   return {
     type: "Feature",
     geometry: {
       type: "Point",
-      coordinates: latest
+      coordinates: rowCoordinate(row)
     },
     properties: {
+      ...metadata,
       name: "Final published location",
       kind: "latest",
-      ...metadata
+      recorded_at: row.recorded_at,
+      recorded_at_iso: epochToIso(row.recorded_at),
+      received_at: row.received_at,
+      received_at_iso: epochToIso(row.received_at),
+      velocity: row.velocity,
+      raw_type: row.raw_type,
+      source: row.source
     }
   };
 }
 
-async function fetchJson(url) {
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`${url} returned ${response.status}`);
-  }
-  return response.json();
-}
-
-async function main() {
-  const archive = readJson(archivePath);
-  const live = await fetchJson(feedUrl);
-  const health = await fetchJson(healthUrl).catch(() => null);
-
-  const archivedRoute = routeFeature(archive);
-  const liveRoute = routeFeature(live);
-  const archivedCoordinates = archivedRoute?.geometry?.coordinates || [];
-  const liveCoordinates = liveRoute?.geometry?.coordinates || [];
-  const allCoordinates = mergedCoordinates(archivedCoordinates, liveCoordinates);
-  const finalCoordinates = filterExclusion(allCoordinates);
-  const filteredCount = allCoordinates.length - finalCoordinates.length;
-  const totalDistanceKilometers = routeDistanceKilometers(finalCoordinates);
+function main() {
+  const rawRows = readTrackerRows(csvPath);
+  const publicSafeRows = publicRows(rawRows);
+  const finalRows = filterExclusion(publicSafeRows);
+  const filteredCount = publicSafeRows.length - finalRows.length;
+  const stats = routeStats(finalRows);
+  const latest = finalRows[finalRows.length - 1] || null;
+  const coordinates = finalRows.map(rowCoordinate);
 
   const sharedProperties = {
     kind: "route",
     routePart: "final",
-    point_count: finalCoordinates.length,
-    public_delay_minutes: live.metadata?.publicDelayMinutes ?? archive.metadata?.publicDelayMinutes ?? null,
-    coordinate_decimals: live.metadata?.coordinateDecimals ?? archive.metadata?.coordinateDecimals ?? null,
+    point_count: finalRows.length,
+    public_delay_minutes: publicDelayMinutes,
+    coordinate_decimals: coordinateDecimals,
     filtered_point_count: filteredCount,
     exclusion_center_lat: exclusionCenter.lat,
     exclusion_center_lon: exclusionCenter.lon,
@@ -140,42 +362,44 @@ async function main() {
 
   const metadata = {
     archivedAt: new Date().toISOString(),
-    source: "merged final public tracker route",
-    sourceArchive: path.relative(repoRoot, archivePath).replace(/\\/g, "/"),
-    sourceFeedUrl: feedUrl,
-    sourceHealthUrl: health ? healthUrl : null,
-    sourceArchivePointCount: archivedCoordinates.length,
-    sourceFeedPointCount: liveCoordinates.length,
-    sourceMergedPointCount: allCoordinates.length,
+    source: "final public tracker route from timestamped D1 CSV export",
+    sourceCsv: path.basename(csvPath),
+    sourceCsvRowCount: rawRows.length,
+    publicWindowRowCount: publicSafeRows.length,
     filteredPointCount: filteredCount,
-    pointCount: finalCoordinates.length,
-    lastRecordedAt: live.metadata?.lastRecordedAt ?? archive.metadata?.lastRecordedAt ?? null,
-    lastReceivedAt: live.metadata?.lastReceivedAt ?? null,
-    publicDelayMinutes: sharedProperties.public_delay_minutes,
-    coordinateDecimals: sharedProperties.coordinate_decimals,
-    totalDistanceMiles: roundStat(kilometersToMiles(totalDistanceKilometers)),
-    totalDistanceKilometers: roundStat(totalDistanceKilometers),
-    footDistanceMiles: health?.live_stats?.foot_distance_miles ?? null,
-    footDistanceKilometers: health?.live_stats?.foot_distance_kilometers ?? null,
+    pointCount: finalRows.length,
+    segmentCount: Math.max(0, finalRows.length - 1),
+    firstRecordedAt: finalRows[0] ? epochToIso(finalRows[0].recorded_at) : null,
+    lastRecordedAt: latest ? epochToIso(latest.recorded_at) : null,
+    lastReceivedAt: latest ? epochToIso(latest.received_at) : null,
+    publicDelayMinutes,
+    coordinateDecimals,
+    totalDistanceMiles: stats.totalDistanceMiles,
+    totalDistanceKilometers: stats.totalDistanceKilometers,
+    footDistanceMiles: stats.footDistanceMiles,
+    footDistanceKilometers: stats.footDistanceKilometers,
     feedStatus: "trip_complete",
-    tripStartDate: live.metadata?.tripStartDate ?? null,
-    tripEndDate: live.metadata?.tripEndDate ?? null,
-    publicWindowStart: live.metadata?.publicWindowStart ?? null,
-    publicWindowEnd: live.metadata?.publicWindowEnd ?? null,
-    exclusionCenter: exclusionCenter,
-    exclusionRadiusMeters: exclusionRadiusMeters,
+    tripStartDate: "2026-05-17",
+    tripEndDate: "2026-06-22",
+    tripTotalDays,
+    publicWindowStart,
+    publicWindowEnd,
+    exclusionCenter,
+    exclusionRadiusMeters,
+    colorMode: "timestamped route segments by local trip day and time of day",
     finalStats
   };
 
   const routeProperties = {
     name: "Final trip route",
     ...sharedProperties,
-    last_recorded_at: live.properties?.last_recorded_at ?? null,
-    received_at: live.properties?.received_at ?? null,
-    total_distance_miles: metadata.totalDistanceMiles,
-    total_distance_kilometers: metadata.totalDistanceKilometers,
-    foot_distance_miles: metadata.footDistanceMiles,
-    foot_distance_kilometers: metadata.footDistanceKilometers,
+    first_recorded_at: finalRows[0]?.recorded_at ?? null,
+    last_recorded_at: latest?.recorded_at ?? null,
+    received_at: latest?.received_at ?? null,
+    total_distance_miles: stats.totalDistanceMiles,
+    total_distance_kilometers: stats.totalDistanceKilometers,
+    foot_distance_miles: stats.footDistanceMiles,
+    foot_distance_kilometers: stats.footDistanceKilometers,
     ticks_intercepted: finalStats.ticksIntercepted,
     fiance_calls: finalStats.fianceCalls,
     bears_encountered: finalStats.bearsEncountered,
@@ -185,6 +409,26 @@ async function main() {
     privacy_mode: "final static route with home-area points removed"
   };
 
+  const routeFeature = {
+    type: "Feature",
+    geometry: {
+      type: "LineString",
+      coordinates
+    },
+    properties: routeProperties
+  };
+
+  const features = coordinates.length
+    ? [
+      routeFeature,
+      ...segmentFeatures(finalRows),
+      latestPointFeature(latest, {
+        ...routeProperties,
+        kind: "latest"
+      })
+    ].filter(Boolean)
+    : [];
+
   const finalGeoJson = {
     type: "FeatureCollection",
     metadata,
@@ -193,33 +437,18 @@ async function main() {
       generated_at: Math.floor(Date.now() / 1000),
       status: "trip_complete"
     },
-    features: finalCoordinates.length ? [
-      {
-        type: "Feature",
-        geometry: {
-          type: "LineString",
-          coordinates: finalCoordinates
-        },
-        properties: routeProperties
-      },
-      latestPointFeature(finalCoordinates, {
-        ...routeProperties,
-        kind: "latest"
-      })
-    ].filter(Boolean) : []
+    features
   };
 
   fs.writeFileSync(finalPath, `${JSON.stringify(finalGeoJson)}\n`);
-  console.log(`Archive route points: ${archivedCoordinates.length}`);
-  console.log(`Current feed route points: ${liveCoordinates.length}`);
-  console.log(`Merged route points: ${allCoordinates.length}`);
+  console.log(`CSV rows: ${rawRows.length}`);
+  console.log(`Public-safe rows after window/spike filtering: ${publicSafeRows.length}`);
   console.log(`Removed within ${exclusionRadiusMeters}m: ${filteredCount}`);
-  console.log(`Final route points: ${finalCoordinates.length}`);
-  console.log(`Final route distance: ${metadata.totalDistanceMiles} mi (${metadata.totalDistanceKilometers} km)`);
+  console.log(`Final route points: ${finalRows.length}`);
+  console.log(`Timestamped route segments: ${Math.max(0, finalRows.length - 1)}`);
+  console.log(`Final route distance: ${stats.totalDistanceMiles} mi (${stats.totalDistanceKilometers} km)`);
+  console.log(`Final foot distance: ${stats.footDistanceMiles} mi (${stats.footDistanceKilometers} km)`);
   console.log(`Wrote ${path.relative(repoRoot, finalPath)}`);
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exit(1);
-});
+main();
