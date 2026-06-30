@@ -151,6 +151,7 @@ permalink: /trip-tracker/
     map.on("load", function () {
       map.addSource("tracker", {
         type: "geojson",
+        tolerance: 0,
         data: emptyGeoJson
       });
 
@@ -165,8 +166,8 @@ permalink: /trip-tracker/
         },
         paint: {
           "line-color": ["get", "color"],
-          "line-width": 4,
-          "line-opacity": 0.9
+          "line-width": ["interpolate", ["linear"], ["zoom"], 3, 3.5, 8, 5.5],
+          "line-opacity": 0.95
         }
       });
 

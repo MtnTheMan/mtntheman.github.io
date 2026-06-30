@@ -278,19 +278,20 @@ function segmentColor(epoch) {
 
 function dayColorRange(dayIndex) {
   const hueFamilies = [
-    [118, 132, 146, 160],
-    [43, 48, 53, 58],
-    [198, 208, 218, 228]
+    [112, 128, 144, 160],
+    [42, 48, 54, 60],
+    [196, 210, 224, 238]
   ];
-  const hues = hueFamilies[dayIndex % hueFamilies.length];
+  const familyIndex = dayIndex % hueFamilies.length;
+  const hues = hueFamilies[familyIndex];
   const hue = hues[Math.floor(dayIndex / hueFamilies.length) % hues.length];
-  const saturation = dayIndex % 3 === 1 ? 82 : 70;
+  const saturation = [92, 96, 90][familyIndex];
   const lightnessOffset = Math.floor(dayIndex / hueFamilies.length) % 3;
   return {
     hue,
     saturation,
-    light: 71 - lightnessOffset * 3,
-    dark: 31 - lightnessOffset * 2
+    light: 78 - lightnessOffset * 2,
+    dark: 24 - lightnessOffset
   };
 }
 
