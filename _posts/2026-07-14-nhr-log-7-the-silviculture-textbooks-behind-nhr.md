@@ -13,6 +13,16 @@ Inside, he had a small library of forestry texts, including books in English and
 
 That kind of visit helped me understand that forestry textbooks are more than assigned readings. They carry nostalgia, professional identity, and a great deal of practical trust. The sourcing and age of a lot of these texts varies widely, depending on where a forester went to school, who taught them, and what that professor sourced their information from as far as textbooks. Many great foresters also do not rely solely on the initial texts they learned from, or the professors they learned from decades ago. They keep adding to the shelf.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-7-forestry-educator-in-the-woods.jpg"
+    alt="Forestry educator speaking with a group in a leafy hardwood forest"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>Forestry knowledge moves back and forth between books, educators, field walks, and the living forest itself.</figcaption>
+</figure>
+
 This post is the first in a short series about the literature that informs the Northern Hardwoods Resilience Project. The NHR project is not the first effort to step back and look at management from a thirty thousand foot view across northern hardwood forests. Long before this project, there were state-based efforts, area-based efforts, guidebooks, research papers, field manuals, and books that helped capture what northern hardwoods look like, what their challenges are, and how foresters have tried to respond to those challenges.
 
 Here, I want to start with textbooks. Specifically, I want to start with major silviculture and forest management texts that form part of the foundation for what we currently do in forestry. This list is incomplete by design. A single blog post cannot capture the entire body of literature that has described northern hardwoods or the broader practice of silviculture. But it can provide a brief reading list, a little acknowledgment, and a sense of where some of the foundation is placed upon.
