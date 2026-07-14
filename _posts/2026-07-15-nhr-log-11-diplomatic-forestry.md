@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 11: Diplomatic Forestry"
-date: 2026-07-15 15:45:00 -0400
+date: 2026-07-15 00:05:00 -0400
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, partnerships, conservation, southern New England]
 excerpt: "A reflection on how partnerships help foresters fill the gaps in markets, labor, funding, and trust."
