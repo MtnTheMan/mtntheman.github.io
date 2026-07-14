@@ -12,6 +12,14 @@ title: Blog
         <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
         <p class="post-meta">
           <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+          <span
+            class="post-view-count"
+            data-view-counter
+            data-counter-mode="read"
+            data-page-path="{{ post.url | relative_url }}"
+          >
+            Views: <span data-view-count>--</span>
+          </span>
         </p>
         {% if post.categories.size > 0 or post.tags.size > 0 %}
           <p class="post-tags">

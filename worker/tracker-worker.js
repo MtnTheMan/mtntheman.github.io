@@ -35,6 +35,14 @@ export default {
         return withCors(await exportCsv(request, env), request, env);
       }
 
+      if (url.pathname === "/api/views/hit" && request.method === "POST") {
+        return withCors(await hitPageView(request, env), request, env);
+      }
+
+      if (url.pathname === "/api/views/counts" && (request.method === "GET" || request.method === "POST")) {
+        return withCors(await pageViewCounts(request, env), request, env);
+      }
+
       return withCors(json({ ok: false, error: "not_found" }, 404), request, env);
     } catch (error) {
       return withCors(json({ ok: false, error: "server_error", message: error.message }, 500), request, env);
@@ -194,6 +202,75 @@ async function exportCsv(request, env) {
       "Content-Disposition": 'attachment; filename="trip-tracker-location-points.csv"'
     }
   });
+}
+
+async function hitPageView(request, env) {
+  if (!isAllowedViewWrite(request, env)) {
+    return json({ ok: false, error: "origin_not_allowed" }, 403);
+  }
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch {
+    return json({ ok: false, error: "invalid_json" }, 400);
+  }
+
+  const path = normalizePagePath(payload?.path);
+  if (!path) return json({ ok: false, error: "invalid_path" }, 400);
+
+  const title = truncateString(stringOrNull(payload?.title), 180);
+  const now = epochSeconds();
+
+  await env.DB.prepare(
+    `INSERT INTO page_views (path, title, views, created_at, updated_at)
+     VALUES (?, ?, 1, ?, ?)
+     ON CONFLICT(path) DO UPDATE SET
+       views = views + 1,
+       title = COALESCE(excluded.title, page_views.title),
+       updated_at = excluded.updated_at`
+  ).bind(path, title, now, now).run();
+
+  const row = await env.DB.prepare(
+    "SELECT path, title, views, updated_at FROM page_views WHERE path = ?"
+  ).bind(path).first();
+
+  return json({ ok: true, path, title: row?.title ?? title, views: row?.views ?? 1, updated_at: row?.updated_at ?? now });
+}
+
+async function pageViewCounts(request, env) {
+  const paths = await requestedViewPaths(request);
+  if (paths.length === 0) return json({ ok: true, counts: {} });
+
+  const placeholders = paths.map(() => "?").join(", ");
+  const rows = await env.DB.prepare(
+    `SELECT path, views FROM page_views WHERE path IN (${placeholders})`
+  ).bind(...paths).all();
+
+  const counts = Object.fromEntries(paths.map((path) => [path, 0]));
+  for (const row of rows.results || []) {
+    counts[row.path] = row.views;
+  }
+
+  return json({ ok: true, counts });
+}
+
+async function requestedViewPaths(request) {
+  const url = new URL(request.url);
+  let rawPaths = [];
+
+  if (request.method === "GET") {
+    rawPaths = url.searchParams.getAll("path");
+  } else {
+    try {
+      const payload = await request.json();
+      rawPaths = Array.isArray(payload?.paths) ? payload.paths : [];
+    } catch {
+      rawPaths = [];
+    }
+  }
+
+  return [...new Set(rawPaths.map(normalizePagePath).filter(Boolean))].slice(0, 100);
 }
 
 function publicRows(rows, config) {
@@ -466,6 +543,37 @@ function allowedOrigins(env) {
 
   if (!configured) return defaults;
   return configured.split(",").map((origin) => origin.trim()).filter(Boolean);
+}
+
+function isAllowedViewWrite(request, env) {
+  const origin = request.headers.get("Origin");
+  return Boolean(origin && allowedOrigins(env).includes(origin));
+}
+
+function normalizePagePath(value) {
+  const rawValue = stringOrNull(value);
+  if (!rawValue) return null;
+
+  let path = rawValue.trim();
+  try {
+    const parsed = new URL(path);
+    path = parsed.pathname;
+  } catch {
+    path = path.split("#")[0].split("?")[0];
+  }
+
+  if (!path.startsWith("/")) path = `/${path}`;
+  path = path.replace(/\/{2,}/g, "/");
+
+  if (path.length > 500) return null;
+  if (path.startsWith("/api/")) return null;
+  if (!(path === "/" || path.endsWith("/") || path.endsWith(".html"))) return null;
+  return path;
+}
+
+function truncateString(value, maxLength) {
+  if (!value) return null;
+  return value.length > maxLength ? value.slice(0, maxLength) : value;
 }
 
 function json(data, status = 200, extraHeaders = {}) {

@@ -19,6 +19,20 @@ layout: default
   <div class="post-content">
     {{ content }}
   </div>
+
+  <aside
+    class="site-hit-counter"
+    data-view-counter
+    data-counter-mode="hit"
+    data-page-path="{{ page.url | relative_url }}"
+    data-page-title="{{ page.title | escape }}"
+    aria-label="Page view counter"
+  >
+    <span class="site-hit-counter-label">Page views</span>
+    <span class="site-hit-counter-window" aria-live="polite">
+      <span data-view-count>------</span>
+    </span>
+  </aside>
 </article>
 
 <p class="back-link"><a href="{{ '/blog.html' | relative_url }}">Back to blog</a></p>

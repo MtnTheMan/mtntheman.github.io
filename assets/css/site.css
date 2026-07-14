@@ -143,6 +143,20 @@ details.resume-details summary {
   margin: 0.25em 0 0.75em;
 }
 
+.post-view-count {
+  display: inline-block;
+  margin-left: 0.75rem;
+  visibility: hidden;
+}
+
+.post-view-count[data-view-counter-loaded="true"] {
+  visibility: visible;
+}
+
+.post-view-count[data-view-counter-hidden="true"] {
+  display: none;
+}
+
 .post-tags {
   font-size: 0.9em;
   margin-top: 0.5em;
@@ -154,6 +168,51 @@ details.resume-details summary {
 
 .back-link {
   margin-top: 2em;
+}
+
+.site-hit-counter {
+  align-items: center;
+  background: #252504;
+  border: 2px outset #00FF00;
+  box-shadow: inset 0 0 0 2px #111100;
+  box-sizing: border-box;
+  display: flex;
+  gap: 0.5rem;
+  margin: 2.5rem 0 0 auto;
+  max-width: max-content;
+  padding: 0.4rem 0.55rem;
+  visibility: hidden;
+}
+
+.site-hit-counter[data-view-counter-loaded="true"] {
+  visibility: visible;
+}
+
+.site-hit-counter[data-view-counter-hidden="true"] {
+  display: none;
+}
+
+.site-hit-counter-label {
+  color: #FFDDA0;
+  font-family: "Rockwell Nova", Rockwell, serif;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.site-hit-counter-window {
+  background: #050505;
+  border: 2px inset #666;
+  color: #00FF00;
+  display: inline-block;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  min-width: 6.8ch;
+  padding: 0.18rem 0.28rem;
+  text-align: right;
 }
 
 /* 10a. Northern Hardwoods blog figures */
