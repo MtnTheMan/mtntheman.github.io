@@ -89,6 +89,20 @@ permalink: /trip-tracker/
   <p><strong>Locked out of car</strong> <span id="tracker-lockout-count">1</span></p>
 </section>
 
+<aside
+  class="site-hit-counter"
+  data-view-counter
+  data-counter-mode="hit"
+  data-page-path="{{ page.url | relative_url }}"
+  data-page-title="{{ page.title | escape }}"
+  aria-label="Trip tracker page view counter"
+>
+  <span class="site-hit-counter-label">Page views</span>
+  <span class="site-hit-counter-window" aria-live="polite">
+    <span data-view-count>------</span>
+  </span>
+</aside>
+
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.js"
 ></script>
