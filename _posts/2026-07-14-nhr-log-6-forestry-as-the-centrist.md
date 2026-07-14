@@ -47,7 +47,7 @@ But that is not the whole land base, and it is not the whole purpose of forestry
 
 There is a long-running idea in forest management that landscapes can be thought of in something like a triad: some land protected primarily for ecological conservation, some land managed very intensively for production, and a large middle category managed for multiple uses. The specific numbers get described different ways, but the rough 10/10/80 idea is useful: 10 percent in strict conservation, 10 percent in intensive production, and 80 percent in a mixed-use working forest matrix. That working middle is where timber, wildlife habitat, recreation, clean water, carbon, rural jobs, and regeneration all have to be considered together (Himes et al., 2022; Puettmann et al., 2025).
 
-This is where forestry becomes hard to communicate. A national park has a clean message: conserve the resource. Protect what is there. The U.S. Forest Service, by comparison, has long operated under a multiple use, sustained yield idea. Timber, recreation, watershed protection, wildlife, and other values all have to coexist. That phrase makes people's eyes glaze over, but the work matters because most of the world's forests are not strict reserves. They are managed landscapes where ecological, economic, and social goals overlap (Riedl et al., 2025; Schwarzbauer et al., 2020).
+This is where forestry becomes hard to communicate. A national park has a clean message: conserve the resource. Protect what is there. The U.S. Forest Service, by comparison, has long operated under a multiple use, sustained yield idea. Timber, recreation, watershed protection, wildlife, and other values all have to coexist. That phrase makes people's eyes glaze over, but the work matters because most of the world's forests are not strict reserves. They are managed landscapes where ecological, economic, and social goals overlap (Riedl, 2025; Ranacher et al., 2020).
 
 Forestry is the middle. And the middle is hard to explain.
 
@@ -63,7 +63,7 @@ But what looks messy in year one may be the thing that produces the better fores
 
 Yellow birch is not sugar maple. It does not regenerate best under the same conditions. If you leave the canopy too closed and the forest floor too undisturbed, you may get more shade-tolerant species. You may also create conditions where less desirable species or shrub layers take over. If the goal is to keep yellow birch as part of the forest, the responsible thing may be to create the conditions yellow birch actually needs.
 
-That is hard to see if all you see is the immediate aftermath. It is much easier to look at disturbed soil and say, "What happened here?" than it is to picture the dense thicket ten years later, the stem exclusion phase after that, and the future canopy lifting off the ground with yellow birch as part of the next stand. Northern hardwood silviculture is full of these long time horizons and regeneration puzzles, and the literature keeps coming back to the same basic point: ecological forestry often requires interventions that are obvious in the short term but aimed at complexity, resilience, and renewal over a much longer period (O'Hara, 2015; Riedl et al., 2025).
+That is hard to see if all you see is the immediate aftermath. It is much easier to look at disturbed soil and say, "What happened here?" than it is to picture the dense thicket ten years later, the stem exclusion phase after that, and the future canopy lifting off the ground with yellow birch as part of the next stand. Northern hardwood silviculture is full of these long time horizons and regeneration puzzles, and the literature keeps coming back to the same basic point: ecological forestry often requires interventions that are obvious in the short term but aimed at complexity, resilience, and renewal over a much longer period (O'Hara, 2015; Riedl, 2025).
 
 This is why public perception can get forestry wrong. The public often sees the cut. The forester is also thinking about the next cohort.
 
@@ -113,7 +113,7 @@ The political analogy is not perfect, but I think it helps.
 
 In the U.S., we live in a very polarized political climate. You can be on the left or you can be on the right, and the forces of the system often push people toward one pole or the other. An independent voter might care deeply about climate change and environmental protection, which might pull them left. That same person might also care about taxes, business ownership, and fiscal policy, which might pull them right. The middle position is not necessarily bland. Sometimes it is where the most complicated set of values lives.
 
-Political science has a lot to say about why middle positions can be hard to maintain. Moderation does not always fit the incentive structure. Primary systems, activist pressure, and media framing can reward simple, sharp positions over nuanced ones (Hall, 2025). Natural resource issues can also become polarized when political identity cues attach themselves to conservation, public lands, or environmental policy (Casola et al., 2022; Larson and Peterson, 2025).
+Political science has a lot to say about why middle positions can be hard to maintain. Moderation does not always fit the incentive structure. Primary systems, activist pressure, and media framing can reward simple, sharp positions over nuanced ones (Hall, 2019). Natural resource issues can also become polarized when political identity cues attach themselves to conservation, public lands, or environmental policy (Casola et al., 2022; Moore, 2025).
 
 Forestry has a similar problem.
 
@@ -121,7 +121,7 @@ On one side, there is a preservation-only mindset: the woods should remain untou
 
 That is a lot harder to put on a bumper sticker.
 
-The phrase "sustainable forestry" sounds contradictory to some people because it pairs two ideas they think cannot coexist: extraction and sustainability. Political framing theory helps explain why. If a harvest is framed as "destructive logging," one set of beliefs gets activated. If it is framed as "regeneration" or "forest health," another set of beliefs gets activated. The same action can become a symbol to different groups, with one coalition seeing restoration and another seeing loss (Sotirov and Memmler, 2012; Riedl et al., 2025).
+The phrase "sustainable forestry" sounds contradictory to some people because it pairs two ideas they think cannot coexist: extraction and sustainability. Political framing theory helps explain why. If a harvest is framed as "destructive logging," one set of beliefs gets activated. If it is framed as "regeneration" or "forest health," another set of beliefs gets activated. The same action can become a symbol to different groups, with one coalition seeing restoration and another seeing loss (Sotirov and Memmler, 2012; Riedl, 2025).
 
 This is where foresters can end up shadowboxing with public perception. If you are too associated with industry, people may assume you are only trying to line pockets. If you are too associated with ecological language, industry may think you are trying to shut everything down. If you are in the center trying to meet multiple needs responsibly, you may satisfy no one's simplest story.
 
@@ -157,7 +157,7 @@ A lot of foresters know this already. They know the work is nuanced. They know f
 
 But the communication has not always kept up.
 
-Public perception research keeps finding that people value forests deeply but often do not understand forestry very well. Many people prioritize biodiversity, recreation, scenery, and conservation over timber production, while also having limited knowledge of how forestry supports wood products, jobs, and ecosystem services (Schwarzbauer et al., 2020). In some studies, people describe forestry as outdated, economically driven, or disconnected from sustainability, even when professional forestry is trying to communicate the opposite (Riedl et al., 2025).
+Public perception research keeps finding that people value forests deeply but often do not understand forestry very well. Many people prioritize biodiversity, recreation, scenery, and conservation over timber production, while also having limited knowledge of how forestry supports wood products, jobs, and ecosystem services (Ranacher et al., 2020). In some studies, people describe forestry as outdated, economically driven, or disconnected from sustainability, even when professional forestry is trying to communicate the opposite (Riedl, 2025).
 
 That is not just a public relations problem. It is a social license problem.
 
@@ -197,24 +197,24 @@ And, in all honesty, if we want forests to keep providing for both nature and pe
 
 ## Works Cited
 
-Casola, W. R., et al. (2022). Political polarization of conservation issues in the era of COVID-19: An examination of partisan perspectives and priorities in the United States. *Journal for Nature Conservation*.
+Casola, W. R., Beall, J. M., Peterson, M. N., Larson, L. R., Jackson, S. B., & Stevenson, K. T. (2022). Political polarization of conservation issues in the era of COVID-19: An examination of partisan perspectives and priorities in the United States. *Journal for Nature Conservation*, 67, 126176. https://doi.org/10.1016/j.jnc.2022.126176
 
-Hall, A. B. (2025). Want to reduce polarization in Congress? Make moderates a better job offer. *Stanford Institute for Economic Policy Research Policy Brief*.
+Hall, A. B. (2019). Want to reduce polarization in Congress? Make moderates a better job offer. *Stanford Institute for Economic Policy Research Policy Brief*. https://siepr.stanford.edu/publications/policy-brief/want-reduce-polarization-congress-make-moderates-better-job-offer
 
-Himes, A., et al. (2022). Thirty years of triad forestry: A critical clarification of theory and recommendations for implementation and testing. *Forest Ecology and Management*.
+Himes, A. J., Betts, M. G., Messier, C., & Seymour, R. S. (2022). Perspectives: Thirty years of triad forestry, a critical clarification of theory and recommendations for implementation and testing. *Forest Ecology and Management*, 510, 120103. https://doi.org/10.1016/j.foreco.2022.120103
 
-Larson, L. R., & Peterson, M. N. (2025). When public lands get political. *NC State College of Natural Resources News*.
+Moore, A. (2025, October 15). When public lands get political: What a Hatch Act complaint says about the future of conservation. *NC State College of Natural Resources News*. https://cnr.ncsu.edu/news/2025/10/hatch-act-complaint-public-lands/
 
-O'Hara, K. L. (2015). What is close-to-nature silviculture in a changing world? *Forestry*.
+O'Hara, K. L. (2015). What is close-to-nature silviculture in a changing world? *Forestry*, 89(1), 1-6. https://doi.org/10.1093/forestry/cpv043
 
-Puettmann, K. J., et al. (2025). Silviculture: More complex than ever. *Journal of Forestry*.
+Puettmann, K. J., D'Amato, A. W., Dockry, M. J., Fortin, M. J., Himes, A., Palik, B. J., Waring, K. M., & Windmuller, M. (2025). Silviculture: More complex than ever. *Journal of Forestry*, 123(2), 133-160. https://doi.org/10.1007/s44392-025-00015-2
 
-Riedl, M., et al. (2025). Forestry communication and public perception: Insights from the Czech Republic. *Forests*, 16(5), 818.
+Ranacher, L., Sedmik, A., & Schwarzbauer, P. (2020). *Public perceptions of forestry and the forest-based bioeconomy in the European Union*. Knowledge to Action 03, European Forest Institute. https://doi.org/10.36333/k2a03
 
-Schwarzbauer, P., et al. (2020). *Public perceptions of forestry and the forest-based bioeconomy in the European Union*. European Forest Institute.
+Riedl, M. (2025). Forestry communication and public perception: Insights from the Czech Republic. *Forests*, 16(5), 818. https://doi.org/10.3390/f16050818
 
-Sotirov, M., & Memmler, M. (2012). The Advocacy Coalition Framework in natural resource policy studies: Recent experiences and further prospects. *Forest Policy and Economics*.
+Sotirov, M., & Memmler, M. (2012). The Advocacy Coalition Framework in natural resource policy studies: Recent experiences and further prospects. *Forest Policy and Economics*, 16, 51-64. https://doi.org/10.1016/j.forpol.2011.06.007
 
-Wang, S. (2019). Managing forests for the greater good: The role of the social license to operate. *Forest Policy and Economics*.
+Wang, S. (2019). Managing forests for the greater good: The role of the social license to operate. *Forest Policy and Economics*, 107, 101920. https://doi.org/10.1016/j.forpol.2019.05.006
 
 Wilson, E. O. (2016). *Half-Earth: Our Planet's Fight for Life*. Liveright.
