@@ -23,19 +23,15 @@ Forestry lives in a much harder middle ground. It is an extractive practice, bec
 
 So the question is not simply, "Were trees cut?" The better question is, "What was the cut trying to do, and what kind of forest is expected to come next?"
 
-<!-- IMAGE PLACEHOLDER:
-Road-trip photo of a recent northern hardwood harvest, preferably one that looks messy or visually abrupt at first glance.
-
 <figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
   <img
-    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/TK-harvest-photo.jpeg"
-    alt="Recent northern hardwood harvest area with visible canopy opening and disturbed forest floor"
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-6-open-canopy-harvest.jpeg"
+    alt="Recently harvested northern hardwood stand with an open canopy, retained trees, and exposed forest floor"
     loading="lazy"
     draggable="false"
   >
-  <figcaption>Caption TK.</figcaption>
+  <figcaption>A fresh harvest can look visually severe in the moment, even when retained trees, exposed mineral soil, and added light are part of the intended next stand.</figcaption>
 </figure>
--->
 
 ## Sustainability Does Not Mean Standing Still
 
@@ -71,19 +67,15 @@ That is hard to see if all you see is the immediate aftermath. It is much easier
 
 This is why public perception can get forestry wrong. The public often sees the cut. The forester is also thinking about the next cohort.
 
-<!-- IMAGE PLACEHOLDER:
-Road-trip photo showing yellow birch regeneration, scarified soil, a canopy gap, or a stand where the regeneration goal is visible.
-
 <figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
   <img
-    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/TK-yellow-birch-regeneration.jpeg"
-    alt="Northern hardwood forest floor with canopy opening and regeneration conditions for yellow birch"
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-6-working-forest-slope.jpeg"
+    alt="Open northern hardwood slope with residual trees, slash, exposed soil, and a distant forested ridge"
     loading="lazy"
     draggable="false"
   >
-  <figcaption>Caption TK.</figcaption>
+  <figcaption>The public often sees the immediate opening; the forester is also reading light, residual trees, soil exposure, future seed source, and what the next cohort might become.</figcaption>
 </figure>
--->
 
 ## Cutting Is a Tool, Not the Whole Philosophy
 
@@ -92,6 +84,16 @@ Sustainable forestry is not just "cutting down trees," although cutting trees is
 Wood fiber is a complicated way of saying wood, but it is also useful language because it reminds us that wood becomes many things. Paper. Boards. Two-by-fours. Furniture. Packaging. Heat. The material life of a tree does not end at "a tree was cut." It becomes part of the daily human world in ways most people probably do not notice.
 
 We use far more wood than the average person recognizes.
+
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-6-skidder-log-removal.jpeg"
+    alt="Skidder moving felled logs through a managed hardwood forest"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>This is the extractive part of forestry, plainly visible: wood leaving the forest, equipment on the ground, and the economic reality that makes management possible.</figcaption>
+</figure>
 
 That does not mean every harvest is good. It does not mean every forester is responsible. It does not mean the timber economy gets a blank check. It means the moral category "cutting" is too blunt to describe what is actually happening.
 
@@ -139,19 +141,15 @@ This is also where E.O. Wilson's *Half-Earth* idea comes to mind. Wilson argued 
 
 That is an important distinction. If our only conservation category is "land where no harvest happens," then we miss the ecological value of the enormous middle landscape where forests are managed, renewed, used, and still functioning.
 
-<!-- IMAGE PLACEHOLDER:
-Road-trip photo of a healthy working forest, a regenerating stand, or a view that shows forest continuity after past disturbance.
-
 <figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
   <img
-    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/TK-working-forest.jpeg"
-    alt="Healthy working northern hardwood forest showing regeneration and forest continuity after management"
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-6-dynamic-hardwood-stand.jpeg"
+    alt="Green northern hardwood stand with multiple tree sizes, understory growth, and deadwood on the forest floor"
     loading="lazy"
     draggable="false"
   >
-  <figcaption>Caption TK.</figcaption>
+  <figcaption>A forest that looks quiet is still changing: trees die, gaps open, understory layers respond, and deadwood becomes part of the next set of possibilities.</figcaption>
 </figure>
--->
 
 ## Communication Is Part of the Work
 
