@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 10: There Shall be No Universal Manual for Northern Hardwood Governance"
-date: 2026-07-14 15:45:00 -0400
+date: 2026-07-15
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, governance, policy, local knowledge]
 excerpt: "A reflection on why northern hardwood governance has to be understood through local policy landscapes rather than a universal manual."
