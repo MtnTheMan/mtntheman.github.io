@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 14: What Happens to Uggo Wood?"
-date: 2026-07-15 00:20:00 -0400
+date: 2026-07-24 00:20:00 -0400
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork]
 excerpt: "A look at low-value wood, fading markets, slash walls, biochar, and the awkward question of where uggo wood goes when nobody wants it."

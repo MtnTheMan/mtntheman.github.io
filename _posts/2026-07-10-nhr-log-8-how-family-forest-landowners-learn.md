@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 8: How Family Forest Landowners Learn"
-date: 2026-07-14
+date: 2026-07-10
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, education, AKIS, family forest landowners]
 excerpt: "A reflection on how family forest landowners learn through formal advice, informal networks, and the slow feedback loops of forestry."

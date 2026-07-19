@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 11: Diplomatic Forestry"
-date: 2026-07-15 00:05:00 -0400
+date: 2026-07-17 00:05:00 -0400
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, partnerships, conservation, southern New England]
 excerpt: "A reflection on how partnerships help foresters fill the gaps in markets, labor, funding, and trust."
@@ -27,7 +27,7 @@ In the end, the hope is that you have a large holistic mission that accomplishes
 
 Southern New England offers a good case study in what forestry looks like when it is struggling, when it is treading a lot of water. In Massachusetts, Connecticut, and Rhode Island, there are foresters who are really striving to do good work, and they are not very well noticed. They are occupying a space that is densely populated. It is a tough place to do forestry, and a tough crowd to please.
 
-I have already written about some of that tension in [NHR Log 6: Forestry as the Centrist](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/14/nhr-log-6-forestry-as-the-centrist.html) and [NHR Log 9: Do We All Remember the Lorax Properly?](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/14/nhr-log-9-do-we-all-remember-the-lorax-properly.html). When you are working in those spaces, you have to deal with public perception in a way that still achieves the common good of forestry. You are trying to satisfy market demands and ecological demands, but you are doing so with a laser focus on whatever you are doing from the political lens. And often, you are doing it with a lack of support.
+I have already written about some of that tension in [NHR Log 6: Forestry as the Centrist](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/06/nhr-log-6-forestry-as-the-centrist.html) and [NHR Log 9: Do We All Remember the Lorax Properly?](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/13/nhr-log-9-do-we-all-remember-the-lorax-properly.html). When you are working in those spaces, you have to deal with public perception in a way that still achieves the common good of forestry. You are trying to satisfy market demands and ecological demands, but you are doing so with a laser focus on whatever you are doing from the political lens. And often, you are doing it with a lack of support.
 
 Markets tend to be far away in southern New England. Parcels can be small and fragmented. The forest itself may be surrounded by people who have very strong feelings about what should happen there, and many of those feelings are reasonable, even when they make the practical work more complicated. That makes southern New England a really good vacuum for thinking about partnerships. It shows what happens when forestry cannot assume that the old systems will be there to catch it.
 
