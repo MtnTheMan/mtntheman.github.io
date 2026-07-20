@@ -133,6 +133,11 @@
     padding: 7px 10px 7px 7px;
   }
 
+  .leaflet-mihrlcPane-pane img.leaflet-tile {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
   .legend {
     position: absolute;
     right: 12px;
@@ -280,6 +285,7 @@ if (!window.L || !window.pmtiles) {
 } else {
   const map = L.map("map", {
     zoomControl: true,
+    maxZoom: 19,
     maxBounds: [[41.2, -88.0], [47.6, -82.0]],
     maxBoundsViscosity: 0.45
   });
@@ -294,6 +300,11 @@ if (!window.L || !window.pmtiles) {
     attribution: "Tiles &copy; Esri - Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community"
   });
 
+  const nativeZoomBounds = {
+    jackson: L.latLngBounds(bounds.jackson),
+    chippewa: L.latLngBounds(bounds.chippewa)
+  };
+
   streetMap.addTo(map);
   map.fitBounds(bounds.pilot, { padding: [28, 28] });
   map.createPane("mihrlcPane");
@@ -303,7 +314,7 @@ if (!window.L || !window.pmtiles) {
   const landCoverLayer = pmtiles.leafletRasterLayer(archive, {
     minZoom: 7,
     maxNativeZoom: 15,
-    maxZoom: 18,
+    maxZoom: 19,
     opacity: Number(controls.opacity.value),
     pane: "mihrlcPane",
     attribution: "Michigan High Resolution Land Cover"
@@ -354,6 +365,16 @@ if (!window.L || !window.pmtiles) {
     landCoverLayer.setOpacity(opacity);
   }
 
+  function syncNativeZoomForView() {
+    const view = map.getBounds();
+    const chippewaOnly = view.intersects(nativeZoomBounds.chippewa) && !view.intersects(nativeZoomBounds.jackson);
+    const nativeMaxZoom = chippewaOnly ? 14 : 15;
+    if (landCoverLayer.options.maxNativeZoom !== nativeMaxZoom) {
+      landCoverLayer.options.maxNativeZoom = nativeMaxZoom;
+      landCoverLayer.redraw();
+    }
+  }
+
   controls.showLandCover.addEventListener("change", syncLandCoverVisibility);
   controls.opacity.addEventListener("input", syncOpacity);
   controls.fitAll.addEventListener("click", () => map.fitBounds(bounds.pilot, { padding: [28, 28] }));
@@ -365,6 +386,8 @@ if (!window.L || !window.pmtiles) {
       landCoverLayer.bringToFront();
     }
   });
+
+  map.on("moveend zoomend", syncNativeZoomForView);
 
   map.on("overlayadd", (event) => {
     if (event.layer === landCoverLayer) {
@@ -379,6 +402,7 @@ if (!window.L || !window.pmtiles) {
   });
 
   syncOpacity();
+  syncNativeZoomForView();
 }
 </script>
 </body>
