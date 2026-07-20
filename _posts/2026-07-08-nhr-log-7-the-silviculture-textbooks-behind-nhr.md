@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 7: The Silviculture Textbooks Behind NHR"
-date: 2026-07-14
+date: 2026-07-08
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, textbooks, ecological silviculture]
 excerpt: "A look at the silviculture textbooks that helped build the intellectual shelf behind the Northern Hardwoods Resilience Project."

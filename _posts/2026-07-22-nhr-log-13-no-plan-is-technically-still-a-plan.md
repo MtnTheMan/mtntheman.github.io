@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 13: No Plan Is Technically Still a Plan"
-date: 2026-07-15 00:15:00 -0400
+date: 2026-07-22 00:15:00 -0400
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork]
 excerpt: "A reflection on why leaving a forest alone is still a management choice, especially in complex northern hardwood systems."
@@ -63,7 +63,7 @@ That last question is the quiet heart of the whole post.
 
 If nothing changes, what is this forest likely to become?
 
-A plan does not have to be fifty pages to be meaningful. [NHR Log 12: Good Forestry Without 50 Pages](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/15/nhr-log-12-good-forestry-without-50-pages.html) was partly about that idea: good forestry can happen without every thought being written in a giant formal document. But there is a difference between a thin plan, an informal plan, and no thought at all. A plan can be a written document, a conversation with a forester, a monitoring habit, a tax program requirement, a family succession conversation, or a clear decision to leave a forest alone because the stand is healthy enough and the owner values what it is becoming.
+A plan does not have to be fifty pages to be meaningful. [NHR Log 12: Good Forestry Without 50 Pages](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/20/nhr-log-12-good-forestry-without-50-pages.html) was partly about that idea: good forestry can happen without every thought being written in a giant formal document. But there is a difference between a thin plan, an informal plan, and no thought at all. A plan can be a written document, a conversation with a forester, a monitoring habit, a tax program requirement, a family succession conversation, or a clear decision to leave a forest alone because the stand is healthy enough and the owner values what it is becoming.
 
 Leaving a forest alone is an acceptable outcome when you are aware of the inertia already there. It becomes more dangerous when it is only the default outcome of confusion, avoidance, lack of access, weak markets, or paralysis.
 

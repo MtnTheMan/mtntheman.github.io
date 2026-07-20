@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 9: Do We All Remember the Lorax Properly?"
-date: 2026-07-14
+date: 2026-07-13
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, communication, social license, public perception]
 excerpt: "A reflection on The Lorax, social license, and why responsible forestry needs a better public story."

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 6: Forestry as the Centrist"
-date: 2026-07-14
+date: 2026-07-06
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, sustainable forestry, public perception]
 excerpt: "A reflection on forestry as a difficult middle ground between preservation and extraction, and why sustainable forestry is harder to explain than it is to dismiss."

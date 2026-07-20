@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 15: When Pollution May Have Helped Black Cherry"
-date: 2026-07-15 00:25:00 -0400
+date: 2026-07-27 00:25:00 -0400
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork]
 excerpt: "A question about acid rain, black cherry, leaf spot, and the strange legacies pollution can leave in a forest economy."

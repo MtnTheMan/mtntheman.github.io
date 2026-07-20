@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 12: Good Forestry Without 50 Pages"
-date: 2026-07-15 00:10:00 -0400
+date: 2026-07-20 00:10:00 -0400
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, documentation, tree marking, forestry practice]
 excerpt: "A reflection on how good forestry can live in marking, apprenticeship, and field judgment even when documentation is thin."

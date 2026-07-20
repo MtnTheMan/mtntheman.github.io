@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "NHR Log 16: The Dichotomy of Ease"
-date: 2026-07-15 00:30:00 -0400
+date: 2026-07-29 00:30:00 -0400
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork]
 excerpt: "A reflection on how ease can pull forest management toward simpler softwood systems and away from the harder skills needed for northern hardwoods."
@@ -9,7 +9,7 @@ excerpt: "A reflection on how ease can pull forest management toward simpler sof
 
 Hardwoods can be stumpers, and I think any honest discussion about northern hardwood forestry has to begin with that admission.
 
-I have already circled around this problem from a few different angles in this series. In [NHR Log 12: Good Forestry Without 50 Pages](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/15/nhr-log-12-good-forestry-without-50-pages.html), I was thinking about how much good forestry can live in field judgment, marking, and apprenticeship, even when the written plan is thin. In [NHR Log 13: No Plan Is Technically Still a Plan](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/15/nhr-log-13-no-plan-is-technically-still-a-plan.html), I was thinking about how complexity can make it tempting to have no clean plan at all. This post sits between those two ideas, because the harder a system is to manage, the more attractive the easier system begins to look.
+I have already circled around this problem from a few different angles in this series. In [NHR Log 12: Good Forestry Without 50 Pages](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/20/nhr-log-12-good-forestry-without-50-pages.html), I was thinking about how much good forestry can live in field judgment, marking, and apprenticeship, even when the written plan is thin. In [NHR Log 13: No Plan Is Technically Still a Plan](https://www.mtntheman.com/northern-hardwoods/research/travel/2026/07/22/nhr-log-13-no-plan-is-technically-still-a-plan.html), I was thinking about how complexity can make it tempting to have no clean plan at all. This post sits between those two ideas, because the harder a system is to manage, the more attractive the easier system begins to look.
 
 The thought I kept returning to in New Brunswick was what I started calling the dichotomy of ease. It is easier, in many situations, to manage a softwood system. It is easier to create a repeat prescription. It is easier to train people into a production-oriented system where the stand is clearcut, regenerated, planted, tended, and moved into the next rotation. The seed is often available. The seedlings are available. The market may already know what to do with the wood. The contractors may already know how to operate in that system. If you spend the first few years of your profession learning that softwood work is the normal work, the easier work, and the work the market rewards, then the path of least resistance starts to look less like a choice and more like gravity.
 
