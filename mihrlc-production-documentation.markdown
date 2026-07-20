@@ -79,6 +79,8 @@ The Michigan High Resolution Land Cover product, abbreviated here as MiHRLC, is 
 
 The final product was built around county-level processing. Each county was mosaicked, classified, clipped to a buffered county boundary, assigned a standardized raster attribute table and color map, and exported as a county product. Those county products then supported statewide mosaics and web map tile experiments.
 
+The recovered final export folder contains 84 TIFF files because Roscommon has both version 2 and version 3 exports. For a curated 83-county Michigan release, the version 3 Roscommon export should be used. The archive also contains two `MAC`-prefixed products that should both be retained because the prefix is shared by two distinct county products. That small naming wrinkle is part of the production archive and should be handled deliberately during repackaging.
+
 ## Class Schema
 
 MiHRLC uses the detailed Chesapeake Bay Level-2 land-cover schema used by Esri's pretrained model documentation. [2]
@@ -105,6 +107,24 @@ MiHRLC did not begin from a CNN trained entirely from scratch. The workflow used
 The Chesapeake Bay training lineage matters because it shaped both the class definitions and the model's initial learned representation of features such as water, wetlands, tree canopy, low vegetation, structures, roads, and impervious surfaces. The Chesapeake Bay Program land-cover production work used high-resolution NAIP imagery, LiDAR-derived height information, and planimetric data where available to create one-meter land-cover and land-use/land-cover products at regional scale. [4,5]
 
 Esri reports the base pretrained model as applicable across the United States, with best expected performance in the Chesapeake Bay region. That makes Michigan fine-tuning important: Michigan's Great Lakes shoreline, northern forest conditions, agricultural landscapes, seasonality, and 0.6 meter source imagery differ from the base model's strongest training geography and nominal imagery assumptions. [1,2]
+
+### Base Model Reference Metrics
+
+Esri reports the following validation metrics for the pretrained model's nine-class output. These values describe the pretrained model before Michigan-specific fine-tuning; they should not be read as Michigan statewide accuracy values. [1]
+
+| Class | Precision | Recall | F1 |
+|---|---:|---:|---:|
+| Water | 0.93614 | 0.93046 | 0.93329 |
+| Wetlands | 0.81659 | 0.75905 | 0.78677 |
+| Tree Canopy | 0.90477 | 0.93143 | 0.91791 |
+| Shrubland | 0.51625 | 0.18643 | 0.27394 |
+| Low Vegetation | 0.85977 | 0.86676 | 0.86325 |
+| Barren | 0.67165 | 0.50922 | 0.57927 |
+| Structures | 0.80510 | 0.84887 | 0.82641 |
+| Impervious Surfaces | 0.73532 | 0.68556 | 0.70957 |
+| Impervious Roads | 0.76281 | 0.81238 | 0.78682 |
+
+Those base metrics explain why fine-tuning and local quality review matter most for classes such as shrubland, barren, wetlands, impervious surfaces, and roads. They also give useful context for the Huron and Crawford fine-tuning results below.
 
 ## CNN And Training Specifications
 
@@ -158,6 +178,17 @@ The table below separates recovered MiHRLC values from Esri's documented fine-tu
 
 Esri's documentation explains that padding can reduce tile-edge artifacts during inference and that batch size depends on available GPU memory. [2] It also documents the fine-tuning workflow using `Export Training Data For Deep Learning` followed by `Train Deep Learning Model`, with TIFF chips, 512 pixel tile size, stride 0, Classified Tiles metadata, early stopping, and a frozen pretrained model. [3]
 
+### Training Volume And Runtime
+
+The preserved training histories for Huron and Crawford include enough information to document training scale and runtime.
+
+| Fine-tuned model | Training chips | Labeled features | Epochs | Best epoch | Approximate training time |
+|---|---:|---:|---:|---:|---:|
+| Huron coastal model | 47,834 | 1,970,506 | 21 | 14 | 19.03 hours |
+| Crawford inland wooded model | 15,884 | 2,984,891 | 52 | 45 | 15.57 hours |
+
+These are model-training runtimes only. Full product production also required county mosaic creation, inference, clipping, raster attribute-table work, GeoTIFF export, sidecar-file preservation, county packaging, statewide mosaicking, and web-tiling experiments.
+
 ## Regional Fine-Tuning Counties
 
 Three counties define the recovered fine-tuning narrative:
@@ -170,9 +201,32 @@ Three counties define the recovered fine-tuning narrative:
 
 Roscommon also appears in the final product archive, including later versioned outputs, but Crawford is the stronger wooded Northern Lower Peninsula case for model documentation because its `.emd`, `.dlpk`, `.pth`, training statistics, and validation metrics were recovered.
 
+### Jackson Proof-Of-Concept County
+
+Jackson County appears to have served as an early proof-of-concept, revision, and southern Lower Peninsula production county. The final Jackson product is present as `JAC_CLASS_v3_100mClip_Export1.tif`, and an earlier small-batch package is preserved as `JacksonCounty_MiHRLC_v1.zip`.
+
+Recovered evidence includes:
+
+- Four-band 0.6 m source county mosaic named `JAC_v1.tif`.
+- Early class export named `JAC_CLASS_v1_Clip_Export_v1.tif`.
+- Final class export named `JAC_CLASS_v3_100mClip_Export1.tif`.
+- Final class export properties of one band, 0.6 m pixels, 8-bit unsigned integer data, and no-data value 255.
+- ArcGIS geoprocessing messages from July 2, 2025 showing `ClassifyPixelsUsingDeepLearning` was invoked and aborted once, followed by two successful "Generate Raster from Raster Function" runs of roughly 70 minutes each.
+
+The standalone Jackson `.emd`, `.dlpk`, or `.pth` model package was not found in the recovered archive, so Jackson should be described as an early workflow and revision county rather than as a preserved regional model package.
+
 ### Huron Coastal Model
 
 The Huron retrain is the clearest preserved coastal fine-tuning case. It was used to adapt the pretrained CNN to a coastal and agricultural landscape with Great Lakes shoreline context, wetlands, developed features, open fields, and woody cover.
+
+Recovered Huron evidence includes:
+
+- Training data folder named `HuronRetrainData`.
+- Model folder named `HuronRetrainData_DLmodel`.
+- Model definition file `HuronRetrainData_DLmodel.emd`.
+- Deep learning package `HuronRetrainData_DLmodel.dlpk`.
+- PyTorch weights file `HuronRetrainData_DLmodel.pth`.
+- Final county export named `HUR_CLASS_v2_100mClip_Export1.tif`.
 
 | Metric | Value |
 |---|---:|
@@ -183,6 +237,8 @@ The Huron retrain is the clearest preserved coastal fine-tuning case. It was use
 | Best validation loss | 0.106400445 |
 | Best validation accuracy | 0.966542 |
 | Best Dice score | 0.960452 |
+| Last validation loss | 0.11581318 |
+| Last validation accuracy | 0.964550 |
 | Approximate training time | 19.03 hours |
 
 | Class | F1 |
@@ -203,6 +259,16 @@ The Huron model was strong overall, especially for tree canopy, low vegetation, 
 
 The Crawford retrain is the preserved inland/upland wooded Northern Lower Peninsula model. It is the best recovered evidence for how MiHRLC was adapted to northern forest conditions.
 
+Recovered Crawford evidence includes:
+
+- Training data folder named `CrawfordTrainingData_v1`.
+- Model folder named `CrawfordRe-Train`.
+- Model definition file `CrawfordRe-Train.emd`.
+- Deep learning package `CrawfordRe-Train.dlpk`.
+- PyTorch weights file `CrawfordRe-Train.pth`.
+- Final Crawford export named `CRA_CLASS_v3_100mClip_Export1.tif`.
+- Related Roscommon final export named `ROS_CLASS_v3_100mClip_Export1.tif`.
+
 | Metric | Value |
 |---|---:|
 | Training chips | 15,884 |
@@ -212,6 +278,8 @@ The Crawford retrain is the preserved inland/upland wooded Northern Lower Penins
 | Best validation loss | 0.24815261 |
 | Best validation accuracy | 0.924733 |
 | Best Dice score | 0.928255 |
+| Last validation loss | 0.24976693 |
+| Last validation accuracy | 0.921307 |
 | Approximate training time | 15.57 hours |
 
 | Class | F1 |
@@ -230,19 +298,100 @@ The Crawford model performs especially well for tree canopy and reasonably well 
 
 ## Production Workflow
 
-The recovered workflow can be summarized as:
+The recovered workflow can be summarized as a county-first ArcGIS Pro/Image Analyst process:
 
-1. Assemble county-level NAIP mosaics from source image tiles.
-2. Prepare or refine land-cover labels using the Chesapeake Bay Level-2 class schema.
-3. Export deep-learning training chips using TIFF format, 512 x 512 tile size, and Classified Tiles metadata.
-4. Fine-tune the Esri High Resolution Land Cover Classification - USA model for representative Michigan landscapes.
-5. Classify county mosaics in ArcGIS Pro/Image Analyst using the fine-tuned CNN workflow.
-6. Clip classified rasters to buffered county boundaries, commonly with a 100 m buffer.
-7. Build raster attribute tables and assign standardized class names and RGB values.
-8. Export final one-band 8-bit GeoTIFF products.
-9. Package county products and assemble statewide mosaic or web-map derivatives.
+### 1. Organize District And County Workspaces
 
-The recovered ArcGIS tool lineage includes `MosaicToNewRaster`, `ClassifyPixelsUsingDeepLearning`, `ExtractByMask`, `BuildRasterAttributeTable`, `AddField`, `CopyRaster`, and `BuildPyramids`.
+The source archive was organized by Michigan Department of Transportation-style district folders. Each district workspace generally included an ArcGIS Pro project, one or more geodatabases, source county NAIP mosaics, raster function templates, geoprocessing messages, versioned class rasters, and model or training folders where retraining occurred.
+
+### 2. Build County NAIP Mosaics
+
+County-level source rasters were assembled from NAIP image tiles using ArcGIS `MosaicToNewRaster`. Recovered county source rasters such as `JAC_v1.tif`, `HUR_v1.tif`, `CRA_v1.tif`, and `ROS_v1.tif` were four-band, 0.6 m, 8-bit rasters.
+
+| Example source raster | Bands | Pixel size | Data type | NoData |
+|---|---:|---:|---|---:|
+| `JAC_v1.tif` | 4 | 0.6 m | Byte | 256 |
+| `HUR_v1.tif` | 4 | 0.6 m | Byte | 256 |
+| `CRA_v1.tif` | 4 | 0.6 m | Byte | 256 |
+| `ROS_v1.tif` | 4 | 0.6 m | Byte | 256 |
+
+### 3. Export Or Prepare Training Data
+
+Fine-tuning used training chips and class labels compatible with the Chesapeake Bay Level-2 schema. The preserved Huron and Crawford training metadata indicate 512 x 512 pixel chips, map-space imagery, four input bands, 0.6 m cell size, TIFF imagery, and Classified Tiles metadata.
+
+### 4. Fine-Tune Regional CNN Models
+
+Regional retraining was used to improve the base model in landscapes that were expected to behave differently from the Chesapeake Bay training geography. The strongest preserved regional model packages are Huron for coastal/agricultural/shoreline conditions and Crawford for inland/upland wooded Northern Lower Peninsula conditions. Jackson is preserved as an early proof-of-concept and production revision county, but not as a standalone recovered model package.
+
+The preserved Huron and Crawford retraining folders include `.emd` model definitions, `.dlpk` deep-learning packages, `.pth` PyTorch weights, metrics HTML, loss graphs, and training-validation loss histories.
+
+### 5. Classify County Imagery
+
+The county mosaics were classified in ArcGIS Pro/Image Analyst using the U-Net CNN workflow. Classification appears to have been executed interactively using raster functions and/or `ClassifyPixelsUsingDeepLearning`. The recovered model metadata confirms the model family and chip geometry, but the full scripted classifier execution for every county was not preserved.
+
+### 6. Clip Final County Products
+
+Final classified rasters were clipped using ArcGIS `ExtractByMask`. Most final products use a 100 m buffered county boundary and are named with `100mClip`; a smaller number are named simply with `Clip`.
+
+Examples of final classified raster names include:
+
+```text
+JAC_CLASS_v3_100mClip
+HUR_CLASS_v2_100mClip
+CRA_CLASS_v3_100mClip
+ROS_CLASS_v3_100mClip
+VAN_CLASS_v2_Clip
+```
+
+The 100 m buffer means that a county product can include a narrow strip of neighboring land along county boundaries. That buffer is expected and should not be interpreted as a defect by itself.
+
+### 7. Standardize Raster Attribute Tables And Colors
+
+The export/recolor workflow standardized final class rasters by building raster attribute tables, adding or updating class-name and RGB fields, applying the standard MiHRLC color mapping, and exporting classified rasters to GeoTIFF with `CopyRaster`.
+
+Recovered tool-use counts show the approximate scale of the final export workflow:
+
+| ArcGIS tool | Recovered count |
+|---|---:|
+| `MosaicToNewRaster` | 83 |
+| `ExtractByMask` | 85 |
+| `BuildRasterAttributeTable` | 85 |
+| `AddField` | 340 |
+| `CopyRaster` | 85 |
+| `BuildPyramids` | 1 |
+
+### 8. Export, Package, Mosaic, And Publish Derivatives
+
+Final county products were exported as one-band Byte GeoTIFFs with sidecar files such as world files, auxiliary XML, and raster metadata XML. Earlier small-batch packages were also created for selected counties, including Jackson and St. Clair.
+
+Statewide products were later assembled from the county rasters through batch mosaic scripts. Web delivery experiments rendered the county/classified products into raster map tiles and PMTiles archives for static object storage and Leaflet-based display.
+
+## Output Organization And Archive Notes
+
+The final county products follow a versioned naming pattern:
+
+```text
+<COUNTY_PREFIX>_CLASS_v<version>_<clip_type>_Export<export_number>.tif
+```
+
+Typical examples:
+
+```text
+JAC_CLASS_v3_100mClip_Export1.tif
+HUR_CLASS_v2_100mClip_Export1.tif
+CRA_CLASS_v3_100mClip_Export1.tif
+ROS_CLASS_v3_100mClip_Export1.tif
+```
+
+Each county GeoTIFF may be accompanied by sidecar files such as:
+
+```text
+.tfw
+.tif.aux.xml
+.tif.xml
+```
+
+Those sidecar files should be retained when preparing archival county packages because they preserve georeferencing and raster metadata used by desktop GIS software.
 
 ## Hardware And Software Environment
 
