@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Michigan High Resolution Land Cover Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    --panel: rgba(255, 253, 240, 0.96);
+    --panel-strong: #fffdf0;
+    --fg: #1d261d;
+    --muted: #576257;
+    --border: rgba(29, 38, 29, 0.2);
+    --accent: #2a7d4f;
+    --focus: #174d89;
+    --shadow: rgba(21, 35, 24, 0.18);
+  }
+
+  html,
+  body,
+  #app {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    color: var(--fg);
+    font: 14px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  #app {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 620px;
+  }
+
+  header {
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel-strong);
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  .title {
+    min-width: 260px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 750;
+  }
+
+  .subtitle {
+    margin-top: 1px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .controls {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px 10px;
+  }
+
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 30px;
+    white-space: nowrap;
+  }
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+  }
+
+  input[type="range"] {
+    width: 132px;
+    accent-color: var(--accent);
+  }
+
+  output {
+    min-width: 34px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .view-select {
+    max-width: min(280px, 80vw);
+  }
+
+  button {
+    min-height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--fg);
+    padding: 4px 10px;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  button:hover,
+  button:focus-visible {
+    border-color: var(--focus);
+    outline: none;
+  }
+
+  select {
+    min-height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--fg);
+    padding: 4px 8px;
+    font: inherit;
+  }
+
+  select:hover,
+  select:focus-visible {
+    border-color: var(--focus);
+    outline: none;
+  }
+
+  #map {
+    min-height: 0;
+    background: #d9e5d8;
+  }
+
+  .leaflet-control-layers {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 3px 12px var(--shadow);
+  }
+
+  .leaflet-control-layers-expanded {
+    padding: 7px 10px 7px 7px;
+  }
+
+  .leaflet-mihrlcPane-pane img.leaflet-tile {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .legend {
+    position: absolute;
+    right: 12px;
+    bottom: 28px;
+    z-index: 800;
+    width: min(250px, calc(100% - 24px));
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: 0 4px 16px var(--shadow);
+    padding: 10px;
+    color: var(--fg);
+  }
+
+  .legend-title {
+    margin-bottom: 7px;
+    font-weight: 700;
+  }
+
+  .legend-row {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    align-items: center;
+    gap: 7px;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .legend-swatch {
+    width: 16px;
+    height: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.22);
+    box-sizing: border-box;
+  }
+
+  .status {
+    position: absolute;
+    left: 12px;
+    bottom: 28px;
+    z-index: 800;
+    max-width: min(410px, calc(100% - 24px));
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: 0 4px 16px var(--shadow);
+    padding: 8px 10px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  @media (max-width: 820px) {
+    #app {
+      min-height: 100%;
+    }
+
+    header {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .title {
+      min-width: 0;
+    }
+
+    .controls {
+      justify-content: flex-start;
+      width: 100%;
+    }
+
+    .legend {
+      right: 8px;
+      bottom: 26px;
+    }
+
+    .status {
+      left: 8px;
+      right: 8px;
+      bottom: 188px;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="title">
+      <h1>Michigan High Resolution Land Cover</h1>
+      <div class="subtitle">Statewide 0.6 m county land-cover products</div>
+    </div>
+    <div class="controls" aria-label="Map controls">
+      <label><input type="checkbox" id="showLandCover" checked> Land cover</label>
+      <label for="opacity">Opacity <output id="opacityOut">85%</output></label>
+      <input type="range" id="opacity" min="0" max="1" value="0.85" step="0.05">
+      <label for="countySelect">View <select id="countySelect" class="view-select"></select></label>
+    </div>
+  </header>
+  <div id="map" aria-label="Interactive map of Michigan High Resolution Land Cover statewide products"></div>
+  <aside class="legend" aria-label="Land cover legend">
+    <div class="legend-title">Land Cover Classes</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#00c5ff"></span><span>Water</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#00a884"></span><span>Wetlands</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#267300"></span><span>Tree canopy</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#a3ff73"></span><span>Low vegetation</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#ffaa00"></span><span>Barren</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#ff0000"></span><span>Structures</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#9c9c9c"></span><span>Impervious surfaces</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#000"></span><span>Impervious roads</span></div>
+  </aside>
+  <div class="status" id="status">Opening statewide land cover...</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/pmtiles@4.4.1/dist/pmtiles.js"></script>
+<script>
+const STATE_URL = "https://tiles.mtntheman.com/mihrlc/state/mihrlc-state-z7-z16.pmtiles";
+const STATE_BOUNDS = [[41.68569937, -90.43517999], [48.25927179, -82.36895554]];
+
+const COUNTY_VIEWS = [
+  { id: "ALC", label: "Alcona County", bounds: [[44.48970792,-83.9085957],[44.87682289,-83.25456085]] },
+  { id: "ALG", label: "Alger County", bounds: [[46.14842888,-87.12822882],[46.6972457,-85.85300442]] },
+  { id: "ALL", label: "Allegan County", bounds: [[42.41069649,-86.28054782],[42.77605303,-85.53378524]] },
+  { id: "ALP", label: "Alpena County", bounds: [[44.83476436,-83.90441914],[45.22449127,-83.17470959]] },
+  { id: "ANT", label: "Antrim County", bounds: [[44.80237603,-85.4517212],[45.21423277,-84.83213771]] },
+  { id: "ARE", label: "Arenac County", bounds: [[43.88883728,-84.17996181],[44.18522748,-83.41052476]] },
+  { id: "BAR", label: "Baraga County", bounds: [[46.41043978,-88.69853652],[46.97566493,-87.9798124]] },
+  { id: "BRY", label: "Barry County", bounds: [[42.41158977,-85.55490367],[42.77866235,-85.05946273]] },
+  { id: "BAY", label: "Bay County", bounds: [[43.47160475,-84.19173953],[44.00418851,-83.66925194]] },
+  { id: "BEN", label: "Benzie County", bounds: [[44.50810429,-86.26430627],[44.78326581,-85.80921685]] },
+  { id: "BER", label: "Berrien County", bounds: [[41.75419864,-86.83332357],[42.24707747,-86.21467945]] },
+  { id: "BRA", label: "Branch County", bounds: [[41.75056643,-85.30308793],[42.08188322,-84.81315595]] },
+  { id: "CAL", label: "Calhoun County", bounds: [[42.05921378,-85.31058681],[42.43363878,-84.69555222]] },
+  { id: "CAS", label: "Cass County", bounds: [[41.75400933,-86.23108862],[42.07652837,-85.75288574]] },
+  { id: "CHA", label: "Charlevoix County", bounds: [[45.10282612,-85.85970408],[45.85235714,-84.7044199]] },
+  { id: "CHE", label: "Cheboygan County", bounds: [[45.18948585,-84.75753123],[45.81582332,-84.18636324]] },
+  { id: "CHI", label: "Chippewa County", bounds: [[45.89378185,-85.26574405],[46.79219679,-83.42053263]] },
+  { id: "CLA", label: "Clare County", bounds: [[43.80358566,-85.10132187],[44.1743636,-84.59063984]] },
+  { id: "CLI", label: "Clinton County", bounds: [[42.75861919,-84.85117974],[43.12983058,-84.34664346]] },
+  { id: "CRA", label: "Crawford County", bounds: [[44.4959123,-84.86518492],[44.86973211,-84.35278657]] },
+  { id: "DEL", label: "Delta County", bounds: [[45.47089919,-87.37543896],[46.1664572,-86.4476815]] },
+  { id: "DIC", label: "Dickinson County", bounds: [[45.71462378,-88.15420847],[46.25571828,-87.59910336]] },
+  { id: "EAT", label: "Eaton County", bounds: [[42.41152142,-85.08768992],[42.78063656,-84.58607872]] },
+  { id: "EMM", label: "Emmet County", bounds: [[45.2643056,-85.13528082],[45.79697243,-84.71031546]] },
+  { id: "GEN", label: "Genesee County", bounds: [[42.76611294,-83.95543688],[43.23804645,-83.42613583]] },
+  { id: "GLA", label: "Gladwin County", bounds: [[43.80255355,-84.62335743],[44.17289744,-84.14775018]] },
+  { id: "GOG", label: "Gogebic County", bounds: [[46.05110618,-90.43517999],[46.79299002,-88.97646958]] },
+  { id: "GRT", label: "Grand Traverse County", bounds: [[44.50578902,-85.82778249],[44.99815554,-85.31866858]] },
+  { id: "GRA", label: "Gratiot County", bounds: [[43.10656847,-84.85956129],[43.47718103,-84.35140588]] },
+  { id: "HIL", label: "Hillsdale County", bounds: [[41.68569937,-84.84040769],[42.0842556,-84.34305028]] },
+  { id: "HOU", label: "Houghton County", bounds: [[46.41126905,-89.03658709],[47.29285139,-88.19447514]] },
+  { id: "HUR", label: "Huron County", bounds: [[43.63665986,-83.50334935],[44.1017899,-82.57481853]] },
+  { id: "ING", label: "Ingham County", bounds: [[42.41024297,-84.61804007],[42.78821148,-84.1223278]] },
+  { id: "ION", label: "Ionia County", bounds: [[42.76057976,-85.32332976],[43.1292694,-84.82318723]] },
+  { id: "IOS", label: "Iosco County", bounds: [[44.14424189,-83.90653545],[44.52953736,-83.30580734]] },
+  { id: "IRO", label: "Iron County", bounds: [[45.90043277,-89.0101228],[46.44026403,-88.09603744]] },
+  { id: "ISA", label: "Isabella County", bounds: [[43.45588551,-85.10113983],[43.82526498,-84.59077059]] },
+  { id: "JAC", label: "Jackson County", bounds: [[42.05628123,-84.73261082],[42.43898276,-84.11349462]] },
+  { id: "KAL", label: "Kalamazoo County", bounds: [[42.0620291,-85.77429656],[42.42842011,-85.28251136]] },
+  { id: "KAS", label: "Kalkaska County", bounds: [[44.5011323,-85.34538851],[44.86861106,-84.83257903]] },
+  { id: "KEN", label: "Kent County", bounds: [[42.76098765,-85.80314426],[43.30176249,-85.29390552]] },
+  { id: "KEW", label: "Keweenaw County", bounds: [[47.1735543,-89.34336801],[48.25927179,-87.5779366]] },
+  { id: "LAK", label: "Lake County", bounds: [[43.80806251,-86.04915402],[44.17398005,-85.55252807]] },
+  { id: "LAP", label: "Lapeer County", bounds: [[42.86328598,-83.48855702],[43.34367793,-82.95314108]] },
+  { id: "LEE", label: "Leelanau County", bounds: [[44.76726396,-86.16919813],[45.49761629,-85.51055697]] },
+  { id: "LEN", label: "Lenawee County", bounds: [[41.69033396,-84.37988823],[42.09863447,-83.74308345]] },
+  { id: "LIV", label: "Livingston County", bounds: [[42.40954995,-84.17581217],[42.79821282,-83.6436254]] },
+  { id: "LUC", label: "Luce County", bounds: [[46.23575297,-85.87648835],[46.76446334,-85.21985996]] },
+  { id: "MAC_Export2", label: "Mackinac County", bounds: [[45.69735765,-85.87697402],[46.26261223,-84.09488761]] },
+  { id: "MAC_Export1", label: "Macomb County", bounds: [[42.43242574,-83.13015561],[42.91213416,-82.68152621]] },
+  { id: "MAN", label: "Manistee County", bounds: [[44.15828786,-86.39574274],[44.52381758,-85.81024148]] },
+  { id: "MAR", label: "Marquette County", bounds: [[45.97136391,-88.14406689],[46.97945497,-87.10498317]] },
+  { id: "MAS", label: "Mason County", bounds: [[43.81057178,-86.52068525],[44.18327969,-86.03069952]] },
+  { id: "MEC", label: "Mecosta County", bounds: [[43.45828043,-85.57248535],[43.82346872,-85.07247856]] },
+  { id: "MEN", label: "Menominee County", bounds: [[45.08987496,-87.91095312],[45.9913083,-87.25258385]] },
+  { id: "MID", label: "Midland County", bounds: [[43.45498317,-84.62364631],[43.83966625,-84.14827036]] },
+  { id: "MIS", label: "Missaukee County", bounds: [[44.15214985,-85.34949526],[44.52159325,-84.83669933]] },
+  { id: "MON", label: "Monroe County", bounds: [[41.70489322,-83.79351881],[42.11062908,-83.16816693]] },
+  { id: "MTC", label: "Montcalm County", bounds: [[43.1057281,-85.5723969],[43.48082296,-84.8214405]] },
+  { id: "MTM", label: "Montmorency County", bounds: [[44.84140589,-84.38918588],[45.21544047,-83.86050465]] },
+  { id: "MUS", label: "Muskegon County", bounds: [[43.11059803,-86.46567018],[43.4790435,-85.78262045]] },
+  { id: "NEW", label: "Newaygo County", bounds: [[43.28697957,-86.04922607],[43.82165976,-85.54832399]] },
+  { id: "OAK", label: "Oakland County", bounds: [[42.41173848,-83.71494117],[42.90853774,-83.053014]] },
+  { id: "OCE", label: "Oceana County", bounds: [[43.46220146,-86.54667721],[43.824294,-86.03082086]] },
+  { id: "OGE", label: "Ogemaw County", bounds: [[44.14751088,-84.38754453],[44.52213986,-83.86355651]] },
+  { id: "ONT", label: "Ontonagon County", bounds: [[46.30505023,-89.90723086],[47.03380819,-88.83975554]] },
+  { id: "OSC", label: "Osceola County", bounds: [[43.80547045,-85.57444554],[44.17307407,-85.07355389]] },
+  { id: "OSO", label: "Oscoda County", bounds: [[44.49376235,-84.38919608],[44.86988544,-83.86655123]] },
+  { id: "OTS", label: "Otsego County", bounds: [[44.84359307,-84.87223759],[45.21324694,-84.34917195]] },
+  { id: "OTT", label: "Ottawa County", bounds: [[42.76227187,-86.27867923],[43.21092691,-85.77251844]] },
+  { id: "PRE", label: "Presque Isle County", bounds: [[45.17359417,-84.27401022],[45.63579417,-83.3566633]] },
+  { id: "ROS", label: "Roscommon County", bounds: [[44.14872836,-84.87008818],[44.52271772,-84.34907967]] },
+  { id: "SAG", label: "Saginaw County", bounds: [[43.10986752,-84.39034783],[43.58730053,-83.66998645]] },
+  { id: "SAN", label: "Sanilac County", bounds: [[43.13056806,-83.15584601],[43.71441049,-82.46213429]] },
+  { id: "SCH", label: "Schoolcraft County", bounds: [[45.74858187,-86.62591527],[46.51227302,-85.84787993]] },
+  { id: "SHI", label: "Shiawassee County", bounds: [[42.76376389,-84.38436489],[43.14478948,-83.90355426]] },
+  { id: "STC", label: "St. Clair County", bounds: [[42.49599121,-83.0394943],[43.19173765,-82.36895554]] },
+  { id: "STJ", label: "St. Joseph County", bounds: [[41.75176389,-85.79702357],[42.07878648,-85.28228185]] },
+  { id: "TUS", label: "Tuscola County", bounds: [[43.20170835,-83.72872033],[43.74870682,-83.06971323]] },
+  { id: "VAN", label: "Van Buren County", bounds: [[42.06643549,-86.36752514],[42.42650249,-85.75482778]] },
+  { id: "WAS", label: "Washtenaw County", bounds: [[42.05478031,-84.151452],[42.452093,-83.51821726]] },
+  { id: "WAY", label: "Wayne County", bounds: [[42.0078824,-83.57578241],[42.47462496,-82.84145875]] },
+  { id: "WEX", label: "Wexford County", bounds: [[44.15731138,-85.83024767],[44.52002582,-85.32288347]] },
+];
+
+const controls = {
+  showLandCover: document.getElementById("showLandCover"),
+  opacity: document.getElementById("opacity"),
+  opacityOut: document.getElementById("opacityOut"),
+  countySelect: document.getElementById("countySelect"),
+  status: document.getElementById("status")
+};
+
+function setStatus(message) {
+  controls.status.textContent = message;
+}
+
+if (!window.L || !window.pmtiles) {
+  setStatus("The map libraries did not load. Please refresh the page.");
+} else {
+  const map = L.map("map", {
+    zoomControl: true,
+    maxZoom: 19,
+    maxBounds: [[41.0, -91.2], [48.8, -82.0]],
+    maxBoundsViscosity: 0.45
+  });
+
+  const streetMap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+
+  const imagery = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+    maxZoom: 19,
+    attribution: "Tiles &copy; Esri - Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+  });
+
+  streetMap.addTo(map);
+  map.fitBounds(STATE_BOUNDS, { padding: [28, 28] });
+  map.createPane("mihrlcPane");
+  map.getPane("mihrlcPane").style.zIndex = 450;
+
+  const archive = new pmtiles.PMTiles(STATE_URL);
+  const landCoverLayer = pmtiles.leafletRasterLayer(archive, {
+    minZoom: 7,
+    maxNativeZoom: 16,
+    maxZoom: 19,
+    opacity: Number(controls.opacity.value),
+    pane: "mihrlcPane",
+    attribution: 'Michigan High Resolution Land Cover (MiHRLC), 0.6 m county products from 2022 NAIP imagery'
+  });
+
+  landCoverLayer.addTo(map);
+
+  L.control.layers({
+    "OpenStreetMap": streetMap,
+    "Imagery": imagery
+  }, {
+    "MiHRLC statewide land cover": landCoverLayer
+  }, {
+    collapsed: false,
+    position: "topright"
+  }).addTo(map);
+
+  let loadedTiles = 0;
+  let failedTiles = 0;
+
+  landCoverLayer.on("tileload", () => {
+    loadedTiles += 1;
+    setStatus(failedTiles ? "Some land-cover tiles did not load in this view." : "Statewide land cover ready.");
+  });
+
+  landCoverLayer.on("tileerror", () => {
+    failedTiles += 1;
+    if (loadedTiles === 0) {
+      setStatus("Land-cover tiles are not loading in this view.");
+    } else {
+      setStatus("Some land-cover tiles did not load in this view.");
+    }
+  });
+
+  function syncLandCoverVisibility() {
+    const shouldShow = controls.showLandCover.checked;
+    const isShown = map.hasLayer(landCoverLayer);
+    if (shouldShow && !isShown) {
+      landCoverLayer.addTo(map);
+    } else if (!shouldShow && isShown) {
+      map.removeLayer(landCoverLayer);
+    }
+  }
+
+  function syncOpacity() {
+    const opacity = Number(controls.opacity.value);
+    controls.opacityOut.textContent = `${Math.round(opacity * 100)}%`;
+    landCoverLayer.setOpacity(opacity);
+  }
+
+  function populateCountySelect() {
+    const statewideOption = document.createElement("option");
+    statewideOption.value = "statewide";
+    statewideOption.textContent = "Statewide";
+    controls.countySelect.appendChild(statewideOption);
+
+    COUNTY_VIEWS.forEach((view) => {
+      const option = document.createElement("option");
+      option.value = view.id;
+      option.textContent = view.label;
+      controls.countySelect.appendChild(option);
+    });
+  }
+
+  function fitSelectedView() {
+    const selected = controls.countySelect.value;
+    if (selected === "statewide") {
+      map.fitBounds(STATE_BOUNDS, { padding: [28, 28] });
+      return;
+    }
+
+    const view = COUNTY_VIEWS.find((item) => item.id === selected);
+    if (view) {
+      map.fitBounds(view.bounds, { padding: [28, 28] });
+    }
+  }
+
+  controls.showLandCover.addEventListener("change", syncLandCoverVisibility);
+  controls.opacity.addEventListener("input", syncOpacity);
+  controls.countySelect.addEventListener("change", fitSelectedView);
+
+  map.on("baselayerchange", () => {
+    if (map.hasLayer(landCoverLayer)) {
+      landCoverLayer.bringToFront();
+    }
+  });
+
+  map.on("overlayadd", (event) => {
+    if (event.layer === landCoverLayer) {
+      controls.showLandCover.checked = true;
+    }
+  });
+
+  map.on("overlayremove", (event) => {
+    if (event.layer === landCoverLayer) {
+      controls.showLandCover.checked = false;
+    }
+  });
+
+  populateCountySelect();
+  syncOpacity();
+}
+</script>
+</body>
+</html>

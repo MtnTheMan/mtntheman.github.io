@@ -54,7 +54,7 @@ The Michigan High Resolution Land Cover product, abbreviated here as MiHRLC, is 
 ![Michigan High Resolution Land Cover statewide mosaic and MSU-area detail](/assets/images/projects/mihrlc_presentation_preview_statewide_msu.png?v=bca9d65)
 
 <div class="mihrlc-actions">
-  <a href="/assets/maps/mihrlc-pilot-map.html">Open the interactive pilot map</a>
+  <a href="/assets/maps/mihrlc-map.html">Open the interactive statewide map</a>
   <a href="/projects.html">Back to projects</a>
 </div>
 
