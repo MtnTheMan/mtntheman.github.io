@@ -27,6 +27,14 @@ excerpt: Production notes for the Michigan High Resolution Land Cover product, i
     background-color: #252504;
   }
 
+  #content img {
+    box-sizing: border-box;
+    display: block;
+    height: auto;
+    margin: 1rem 0;
+    max-width: 100%;
+  }
+
   .mihrlc-note {
     background-color: #252504;
     border: 2px dotted #00FF00;
