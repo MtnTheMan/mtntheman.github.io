@@ -4,18 +4,16 @@ title: "NHR Log 4: Span of Control in Forestry"
 date: 2026-05-24
 categories: [northern-hardwoods, research, travel]
 tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, fieldwork, span of control, staffing]
-excerpt: "A time-budget look at how many acres one forester can realistically manage with intensive silviculture."
+excerpt: "A time-budget look at how many acres one forester can manage with intensive silviculture."
 ---
 
-I was chatting with a state forester recently about a concept that rarely makes it into academic literature but dictates almost everything on the ground: the practical span of control. We talk constantly about sustainable harvest levels and silvicultural prescriptions, which are the specific management plans tailored to a forest stand, but we rarely calculate the physical limits of human bandwidth.
+I was talking recently with a state forester about a concept that rarely makes it into academic literature but controls a lot of what happens on the ground: practical span of control. We talk constantly about sustainable harvest levels and silvicultural prescriptions, which are the stand-level plans that guide management. We talk less about the physical limits of one person's time.
 
-When an agency or land management firm assigns a single forester a massive footprint, say a round number like 20,000 acres, there is an underlying assumption that the land is being actively managed. In reality, raw acreage is a deceptive metric. The true ceiling of sustainable forestry is a time-budget problem, determined by active decision acres and the long administrative tail that follows every single harvest.
+When an agency or land management firm assigns one forester a large area, say 20,000 acres, there is usually an assumption that the land is being actively managed. Raw acreage can hide the problem. The better question is how many acres require decisions this year, and how much work follows each harvest once the trees are marked and the contract is signed.
 
-## The First Attempt: The Back-of-the-Napkin Calculation
+## The first attempt: the back-of-the-napkin calculation
 
-To see how this looks on paper, we can run a simple, back-of-the-napkin calculation using standard baseline assumptions for northern hardwoods. Let us look at a manageable 5,000-acre baseline first to see how the logic operates.
-
-If we assume a typical 20-year re-entry interval, which is the time elapsed between scheduled harvests in the same stand, then a 5,000-acre forest requires 250 active treatment acres per year. If our average timber sale unit is 40 acres, the math is straightforward:
+Start with a simple version of the problem. A 5,000-acre forest on a 20-year re-entry interval, meaning the time between scheduled harvests in the same stand, would need about 250 active treatment acres per year. If the average timber sale unit is 40 acres, the math is simple:
 
 <div class="nhr-equation" role="img" aria-label="Annual sales equals 250 active acres divided by 40 acres per sale, which equals 6.25 sales per year.">
   Annual Sales =
@@ -23,33 +21,25 @@ If we assume a typical 20-year re-entry interval, which is the time elapsed betw
   = 6.25 sales per year
 </div>
 
-On paper, managing six or seven sales a year sounds like a comfortable workload. A forester should easily have enough time to mark the timber, write the prescriptions, and file the paperwork. If we scale that exact same logic up to a 20,000-acre assignment, the formula implies the forester just needs to clear 1,000 active acres across 25 sales each year.
+On paper, six or seven sales a year sounds manageable. A forester should have enough time to mark timber, write prescriptions, and keep the paperwork moving. If we scale the same arithmetic up to 20,000 acres, the assignment becomes 1,000 active acres across 25 sales each year.
 
-## The "Oh No" Reality Check
+## The "oh no" reality check
 
-That clean paper model quickly falls apart the moment it hits real-world operational friction. The first major flaw is assuming a forester is responsible for only 5,000 acres. Oftentimes, it will be four or more times that. Second is the assumption that forest treatments occur in perfect, uniform blocks. In practice, timber sales follow a wide bell curve, frequently stretching from tight 13-acre cuts to 120-acre structural thinnings, with 40 acres serving as an assumed mean.
+This is where the paper model starts to break. First, 5,000 acres is not always the assignment. It may be four times that, or more. Second, forest treatments do not arrive as clean, uniform blocks. Timber sales follow a wide bell curve, with some tight 13-acre cuts and some 120-acre structural thinnings. Forty acres may be a workable average, but the year-to-year mix matters.
 
-Even small sales can carry a high fixed administrative time cost. Setting up a 13-acre sale requires almost the same baseline of desk work as a 100-acre sale: you must still establish boundaries, verify property lines, draft the contract, and advertise the bid package. A year dominated by smaller, fragmented units results in a skyrocketing administrative workload, even if the total treated acreage remains the same.
+Small sales can carry nearly the same fixed desk cost as large sales. Setting up a 13-acre sale still means checking boundaries, verifying property lines, drafting a contract, and advertising the bid package. A year filled with smaller, scattered units can create a heavy administrative load even when the treated acreage stays the same.
 
-Furthermore, the initial calculation can overlook the fact that foresters cannot teleport. Windshield time, meaning the hours spent driving to remote, scattered forest units, consumes a significant portion of the work week. Weather and other surprises can also interfere with schedules.
+Then there is windshield time. Driving to remote or scattered units eats into the work week before any marking, cruising, or inspection happens. Weather and other surprises can also push a tidy schedule out of shape.
 
-Beyond travel and incidentals, the most glaring omission in the presumptive model is the monitoring tail and the continuous requirement for forest inventory. Forestry is not a sequence of isolated cutting events: it is a continuous loop of verification and measurement. Most sustainable forestry certifications mandate regular field checks:
+The bigger miss is monitoring and inventory. Forestry is not a set of isolated cutting events. It is a loop of checking, measuring, and returning to stands after the sale is finished. Certification programs and agency policies often require a one-year post-harvest check for Best Management Practices (BMPs), a three-year check for regeneration and deer browse, a five-year check for invasive species and stand health, and a ten-year re-inventory to keep stand records current. The exact schedule changes by owner and program, but the tail is the point.
 
-**One-year post-harvest:** Verifying Best Management Practices (BMPs) for water quality and soil stabilization.
+## A more complete span-of-control model
 
-**Three-year post-harvest:** Evaluating seedling regeneration and assessing deer browse impacts.
+If we rebuild the calculation for a 20,000-acre responsibility and include the work that follows each entry, the numbers change fast.
 
-**Five-year post-harvest:** Monitoring for invasive species introductions and overall stand health.
+On a 20-year rotation, the forester has to handle 1,000 active treatment acres per year. At 40 acres per unit, that means establishing 25 sales annually. Cruising adds another layer. A 10-year inventory cycle on a 20,000-acre forest requires 2,000 background acres each year, separate from the active timber sales.
 
-**Ten-year inventory cycle:** Standard agency policy usually requires a complete re-inventory of every stand every ten years to maintain accurate database records.
-
-## Our Span of Control Model V2
-
-If we rebuild the calculation for a 20,000-acre responsibility and include these missing operational components, the numbers change dramatically.
-
-On a 20-year rotation, our forester must handle 1,000 active treatment acres per year. Assuming the historical mean of 40 acres per unit, which may be large, that requires establishing 25 distinct sales annually. Cruising the forest, which means walking lines to collect tree inventory data, adds an additional, massive baseline burden. A 10-year inventory cycle for a 20,000-acre forest requires cruising 2,000 background acres each year, independent of active timber sales.
-
-The table below breaks down a realistic hour budget for these combined responsibilities:
+The table below lays out one workable annual hour budget:
 
 | Workload Component | Operational Assumption | Annual Hours Required |
 | --- | --- | ---: |
@@ -61,9 +51,9 @@ The table below breaks down a realistic hour budget for these combined responsib
 | General Stewardship & Public Inquiries | Forest health anomalies, boundary disputes, and road washouts | 400 hours |
 | **Total Annual Workload** |  | **4,500 hours** |
 
-Considering that a single full-time employee provides roughly 1,100 to 1,400 hours of actual, direct field-management capacity per year after subtracting leave, mandatory training, and general agency meetings, a 20,000-acre forest actually requires three to four full-time foresters to manage intensively.
+A full-time employee does not have 2,080 usable field-management hours. Leave, mandatory training, meetings, reporting, and general agency work cut into that number. A more believable annual field-management capacity is roughly 1,100 to 1,400 hours. That puts the 20,000-acre example at about three to four full-time foresters if the goal is intensive management.
 
-To see how these operational constraints scale within your own organization or geographic region, use the interactive calculator below. By adjusting the sliders, you can simulate different management scenarios, test the impact of smaller or larger average sale sizes, and calculate exactly how many full-time foresters are required to maintain intensive, sustainable silviculture on a given landscape footprint.
+The calculator below keeps those assumptions adjustable. You can change the acreage, re-entry interval, sale size, fixed setup time, inventory cycle, and available field hours to see how quickly the workload moves.
 
 <section class="nhr-calculator" id="span-control-calculator" aria-labelledby="span-control-title">
   <h3 id="span-control-title">Span of Control Calculator</h3>
@@ -120,7 +110,7 @@ To see how these operational constraints scale within your own organization or g
   <p class="nhr-calc-note">Fixed model assumptions: 1.5 prep hours, 0.8 inspection/travel hours, and 0.3 post-harvest monitoring hours per active acre; 0.25 inventory hours per inventory acre; and 0.02 background stewardship hours per district acre.</p>
 </section>
 
-Behind the interactive simulator sits an expanded operational model that accounts for the cumulative impact of active harvest preparation, fixed contract administration, mandatory inventory tracking, and background stewardship maintenance. This multi-variable equation quantifies the cumulative workload, which allows land managers to pinpoint exactly where administrative bottlenecks emerge as district sizes expand:
+Behind the calculator is a simple workload equation. It adds active harvest preparation, contract administration, inventory, post-harvest monitoring, and background stewardship into one annual hour estimate:
 
 <div class="nhr-equation" role="img" aria-label="W equals A divided by R times the sum of h prep, h inspection, and h post, plus A divided by R times S multiplied by h admin, plus A divided by I multiplied by h inventory, plus A multiplied by h background.">
   W =
@@ -135,13 +125,15 @@ Behind the interactive simulator sits an expanded operational model that account
   + A &middot; h<sub>bg</sub>
 </div>
 
-In this formulation, <em>W</em> represents the total annual operational hours required to sustain the forest tract. The geographic scale of responsibility is captured by <em>A</em>, which represents the total district footprint in acres, while <em>R</em> represents the re-entry interval in years, and <em>I</em> represents the mandatory inventory cycle length in years. The operational units are defined by <em>S</em>, which is the average treatment size in acres. Time allocations are distributed across specific field and office tasks, where <em>h</em><sub>prep</sub> represents the layout and tree marking hours per active acre, <em>h</em><sub>insp</sub> represents active harvest inspection hours per active acre, and <em>h</em><sub>post</sub> represents post-harvest certification monitoring hours per active acre. The fixed overhead constraints are isolated by <em>h</em><sub>admin</sub>, which represents the baseline contract preparation and bidding hours per sale, while <em>h</em><sub>inv</sub> represents plot-level cruising hours per inventory acre, and <em>h</em><sub>bg</sub> represents background stewardship hours per district acre.
+Here, <em>W</em> is total annual operational hours. <em>A</em> is district acres, <em>R</em> is the re-entry interval, <em>I</em> is the inventory cycle, and <em>S</em> is the average treatment size. The <em>h</em> terms are the time costs: <em>h</em><sub>prep</sub> covers layout and tree marking per active acre, <em>h</em><sub>insp</sub> covers active harvest inspection, <em>h</em><sub>post</sub> covers post-harvest monitoring, <em>h</em><sub>admin</sub> covers contract preparation and bidding per sale, <em>h</em><sub>inv</sub> covers cruising per inventory acre, and <em>h</em><sub>bg</sub> covers background stewardship per district acre.
 
-Expressing the time budget in this manner demonstrates that a forester's capacity is rarely limited by a single variable, because an adjustment to any single parameter propagates across the entire management system. For example, compressing the re-entry interval or reducing the average sale size increases the frequency of contract boundary layouts, which accelerates the consumption of available field hours. By analyzing the interactions among these variables, organizations can move beyond arbitrary acreage quotas and design staffing structures that reflect the true physical constraints of field operations.
+The useful part of writing the budget this way is that no single variable tells the whole story. A shorter re-entry interval increases active acres. Smaller sale units increase contracts and boundary layouts. A tighter inventory cycle adds background cruising. Staffing should follow the work a forester can physically complete, not an acreage number that looks clean in a spreadsheet.
 
-## What Does "Responsible For" Actually Mean?
+## What does "responsible for" actually mean?
 
-When we see a single forester assigned to a 20,000-acre area, they are rarely practicing idyllic and intensive, stand-level silviculture taught in textbooks; rather, they are practicing triage. They are often deciding which few hundred acres will receive meticulous attention this year, while accepting that the remaining thousands of acres must be managed via deferred entries, standardized prescriptions, or broad, landscape-scale planning. The physical bottleneck in forestry is the number of stands a human being can realistically walk, mark, inspect, maintain, and return to monitor in a year.
+When one forester is assigned to a 20,000-acre area, textbook silviculture may still be the ideal, but the job often turns into triage. They decide which few hundred acres will get close attention this year while the remaining acres move through deferred entries, standardized prescriptions, or broader planning.
+
+I do not think that makes broad-acre assignments unserious by default. It means acreage alone is a bad measure of responsibility. The bottleneck is the number of stands a person can walk, mark, inspect, maintain, and revisit in a year.
 
 <script>
 (function () {
