@@ -16,6 +16,16 @@
     <meta name="msapplication-TileImage" content="{{ '/assets/images/favicons/favicon-270x270.png' | relative_url }}" />
 
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}" />
+    {% if page.math %}
+    <script>
+      window.MathJax = {
+        svg: {
+          fontCache: "global"
+        }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js"></script>
+    {% endif %}
   </head>
   <body>
     <table class="site-table" width="800" align="center" cellpadding="10" cellspacing="0" border="2" bordercolor="#00FF00">

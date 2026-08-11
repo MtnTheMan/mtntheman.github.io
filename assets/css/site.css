@@ -321,6 +321,19 @@ details.resume-details summary {
   text-align: center;
 }
 
+.nhr-equation mjx-container {
+  color: inherit;
+}
+
+.nhr-equation mjx-container[display="true"] {
+  margin: 0;
+  min-width: max-content;
+}
+
+.nhr-equation mjx-container svg {
+  max-width: none;
+}
+
 .nhr-equation .frac {
   display: inline-grid;
   grid-template-rows: auto auto;
