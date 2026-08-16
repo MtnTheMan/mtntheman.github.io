@@ -7,6 +7,8 @@ tags: [Northern Hardwoods Resilience Project, forestry, silviculture, megatrip, 
 excerpt: "A look at the silviculture textbooks that helped build the intellectual shelf behind the Northern Hardwoods Resilience Project."
 ---
 
+*Part 1 of the NHR Literature Series: Silviculture Textbooks*
+
 Sitting in people's houses or in their offices and talking with them about their forestry was one of the greatest parts of going out on the mega trip and visiting people in person. One Saturday, I visited the cabin of a longtime forester in the Northeast U.S. It was very nice of him to let me in on a Saturday. The cabin itself became part of the conversation. He had built it himself, with something like eight different species of wood, and he pointed them out as we talked.
 
 Inside, he had a small library of forestry texts, including books in English and French. Some were old class books. Some were texts he still pulled out when he wanted to get some inspiration for what a best practice should look like. Afterward, we walked through the misty forest around the cabin that he had built with his own two hands and talked about forest health, his ongoing concern for it, and all of the acres that he had managed in his career.
