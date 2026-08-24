@@ -6,9 +6,38 @@ const DEFAULT_MAX_SPIKE_DISTANCE_KM = 75;
 const DEFAULT_MAX_SPIKE_POINT_COUNT = 5;
 const TRIP_START_DATE = "2026-05-17";
 const TRIP_END_DATE = "2026-06-22";
-const PUBLIC_WINDOW_START = "2026-05-17T08:00:00-04:00";
-const PUBLIC_WINDOW_END = "2026-06-22T19:00:00-04:00";
-const STATIC_ROUTE_CUTOFF = "2026-06-09T15:39:56Z";
+const DEFAULT_TRACK_ID = "nhr-megatrip-2026";
+const TRACKS = {
+  "nhr-megatrip-2026": {
+    id: "nhr-megatrip-2026",
+    name: "NHR Megatrip 2026",
+    publicDelayMinutes: 600,
+    coordinateDecimals: 3,
+    publicWindowStart: "2026-05-17T08:00:00-04:00",
+    publicWindowEnd: "2026-06-22T19:00:00-04:00",
+    staticRouteCutoff: "2026-06-09T15:39:56Z",
+    color: "#00ff66"
+  },
+  "maine-august-trip": {
+    id: "maine-august-trip",
+    name: "Maine August Trip",
+    publicDelayMinutes: 900,
+    coordinateDecimals: 3,
+    publicWindowStart: "2026-08-24T13:00:00-04:00",
+    publicWindowEnd: "2026-08-28T20:00:00-04:00",
+    staticRouteCutoff: null,
+    color: "#5ab0ff"
+  }
+};
+const EASTERN_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/New_York",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23"
+});
 
 export default {
   async fetch(request, env) {
@@ -20,11 +49,11 @@ export default {
 
     try {
       if (url.pathname === "/api/tracker/ingest" && request.method === "POST") {
-        return withCors(await ingestOwnTracks(request, env), request, env);
+        return withCors(await ingestOwnTracks(request, env, url), request, env);
       }
 
       if (url.pathname === "/api/tracker/geojson" && request.method === "GET") {
-        return withCors(await publicGeoJson(env), request, env);
+        return withCors(await publicGeoJson(env, url), request, env);
       }
 
       if (url.pathname === "/api/tracker/health" && request.method === "GET") {
@@ -50,11 +79,17 @@ export default {
   }
 };
 
-async function ingestOwnTracks(request, env) {
+async function ingestOwnTracks(request, env, url) {
   if (!isAuthorized(request, env)) {
     return json({ ok: false, error: "unauthorized" }, 401, {
       "WWW-Authenticate": 'Basic realm="Trip Tracker"'
     });
+  }
+
+  const trackId = url.searchParams.get("track") || DEFAULT_TRACK_ID;
+  const track = TRACKS[trackId];
+  if (!track) {
+    return json({ ok: false, error: "unknown_track" }, 400);
   }
 
   let payload;
@@ -87,8 +122,8 @@ async function ingestOwnTracks(request, env) {
 
   const result = await env.DB.prepare(
     `INSERT INTO location_points
-      (recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      (recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source, track_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   )
     .bind(
       recordedAt,
@@ -100,79 +135,70 @@ async function ingestOwnTracks(request, env) {
       recognizedBattery(payload),
       velocity,
       rawType,
-      "owntracks"
+      "owntracks",
+      track.id
     )
     .run();
 
-  return json({ ok: true, stored: true, id: result.meta.last_row_id });
+  return json({
+    ok: true,
+    stored: true,
+    id: result.meta.last_row_id,
+    track_id: track.id,
+    track_name: track.name
+  });
 }
 
-async function publicGeoJson(env) {
-  const config = publicConfig(env);
-  const cutoff = epochSeconds() - config.publicDelayMinutes * 60;
-  const windowStart = epochFromIso(PUBLIC_WINDOW_START);
-  const windowEnd = epochFromIso(PUBLIC_WINDOW_END);
-  const publicEnd = Math.min(cutoff, windowEnd);
-  const recentWindowStart = Math.max(windowStart, epochFromIso(STATIC_ROUTE_CUTOFF));
-
-  if (publicEnd < windowStart) {
-    return json(buildFeatureCollection([], config));
+async function publicGeoJson(env, url) {
+  const selectedTracks = requestedTracks(url);
+  if (!selectedTracks) {
+    return json({ ok: false, error: "unknown_track" }, 400);
   }
 
-  const rows = await env.DB.prepare(
-    `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
-     FROM location_points
-     WHERE recorded_at >= ?
-       AND recorded_at <= ?
-     ORDER BY recorded_at DESC
-     LIMIT ?`
-  ).bind(recentWindowStart, publicEnd, config.maxPublicPoints).all();
-
-  return json(buildFeatureCollection((rows.results || []).reverse(), config));
+  const trackResults = await Promise.all(selectedTracks.map((track) => publicTrackData(env, track)));
+  return json(buildFeatureCollection(trackResults));
 }
 
 async function health(env) {
   const countResult = await env.DB.prepare(
     "SELECT COUNT(*) AS point_count, MAX(received_at) AS latest_received_at FROM location_points"
   ).first();
-
-  const config = publicConfig(env);
-  const windowStart = epochFromIso(PUBLIC_WINDOW_START);
-  const windowEnd = epochFromIso(PUBLIC_WINDOW_END);
-  const liveEnd = Math.min(epochSeconds(), windowEnd);
-  const statsRows = await env.DB.prepare(
-    `SELECT recorded_at, lat, lon
+  const groupedRows = await env.DB.prepare(
+    `SELECT track_id, COUNT(*) AS stored_count, MAX(received_at) AS latest_received_at
      FROM location_points
-     WHERE recorded_at >= ?
-       AND recorded_at <= ?
-     ORDER BY recorded_at ASC`
-  ).bind(windowStart, liveEnd).all();
-  const liveStats = routeStats(statsRows.results || []);
+     GROUP BY track_id`
+  ).all();
+  const countsByTrack = new Map((groupedRows.results || []).map((row) => [row.track_id || DEFAULT_TRACK_ID, row]));
+  const tracks = Object.values(TRACKS).map((track) => {
+    const config = trackConfig(track, env);
+    const row = countsByTrack.get(track.id);
+    return {
+      track_id: track.id,
+      track_name: track.name,
+      stored_count: row?.stored_count ?? 0,
+      latest_received_at: row?.latest_received_at ?? null,
+      public_delay_minutes: config.publicDelayMinutes,
+      public_window_start: track.publicWindowStart,
+      public_window_end: track.publicWindowEnd
+    };
+  });
 
   return json({
     ok: true,
     service: "trip-tracker",
     point_count: countResult?.point_count ?? 0,
     latest_received_at: countResult?.latest_received_at ?? null,
-    live_stats: {
-      total_distance_miles: liveStats.totalDistanceMiles,
-      total_distance_kilometers: liveStats.totalDistanceKilometers,
-      foot_distance_miles: liveStats.footDistanceMiles,
-      foot_distance_kilometers: liveStats.footDistanceKilometers
-    },
+    tracks,
     config: {
-      public_delay_minutes: config.publicDelayMinutes,
-      coordinate_decimals: config.coordinateDecimals,
-      max_public_points: config.maxPublicPoints,
-      stale_minutes: config.staleMinutes,
-      allow_zero_coords: config.allowZeroCoords,
+      default_track_id: DEFAULT_TRACK_ID,
+      default_public_delay_minutes: integerEnv(env.PUBLIC_DELAY_MINUTES, DEFAULT_PUBLIC_DELAY_MINUTES),
+      max_public_points: integerEnv(env.MAX_PUBLIC_POINTS, DEFAULT_MAX_PUBLIC_POINTS),
+      stale_minutes: integerEnv(env.STALE_MINUTES, DEFAULT_STALE_MINUTES),
+      allow_zero_coords: booleanEnv(env.ALLOW_ZERO_COORDS),
       bounding_box: configuredBounds(env),
       cors_allowed_origins: allowedOrigins(env),
       trip_start_date: TRIP_START_DATE,
-      trip_end_date: TRIP_END_DATE,
-      public_window_start: PUBLIC_WINDOW_START,
-      public_window_end: PUBLIC_WINDOW_END,
-      static_route_cutoff: STATIC_ROUTE_CUTOFF
+      trip_end_date: TRIP_END_DATE
     }
   });
 }
@@ -185,12 +211,12 @@ async function exportCsv(request, env) {
   }
 
   const rows = await env.DB.prepare(
-    `SELECT id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
+    `SELECT id, track_id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
      FROM location_points
      ORDER BY recorded_at ASC`
   ).all();
 
-  const columns = ["id", "recorded_at", "received_at", "lat", "lon", "acc", "alt", "batt", "velocity", "raw_type", "source"];
+  const columns = ["id", "track_id", "recorded_at", "received_at", "lat", "lon", "acc", "alt", "batt", "velocity", "raw_type", "source"];
   const body = [
     columns.join(","),
     ...(rows.results || []).map((row) => columns.map((column) => csvCell(row[column])).join(","))
@@ -273,6 +299,66 @@ async function requestedViewPaths(request) {
   return [...new Set(rawPaths.map(normalizePagePath).filter(Boolean))].slice(0, 100);
 }
 
+function requestedTracks(url) {
+  const singleTrack = url.searchParams.get("track");
+  const multipleTracks = url.searchParams.get("tracks");
+  let requestedIds;
+
+  if (singleTrack !== null) {
+    requestedIds = [singleTrack.trim()];
+  } else if (multipleTracks !== null) {
+    requestedIds = multipleTracks.split(",").map((value) => value.trim()).filter(Boolean);
+  } else {
+    requestedIds = Object.keys(TRACKS);
+  }
+
+  const uniqueIds = [...new Set(requestedIds)];
+  if (uniqueIds.length === 0 || uniqueIds.some((trackId) => !TRACKS[trackId])) return null;
+  return uniqueIds.map((trackId) => TRACKS[trackId]);
+}
+
+async function publicTrackData(env, track) {
+  const config = trackConfig(track, env);
+  const windowStart = epochFromIso(track.publicWindowStart);
+  const windowEnd = epochFromIso(track.publicWindowEnd);
+  const cutoff = epochSeconds() - config.publicDelayMinutes * 60;
+  const publicEnd = Math.min(cutoff, windowEnd);
+  const effectiveStart = track.staticRouteCutoff
+    ? Math.max(windowStart, epochFromIso(track.staticRouteCutoff))
+    : windowStart;
+
+  if (publicEnd < effectiveStart) {
+    return buildTrackData(track, config, [], {
+      stored_count: 0,
+      latest_recorded_at: null,
+      latest_received_at: null
+    });
+  }
+
+  const summaryPromise = env.DB.prepare(
+    `SELECT COUNT(*) AS stored_count,
+            MAX(recorded_at) AS latest_recorded_at,
+            MAX(received_at) AS latest_received_at
+     FROM location_points
+     WHERE track_id = ?
+       AND recorded_at >= ?
+       AND recorded_at <= ?`
+  ).bind(track.id, effectiveStart, publicEnd).first();
+
+  const rowsPromise = env.DB.prepare(
+    `SELECT id, track_id, recorded_at, received_at, lat, lon, acc, alt, batt, velocity, raw_type, source
+     FROM location_points
+     WHERE track_id = ?
+       AND recorded_at >= ?
+       AND recorded_at <= ?
+     ORDER BY recorded_at DESC, id DESC
+     LIMIT ?`
+  ).bind(track.id, effectiveStart, publicEnd, config.maxPublicPoints).all();
+
+  const [summary, rows] = await Promise.all([summaryPromise, rowsPromise]);
+  return buildTrackData(track, config, (rows.results || []).reverse(), summary || {});
+}
+
 function publicRows(rows, config) {
   return filterRouteSpikes(rows.map((row) => ({
     ...row,
@@ -281,87 +367,151 @@ function publicRows(rows, config) {
   })), config);
 }
 
-function buildFeatureCollection(rows, config, stats = null) {
+function buildTrackData(track, config, rows, summary) {
   const roundedRows = publicRows(rows, config);
-  const routeStatsSummary = stats || routeStats(roundedRows);
-
   const latest = roundedRows[roundedRows.length - 1] || null;
-  const coordinates = roundedRows.map((row) => [row.lon, row.lat]);
-  const routeCoordinates = coordinates.length === 1 ? [coordinates[0], coordinates[0]] : coordinates;
-  const status = tripStatus(latest, config);
-
-  const sharedProperties = {
-    last_recorded_at: latest?.recorded_at ?? null,
-    received_at: latest?.received_at ?? null,
-    acc: latest?.acc ?? null,
-    batt: latest?.batt ?? null,
-    public_delay_minutes: config.publicDelayMinutes,
-    coordinate_decimals: config.coordinateDecimals,
-    point_count: roundedRows.length,
-    total_distance_miles: routeStatsSummary.totalDistanceMiles,
-    total_distance_kilometers: routeStatsSummary.totalDistanceKilometers,
-    foot_distance_miles: routeStatsSummary.footDistanceMiles,
-    foot_distance_kilometers: routeStatsSummary.footDistanceKilometers,
-    privacy_mode: privacyMode(config),
-    public_window_start: PUBLIC_WINDOW_START,
-    public_window_end: PUBLIC_WINDOW_END,
-    static_route_cutoff: STATIC_ROUTE_CUTOFF
-  };
-
   const features = [];
-  if (routeCoordinates.length > 0) {
+  const pointSpeeds = [null];
+  const easternTimeCache = new Map();
+  const easternTime = (epoch) => {
+    if (!easternTimeCache.has(epoch)) easternTimeCache.set(epoch, epochToEastern(epoch));
+    return easternTimeCache.get(epoch);
+  };
+  let totalDistanceKilometers = 0;
+  let footDistanceKilometers = 0;
+
+  for (let index = 1; index < roundedRows.length; index += 1) {
+    const previous = roundedRows[index - 1];
+    const current = roundedRows[index];
+    const distanceKilometers = distanceKm(previous, current);
+    const distanceMiles = kilometersToMiles(distanceKilometers);
+    const elapsedHours = (current.recorded_at - previous.recorded_at) / 3600;
+    const speedMph = elapsedHours > 0 ? roundStat(distanceMiles / elapsedHours) : null;
+    pointSpeeds.push(speedMph);
+    totalDistanceKilometers += distanceKilometers;
+    if (speedMph !== null && speedMph < 7) footDistanceKilometers += distanceKilometers;
+
     features.push({
       type: "Feature",
-      geometry: { type: "LineString", coordinates: routeCoordinates },
+      geometry: {
+        type: "LineString",
+        coordinates: [[previous.lon, previous.lat], [current.lon, current.lat]]
+      },
       properties: {
-        name: "Route",
-        kind: "route",
-        ...sharedProperties
+        kind: "route-segment",
+        track_id: track.id,
+        track_name: track.name,
+        segment_index: index - 1,
+        start_recorded_at: previous.recorded_at,
+        end_recorded_at: current.recorded_at,
+        start_time_eastern: easternTime(previous.recorded_at),
+        end_time_eastern: easternTime(current.recorded_at),
+        distance_miles: roundStat(distanceMiles),
+        speed_mph: speedMph,
+        color: track.color,
+        source: current.source || previous.source || "owntracks"
       }
     });
   }
+
+  roundedRows.forEach((row, index) => {
+    features.push({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [row.lon, row.lat] },
+      properties: {
+        kind: "route-point",
+        track_id: track.id,
+        track_name: track.name,
+        recorded_at: row.recorded_at,
+        time_eastern: easternTime(row.recorded_at),
+        speed_mph: pointSpeeds[index] ?? null,
+        raw_velocity: row.velocity ?? null,
+        acc: row.acc ?? null,
+        batt: row.batt ?? null,
+        color: track.color,
+        source: row.source || "owntracks"
+      }
+    });
+  });
 
   if (latest) {
     features.push({
       type: "Feature",
       geometry: { type: "Point", coordinates: [latest.lon, latest.lat] },
       properties: {
-        name: "Latest delayed location",
         kind: "latest",
+        track_id: track.id,
+        track_name: track.name,
         recorded_at: latest.recorded_at,
-        velocity: latest.velocity,
-        raw_type: latest.raw_type,
-        source: latest.source,
-        ...sharedProperties
+        time_eastern: easternTime(latest.recorded_at),
+        speed_mph: pointSpeeds[pointSpeeds.length - 1] ?? null,
+        raw_velocity: latest.velocity ?? null,
+        acc: latest.acc ?? null,
+        batt: latest.batt ?? null,
+        public_delay_minutes: config.publicDelayMinutes,
+        privacy_mode: privacyMode(config),
+        color: track.color,
+        source: latest.source || "owntracks"
       }
     });
   }
 
+  const elapsedHours = roundedRows.length > 1
+    ? (roundedRows[roundedRows.length - 1].recorded_at - roundedRows[0].recorded_at) / 3600
+    : 0;
+  const totalDistanceMiles = kilometersToMiles(totalDistanceKilometers);
+  const stats = {
+    totalDistanceMiles: roundStat(totalDistanceMiles),
+    totalDistanceKilometers: roundStat(totalDistanceKilometers),
+    footDistanceMiles: roundStat(kilometersToMiles(footDistanceKilometers)),
+    footDistanceKilometers: roundStat(footDistanceKilometers),
+    averageSpeedMph: elapsedHours > 0 ? roundStat(totalDistanceMiles / elapsedHours) : null
+  };
+
+  return {
+    features,
+    metadata: {
+      track_id: track.id,
+      track_name: track.name,
+      public_delay_minutes: config.publicDelayMinutes,
+      public_window_start: track.publicWindowStart,
+      public_window_end: track.publicWindowEnd,
+      stored_count: summary.stored_count ?? 0,
+      public_point_count: roundedRows.length,
+      latest_recorded_at: summary.latest_recorded_at ?? null,
+      latest_received_at: summary.latest_received_at ?? null,
+      latest_public_recorded_at: latest?.recorded_at ?? null,
+      total_distance_miles: stats.totalDistanceMiles,
+      total_distance_kilometers: stats.totalDistanceKilometers,
+      foot_distance_miles: stats.footDistanceMiles,
+      foot_distance_kilometers: stats.footDistanceKilometers,
+      average_speed_mph: stats.averageSpeedMph,
+      status: trackStatus(track, latest, config),
+      coordinate_decimals: config.coordinateDecimals,
+      color: track.color
+    }
+  };
+}
+
+function buildFeatureCollection(trackResults) {
+  const tracks = trackResults.map((result) => result.metadata);
+  const features = trackResults.flatMap((result) => result.features);
+  const latestRecordedAt = maxNullable(tracks.map((track) => track.latest_public_recorded_at));
+  const latestReceivedAt = maxNullable(tracks.map((track) => track.latest_received_at));
+  const pointCount = tracks.reduce((sum, track) => sum + track.public_point_count, 0);
+
   return {
     type: "FeatureCollection",
     properties: {
-      ...sharedProperties,
       generated_at: epochSeconds(),
-      status
+      point_count: pointCount
     },
     metadata: {
       generatedAt: new Date().toISOString(),
-      lastRecordedAt: latest ? epochToIso(latest.recorded_at) : null,
-      lastReceivedAt: latest ? epochToIso(latest.received_at) : null,
-      pointCount: roundedRows.length,
-      publicDelayMinutes: config.publicDelayMinutes,
-      coordinateDecimals: config.coordinateDecimals,
-      totalDistanceMiles: routeStatsSummary.totalDistanceMiles,
-      totalDistanceKilometers: routeStatsSummary.totalDistanceKilometers,
-      footDistanceMiles: routeStatsSummary.footDistanceMiles,
-      footDistanceKilometers: routeStatsSummary.footDistanceKilometers,
-      privacyMode: privacyMode(config),
-      feedStatus: status,
-      tripStartDate: TRIP_START_DATE,
-      tripEndDate: TRIP_END_DATE,
-      publicWindowStart: PUBLIC_WINDOW_START,
-      publicWindowEnd: PUBLIC_WINDOW_END,
-      staticRouteCutoff: STATIC_ROUTE_CUTOFF
+      lastRecordedAt: latestRecordedAt === null ? null : epochToIso(latestRecordedAt),
+      lastReceivedAt: latestReceivedAt === null ? null : epochToIso(latestReceivedAt),
+      pointCount,
+      tracks
     },
     features
   };
@@ -380,26 +530,33 @@ function routeStats(rows) {
     const elapsedHours = (current.recorded_at - previous.recorded_at) / 3600;
     if (elapsedHours > 0) {
       const segmentMiles = kilometersToMiles(segmentKilometers);
-      if (segmentMiles / elapsedHours < 7) {
-        footDistanceKilometers += segmentKilometers;
-      }
+      if (segmentMiles / elapsedHours < 7) footDistanceKilometers += segmentKilometers;
     }
   }
 
+  const elapsedHours = rows.length > 1
+    ? (rows[rows.length - 1].recorded_at - rows[0].recorded_at) / 3600
+    : 0;
+  const totalDistanceMiles = kilometersToMiles(totalDistanceKilometers);
+
   return {
-    totalDistanceMiles: roundStat(kilometersToMiles(totalDistanceKilometers)),
+    totalDistanceMiles: roundStat(totalDistanceMiles),
     totalDistanceKilometers: roundStat(totalDistanceKilometers),
     footDistanceMiles: roundStat(kilometersToMiles(footDistanceKilometers)),
-    footDistanceKilometers: roundStat(footDistanceKilometers)
+    footDistanceKilometers: roundStat(footDistanceKilometers),
+    averageSpeedMph: elapsedHours > 0 ? roundStat(totalDistanceMiles / elapsedHours) : null
   };
 }
 
-function tripStatus(latest, config) {
-  const tripEnd = new Date(PUBLIC_WINDOW_END).getTime();
-  if (Date.now() > tripEnd) return "trip_complete";
-  if (!latest) return "stale";
+function trackStatus(track, latest, config) {
+  const now = epochSeconds();
+  const windowStart = epochFromIso(track.publicWindowStart);
+  const windowEnd = epochFromIso(track.publicWindowEnd);
+  if (now < windowStart) return "scheduled";
+  if (now > windowEnd + config.publicDelayMinutes * 60) return "trip_complete";
+  if (!latest) return "waiting_for_delay";
 
-  const latestAgeMinutes = (epochSeconds() - latest.recorded_at) / 60;
+  const latestAgeMinutes = (now - latest.recorded_at) / 60;
   if (latestAgeMinutes > config.publicDelayMinutes + config.staleMinutes) return "stale";
   return config.publicDelayMinutes > 0 || config.coordinateDecimals <= 3 ? "delayed" : "live";
 }
@@ -471,10 +628,15 @@ function configuredBounds(env) {
   };
 }
 
-function publicConfig(env) {
+function trackConfig(track, env) {
   return {
-    publicDelayMinutes: integerEnv(env.PUBLIC_DELAY_MINUTES, DEFAULT_PUBLIC_DELAY_MINUTES),
-    coordinateDecimals: clamp(integerEnv(env.COORDINATE_DECIMALS, DEFAULT_COORDINATE_DECIMALS), 0, 6),
+    publicDelayMinutes: track.publicDelayMinutes
+      ?? integerEnv(env.PUBLIC_DELAY_MINUTES, DEFAULT_PUBLIC_DELAY_MINUTES),
+    coordinateDecimals: clamp(
+      track.coordinateDecimals ?? integerEnv(env.COORDINATE_DECIMALS, DEFAULT_COORDINATE_DECIMALS),
+      0,
+      6
+    ),
     maxPublicPoints: integerEnv(env.MAX_PUBLIC_POINTS, DEFAULT_MAX_PUBLIC_POINTS),
     staleMinutes: integerEnv(env.STALE_MINUTES, DEFAULT_STALE_MINUTES),
     maxSpikeDistanceKm: numberEnv(env.MAX_SPIKE_DISTANCE_KM, DEFAULT_MAX_SPIKE_DISTANCE_KM),
@@ -702,6 +864,17 @@ function epochFromIso(value) {
 
 function epochToIso(value) {
   return new Date(value * 1000).toISOString();
+}
+
+function epochToEastern(value) {
+  const parts = EASTERN_TIME_FORMATTER.formatToParts(new Date(value * 1000));
+  const part = (type) => parts.find((item) => item.type === type)?.value || "";
+  return `${part("year")}-${part("month")}-${part("day")} ${part("hour")}:${part("minute")} ET`;
+}
+
+function maxNullable(values) {
+  const numbers = values.filter((value) => Number.isFinite(value));
+  return numbers.length > 0 ? Math.max(...numbers) : null;
 }
 
 function csvCell(value) {

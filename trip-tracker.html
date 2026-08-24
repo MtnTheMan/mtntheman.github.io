@@ -56,27 +56,61 @@ permalink: /trip-tracker/
 <h1>Trip Tracker</h1>
 
 <p>
-  Final road-trip tracker for May 17-June 22, 2026. For privacy, the map
-  uses the delayed and generalized public route with the final home-area
-  points removed.
+  The map keeps the final NHR Megatrip 2026 archive visible alongside the
+  Maine August Trip. Maine locations are published only after a 15-hour
+  privacy delay and are rounded before display.
 </p>
 
 <section class="tracker-status" aria-live="polite">
   <p><strong>Status:</strong> <span id="tracker-feed-status">Loading...</span></p>
   <p><strong>Last published location:</strong> <span id="tracker-last-update">Loading...</span></p>
-  <p><strong>Last report received:</strong> <span id="tracker-last-received">Loading...</span></p>
+  <p><strong>Latest public report received:</strong> <span id="tracker-last-received">Loading...</span></p>
   <p><strong>Privacy mode:</strong> <span id="tracker-privacy-mode">Loading...</span></p>
   <p><strong>Points shown:</strong> <span id="tracker-point-count">Loading...</span></p>
+  <ul id="tracker-track-statuses" class="tracker-track-statuses">
+    <li>NHR Megatrip 2026: loading archive...</li>
+    <li>Maine August Trip: loading delayed public feed...</li>
+  </ul>
   <button id="tracker-recenter" class="tracker-button" type="button">Recenter on latest</button>
+</section>
+
+<fieldset class="tracker-legend" aria-label="Track visibility">
+  <legend>Routes</legend>
+  <label>
+    <input type="checkbox" data-track-toggle value="nhr-megatrip-2026" checked />
+    <span class="tracker-swatch tracker-swatch-nhr" aria-hidden="true"></span>
+    NHR Megatrip 2026
+  </label>
+  <label>
+    <input type="checkbox" data-track-toggle value="maine-august-trip" checked />
+    <span class="tracker-swatch tracker-swatch-maine" aria-hidden="true"></span>
+    Maine August Trip
+  </label>
+</fieldset>
+
+<section id="tracker-detail" class="tracker-detail" aria-live="polite" aria-label="Selected route detail">
+  <strong>Route details</strong>
+  <p>Hover over a route on desktop, or tap/click a point or segment to keep its details here.</p>
 </section>
 
 <div id="trip-map" class="trip-map" role="application" aria-label="Trip tracker map"></div>
 
 <p class="tracker-note">
-  This is the finalized public route after the trip concluded.
+  Markers are delayed public locations, not real-time positions. Times are shown in Eastern Time;
+  speeds are approximate and calculated between consecutive published points.
 </p>
 
-<section class="tracker-ticker" aria-label="Trip tracker counters">
+<section class="tracker-live-stats" aria-labelledby="maine-stats-heading">
+  <h2 id="maine-stats-heading">Maine August Trip stats</h2>
+  <div class="tracker-live-stats-grid">
+    <p><strong>Public points</strong> <span id="maine-public-points">Waiting...</span></p>
+    <p><strong>Public distance</strong> <span id="maine-public-distance">Waiting...</span></p>
+    <p><strong>Public miles on foot</strong> <span id="maine-foot-distance">Waiting...</span></p>
+    <p><strong>Average speed</strong> <span id="maine-average-speed">Waiting...</span></p>
+  </div>
+</section>
+
+<section class="tracker-ticker" aria-label="Final NHR trip counters">
   <p><strong>Total distance covered</strong> <span id="tracker-total-distance">Loading...</span></p>
   <p><strong>Miles on foot</strong> <span id="tracker-foot-distance">Loading...</span></p>
   <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">16</span></p>
@@ -109,6 +143,13 @@ permalink: /trip-tracker/
 <script>
   (function () {
     var archiveUrl = "{{ '/assets/data/trip-route-final.geojson' | relative_url }}";
+    var defaultApiBaseUrl = "https://mtntheman-trip-tracker.mtntheman.workers.dev";
+    var apiBaseUrl = String(window.TRIP_TRACKER_API_BASE_URL || defaultApiBaseUrl).replace(/\/$/, "");
+    var liveGeoJsonUrl = apiBaseUrl + "/api/tracker/geojson";
+    var trackDefinitions = {
+      "nhr-megatrip-2026": { name: "NHR Megatrip 2026", color: "#00ff66" },
+      "maine-august-trip": { name: "Maine August Trip", color: "#5ab0ff" }
+    };
     var finalStats = {
       ticksIntercepted: 16,
       fianceCalls: 88,
@@ -119,16 +160,19 @@ permalink: /trip-tracker/
       trees: "Countless",
       carLockouts: 1
     };
-    var tripEnd = new Date("2026-06-22T23:59:59-04:00").getTime();
+    var visibleTracks = new Set(Object.keys(trackDefinitions));
+    var emptyGeoJson = { type: "FeatureCollection", features: [] };
+    var archivedGeoJson = emptyGeoJson;
+    var liveGeoJson = emptyGeoJson;
+    var archiveLoaded = false;
+    var liveLoaded = false;
+    var liveLoadFailed = false;
     var fittedOnce = false;
+    var hoveredFeatureId = null;
+    var pinnedFeature = null;
     var latestLngLat = null;
-    var archivedGeoJson = null;
-    var liveGeoJson = null;
-
-    var emptyGeoJson = {
-      type: "FeatureCollection",
-      features: []
-    };
+    var hoverPopup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10 });
+    var pinnedPopup = new maplibregl.Popup({ closeButton: true, closeOnClick: false, offset: 12 });
 
     var map = new maplibregl.Map({
       container: "trip-map",
@@ -149,13 +193,7 @@ permalink: /trip-tracker/
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           }
         },
-        layers: [
-          {
-            id: "osm",
-            type: "raster",
-            source: "osm"
-          }
-        ]
+        layers: [{ id: "osm", type: "raster", source: "osm" }]
       }
     });
 
@@ -166,22 +204,42 @@ permalink: /trip-tracker/
       map.addSource("tracker", {
         type: "geojson",
         tolerance: 0,
+        generateId: true,
         data: emptyGeoJson
       });
 
       map.addLayer({
-        id: "tracker-route",
+        id: "tracker-route-segments",
         type: "line",
         source: "tracker",
-        filter: ["==", ["get", "kind"], "route-segment"],
-        layout: {
-          "line-cap": "round",
-          "line-join": "round"
-        },
+        filter: featureFilter("route-segment"),
+        layout: { "line-cap": "round", "line-join": "round" },
         paint: {
-          "line-color": ["get", "color"],
-          "line-width": ["interpolate", ["linear"], ["zoom"], 3, 3.5, 8, 5.5],
+          "line-color": ["coalesce", ["get", "color"], "#00ff66"],
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            3,
+            ["case", ["boolean", ["feature-state", "hover"], false], 8, 3.5],
+            8,
+            ["case", ["boolean", ["feature-state", "hover"], false], 10, 5.5]
+          ],
           "line-opacity": 0.95
+        }
+      });
+
+      map.addLayer({
+        id: "tracker-route-points",
+        type: "circle",
+        source: "tracker",
+        filter: featureFilter("route-point"),
+        paint: {
+          "circle-radius": ["case", ["boolean", ["feature-state", "hover"], false], 7, 3.5],
+          "circle-color": ["coalesce", ["get", "color"], "#ffffff"],
+          "circle-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.95, 0.48],
+          "circle-stroke-color": "#1d1d08",
+          "circle-stroke-width": 1
         }
       });
 
@@ -189,72 +247,401 @@ permalink: /trip-tracker/
         id: "tracker-latest",
         type: "circle",
         source: "tracker",
-        filter: ["==", ["get", "kind"], "latest"],
+        filter: featureFilter("latest"),
         paint: {
-          "circle-radius": 8,
-          "circle-color": "#ffff00",
-          "circle-stroke-color": "#333300",
-          "circle-stroke-width": 2
+          "circle-radius": ["case", ["boolean", ["feature-state", "hover"], false], 11, 8],
+          "circle-color": ["coalesce", ["get", "color"], "#ffff00"],
+          "circle-stroke-color": "#ffff00",
+          "circle-stroke-width": 3
         }
       });
 
-      map.on("click", "tracker-latest", function (event) {
-        var feature = event.features && event.features[0];
-        if (!feature) return;
-        new maplibregl.Popup()
-          .setLngLat(feature.geometry.coordinates)
-          .setText("Latest published location")
-          .addTo(map);
-      });
+      ["tracker-route-segments", "tracker-route-points", "tracker-latest"].forEach(bindInteractions);
+      loadRoutes();
+    });
 
-      map.on("mouseenter", "tracker-latest", function () {
+    function featureFilter(kind) {
+      return [
+        "all",
+        ["==", ["get", "kind"], kind],
+        ["in", ["get", "track_id"], ["literal", Array.from(visibleTracks)]]
+      ];
+    }
+
+    function bindInteractions(layerId) {
+      map.on("mouseenter", layerId, function () {
         map.getCanvas().style.cursor = "pointer";
       });
 
-      map.on("mouseleave", "tracker-latest", function () {
-        map.getCanvas().style.cursor = "";
+      map.on("mousemove", layerId, function (event) {
+        var feature = event.features && event.features[0];
+        if (!feature) return;
+        setHoveredFeature(feature);
+        if (!pinnedFeature) renderDetail(feature, false);
+        hoverPopup
+          .setLngLat(feature.geometry.type === "Point" ? feature.geometry.coordinates : event.lngLat)
+          .setDOMContent(buildDetailNode(feature, true))
+          .addTo(map);
       });
 
-      loadArchivedRoute();
-    });
+      map.on("mouseleave", layerId, function () {
+        map.getCanvas().style.cursor = "";
+        clearHoveredFeature();
+        hoverPopup.remove();
+        if (pinnedFeature) renderDetail(pinnedFeature, true);
+        else renderDetail(null, false);
+      });
 
-    window.setTimeout(function () {
-      map.resize();
-    }, 0);
-
-    function updateTrackerSource() {
-      var source = map.getSource("tracker");
-      if (!source) return;
-      source.setData(combinedTrackerGeoJson());
+      map.on("click", layerId, function (event) {
+        var feature = event.features && event.features[0];
+        if (!feature) return;
+        pinnedFeature = feature;
+        hoverPopup.remove();
+        renderDetail(feature, true);
+        pinnedPopup
+          .setLngLat(feature.geometry.type === "Point" ? feature.geometry.coordinates : event.lngLat)
+          .setDOMContent(buildDetailNode(feature, true))
+          .addTo(map);
+      });
     }
 
-    function combinedTrackerGeoJson() {
-      var archivedFeatures = archivedGeoJson && archivedGeoJson.features ? archivedGeoJson.features : [];
-      var liveFeatures = liveGeoJson && liveGeoJson.features ? liveGeoJson.features : [];
+    function setHoveredFeature(feature) {
+      if (hoveredFeatureId === feature.id) return;
+      clearHoveredFeature();
+      if (feature.id === undefined || feature.id === null) return;
+      hoveredFeatureId = feature.id;
+      map.setFeatureState({ source: "tracker", id: hoveredFeatureId }, { hover: true });
+    }
+
+    function clearHoveredFeature() {
+      if (hoveredFeatureId === null) return;
+      try {
+        map.setFeatureState({ source: "tracker", id: hoveredFeatureId }, { hover: false });
+      } catch (error) {
+        // Source data may have refreshed while the pointer was moving.
+      }
+      hoveredFeatureId = null;
+    }
+
+    function loadRoutes() {
+      Promise.all([
+        fetchJson(archiveUrl)
+          .then(function (geojson) {
+            archivedGeoJson = normalizeArchivedGeoJson(geojson || emptyGeoJson);
+            archiveLoaded = true;
+            updateFinalTicker(geojson && geojson.metadata ? geojson.metadata : {});
+          })
+          .catch(function () {
+            archivedGeoJson = emptyGeoJson;
+          }),
+        fetchJson(liveGeoJsonUrl)
+          .then(function (geojson) {
+            liveGeoJson = normalizeLiveGeoJson(geojson || emptyGeoJson);
+            liveLoaded = true;
+          })
+          .catch(function () {
+            liveGeoJson = emptyGeoJson;
+            liveLoadFailed = true;
+          })
+      ]).then(function () {
+        updateTrackerSource();
+        updateStatus();
+        updateMaineStats();
+        updateLatestLngLat();
+        fitRouteOnce(combinedTrackerGeoJson());
+      });
+    }
+
+    function fetchJson(url) {
+      return fetch(url, { cache: "no-store" }).then(function (response) {
+        if (!response.ok) throw new Error(url + " returned " + response.status);
+        return response.json();
+      });
+    }
+
+    function normalizeArchivedGeoJson(geojson) {
+      var normalized = [];
+      var features = geojson && geojson.features ? geojson.features : [];
+      var latestSegmentSpeed = null;
+
+      features.forEach(function (feature) {
+        var properties = feature.properties || {};
+        if (properties.kind === "route-segment") {
+          var start = finiteNumber(properties.start_recorded_at);
+          if (start === null) start = finiteNumber(properties.recorded_at_start);
+          var end = finiteNumber(properties.end_recorded_at);
+          if (end === null) end = finiteNumber(properties.recorded_at_end);
+          var distanceMiles = segmentDistanceMiles(feature.geometry && feature.geometry.coordinates);
+          var elapsedHours = start !== null && end !== null ? (end - start) / 3600 : 0;
+          var speedMph = elapsedHours > 0 && distanceMiles !== null ? roundOne(distanceMiles / elapsedHours) : null;
+          latestSegmentSpeed = speedMph;
+          normalized.push({
+            type: "Feature",
+            geometry: feature.geometry,
+            properties: Object.assign({}, properties, {
+              kind: "route-segment",
+              track_id: "nhr-megatrip-2026",
+              track_name: "NHR Megatrip 2026",
+              start_recorded_at: start,
+              end_recorded_at: end,
+              distance_miles: distanceMiles === null ? null : roundOne(distanceMiles),
+              speed_mph: speedMph,
+              color: properties.color || trackDefinitions["nhr-megatrip-2026"].color,
+              source: "archived"
+            })
+          });
+        } else if (properties.kind === "latest") {
+          normalized.push({
+            type: "Feature",
+            geometry: feature.geometry,
+            properties: Object.assign({}, properties, {
+              kind: "latest",
+              track_id: "nhr-megatrip-2026",
+              track_name: "NHR Megatrip 2026",
+              speed_mph: latestSegmentSpeed,
+              color: trackDefinitions["nhr-megatrip-2026"].color,
+              source: "archived"
+            })
+          });
+        }
+      });
+
       return {
         type: "FeatureCollection",
-        properties: liveGeoJson && liveGeoJson.properties ? liveGeoJson.properties : {},
-        metadata: liveGeoJson && liveGeoJson.metadata ? liveGeoJson.metadata : {},
-        features: archivedFeatures.concat(liveFeatures)
+        metadata: geojson.metadata || {},
+        properties: geojson.properties || {},
+        features: normalized
       };
     }
 
-    function getLatestLngLat(geojson) {
-      var features = geojson && geojson.features ? geojson.features : [];
-      for (var i = 0; i < features.length; i += 1) {
-        if (features[i].properties && features[i].properties.kind === "latest") {
-          return features[i].geometry.coordinates;
-        }
+    function normalizeLiveGeoJson(geojson) {
+      var features = (geojson.features || []).filter(function (feature) {
+        var kind = feature.properties && feature.properties.kind;
+        return kind === "route-segment" || kind === "route-point" || kind === "latest";
+      }).map(function (feature) {
+        var properties = Object.assign({}, feature.properties || {});
+        var definition = trackDefinitions[properties.track_id] || {};
+        properties.track_name = properties.track_name || definition.name || properties.track_id || "Route";
+        properties.color = properties.color || definition.color || "#ffffff";
+        properties.source = properties.source || "owntracks";
+        return { type: "Feature", geometry: feature.geometry, properties: properties };
+      });
+
+      return {
+        type: "FeatureCollection",
+        metadata: geojson.metadata || {},
+        properties: geojson.properties || {},
+        features: features
+      };
+    }
+
+    function combinedTrackerGeoJson() {
+      return {
+        type: "FeatureCollection",
+        features: (archivedGeoJson.features || []).concat(liveGeoJson.features || [])
+      };
+    }
+
+    function updateTrackerSource() {
+      clearHoveredFeature();
+      var source = map.getSource("tracker");
+      if (source) source.setData(combinedTrackerGeoJson());
+      applyTrackFilters();
+    }
+
+    function applyTrackFilters() {
+      [
+        ["tracker-route-segments", "route-segment"],
+        ["tracker-route-points", "route-point"],
+        ["tracker-latest", "latest"]
+      ].forEach(function (entry) {
+        if (map.getLayer(entry[0])) map.setFilter(entry[0], featureFilter(entry[1]));
+      });
+    }
+
+    function renderDetail(feature, pinned) {
+      var panel = document.getElementById("tracker-detail");
+      if (!panel) return;
+      panel.replaceChildren(buildDetailNode(feature, false, pinned));
+    }
+
+    function buildDetailNode(feature, compact, pinned) {
+      var wrapper = document.createElement("div");
+      wrapper.className = compact ? "tracker-popup-detail" : "tracker-detail-content";
+      if (!feature) {
+        var heading = document.createElement("strong");
+        heading.textContent = "Route details";
+        var instruction = document.createElement("p");
+        instruction.textContent = "Hover over a route on desktop, or tap/click a point or segment to keep its details here.";
+        wrapper.append(heading, instruction);
+        return wrapper;
+      }
+
+      var properties = feature.properties || {};
+      var title = document.createElement("strong");
+      title.textContent = pinned ? "Pinned route detail" : "Route detail";
+      wrapper.appendChild(title);
+      appendDetailRow(wrapper, "Route", properties.track_name || "Route");
+
+      if (properties.kind === "route-segment") {
+        var start = detailTime(properties.start_recorded_at, properties.start_time_eastern);
+        var end = detailTime(properties.end_recorded_at, properties.end_time_eastern);
+        appendDetailRow(
+          wrapper,
+          "Segment",
+          start && end ? start + " to " + end : "Time unavailable for this archived segment"
+        );
+        appendDetailRow(wrapper, "Speed", speedLabel(properties.speed_mph));
+        appendDetailRow(wrapper, "Distance", distanceLabel(properties.distance_miles));
+      } else {
+        var time = detailTime(properties.recorded_at, properties.time_eastern);
+        appendDetailRow(wrapper, "Time", time || "Time unavailable for this archived point");
+        appendDetailRow(wrapper, "Speed", speedLabel(properties.speed_mph));
+        var accuracy = finiteNumber(properties.acc);
+        if (accuracy !== null) appendDetailRow(wrapper, "Accuracy", formatNumber(accuracy, 0) + " m");
+      }
+
+      appendDetailRow(wrapper, "Source", sourceLabel(properties.source));
+      return wrapper;
+    }
+
+    function appendDetailRow(wrapper, label, value) {
+      var row = document.createElement("p");
+      var strong = document.createElement("strong");
+      strong.textContent = label + ": ";
+      row.append(strong, document.createTextNode(value));
+      wrapper.appendChild(row);
+    }
+
+    function detailTime(epoch, fallback) {
+      var value = finiteNumber(epoch);
+      if (value !== null) return formatEastern(value);
+      return typeof fallback === "string" && fallback ? fallback : null;
+    }
+
+    function speedLabel(value) {
+      var speed = finiteNumber(value);
+      return speed === null ? "Speed unavailable" : formatNumber(speed, 1) + " mph";
+    }
+
+    function distanceLabel(value) {
+      var distance = finiteNumber(value);
+      return distance === null ? "Distance unavailable" : formatNumber(distance, 1) + " mi";
+    }
+
+    function sourceLabel(source) {
+      var normalized = String(source || "").toLowerCase();
+      if (normalized.indexOf("archive") !== -1 || normalized.indexOf("static") !== -1) return "Archived/static";
+      if (normalized.indexOf("owntracks") !== -1) return "OwnTracks (delayed public data)";
+      return source ? String(source) : "Source unavailable";
+    }
+
+    function updateStatus() {
+      var liveMetadata = liveGeoJson.metadata || {};
+      var tracks = Array.isArray(liveMetadata.tracks) ? liveMetadata.tracks : [];
+      var maine = findTrackMetadata(tracks, "maine-august-trip");
+      setText(
+        "tracker-feed-status",
+        liveLoadFailed ? "NHR archive loaded; delayed live feed unavailable" : "NHR archive plus 15-hour-delayed Maine public feed"
+      );
+
+      var latestPublished = maxEpoch([
+        isoToEpoch(archivedGeoJson.metadata && archivedGeoJson.metadata.lastRecordedAt),
+        maxTrackValue(tracks, "latest_public_recorded_at")
+      ]);
+      var latestReceived = maxEpoch([
+        isoToEpoch(archivedGeoJson.metadata && archivedGeoJson.metadata.lastReceivedAt),
+        maxTrackValue(tracks, "latest_received_at")
+      ]);
+      setText("tracker-last-update", latestPublished === null ? "No published points yet" : formatEastern(latestPublished));
+      setText("tracker-last-received", latestReceived === null ? "No public reports yet" : formatEastern(latestReceived));
+      setText("tracker-privacy-mode", "NHR final archive; Maine delayed 15 hours and rounded to 3 decimals");
+
+      var archivePointCount = finiteNumber(archivedGeoJson.metadata && archivedGeoJson.metadata.pointCount) || 0;
+      var livePointCount = finiteNumber(liveMetadata.pointCount) || 0;
+      setText("tracker-point-count", String(archivePointCount + livePointCount));
+      updateTrackStatusList(maine);
+    }
+
+    function updateTrackStatusList(maine) {
+      var list = document.getElementById("tracker-track-statuses");
+      if (!list) return;
+      list.replaceChildren();
+      appendStatus(list, "NHR Megatrip 2026: final/archive route plus delayed public data");
+
+      var maineText;
+      if (liveLoadFailed) {
+        maineText = "Maine August Trip: delayed public feed unavailable";
+      } else if (!maine) {
+        maineText = "Maine August Trip: waiting for delayed public feed metadata";
+      } else if (maine.status === "scheduled") {
+        maineText = "Maine August Trip: scheduled; public route will be delayed 15 hours";
+      } else if ((finiteNumber(maine.public_point_count) || 0) === 0) {
+        maineText = "Maine August Trip: receiving points, waiting for 15-hour privacy delay";
+      } else if (maine.status === "trip_complete") {
+        maineText = "Maine August Trip: trip complete; published route remained delayed 15 hours";
+      } else {
+        maineText = "Maine August Trip: receiving points; public route delayed 15 hours";
+      }
+      appendStatus(list, maineText);
+    }
+
+    function appendStatus(list, text) {
+      var item = document.createElement("li");
+      item.textContent = text;
+      list.appendChild(item);
+    }
+
+    function updateMaineStats() {
+      var tracks = liveGeoJson.metadata && Array.isArray(liveGeoJson.metadata.tracks)
+        ? liveGeoJson.metadata.tracks
+        : [];
+      var maine = findTrackMetadata(tracks, "maine-august-trip");
+      if (!maine) {
+        setText("maine-public-points", liveLoadFailed ? "Feed unavailable" : "Waiting...");
+        setText("maine-public-distance", "Waiting...");
+        setText("maine-foot-distance", "Waiting...");
+        setText("maine-average-speed", "Waiting...");
+        return;
+      }
+
+      setText("maine-public-points", String(finiteNumber(maine.public_point_count) || 0));
+      setText("maine-public-distance", formatDistance(maine.total_distance_miles, maine.total_distance_kilometers, 1));
+      setText("maine-foot-distance", formatDistance(maine.foot_distance_miles, maine.foot_distance_kilometers, 1));
+      var averageSpeed = finiteNumber(maine.average_speed_mph);
+      setText("maine-average-speed", averageSpeed === null ? "Not enough public points" : formatNumber(averageSpeed, 1) + " mph");
+    }
+
+    function findTrackMetadata(tracks, trackId) {
+      for (var index = 0; index < tracks.length; index += 1) {
+        if (tracks[index].track_id === trackId) return tracks[index];
       }
       return null;
     }
 
-    function routeBounds(geojson) {
-      var features = geojson && geojson.features ? geojson.features : [];
-      var bounds = null;
+    function maxTrackValue(tracks, property) {
+      return maxEpoch(tracks.map(function (track) { return finiteNumber(track[property]); }));
+    }
 
-      features.forEach(function (feature) {
-        if (!feature.geometry) return;
+    function updateLatestLngLat() {
+      latestLngLat = null;
+      var latestEpoch = null;
+      combinedTrackerGeoJson().features.forEach(function (feature) {
+        var properties = feature.properties || {};
+        if (properties.kind !== "latest" || !visibleTracks.has(properties.track_id)) return;
+        var recordedAt = finiteNumber(properties.recorded_at);
+        if (latestLngLat === null || (recordedAt !== null && (latestEpoch === null || recordedAt > latestEpoch))) {
+          latestLngLat = feature.geometry.coordinates;
+          latestEpoch = recordedAt;
+        }
+      });
+      document.getElementById("tracker-recenter").disabled = !latestLngLat;
+    }
+
+    function routeBounds(geojson) {
+      var bounds = null;
+      (geojson.features || []).forEach(function (feature) {
+        if (!feature.geometry || !visibleTracks.has(feature.properties && feature.properties.track_id)) return;
         if (feature.geometry.type === "LineString") {
           feature.geometry.coordinates.forEach(function (coordinate) {
             bounds = extendBounds(bounds, coordinate);
@@ -263,18 +650,7 @@ permalink: /trip-tracker/
           bounds = extendBounds(bounds, feature.geometry.coordinates);
         }
       });
-
       return bounds;
-    }
-
-    function routeHasArea(geojson) {
-      var bounds = routeBounds(geojson);
-      if (!bounds || bounds.isEmpty()) return false;
-      var west = bounds.getWest();
-      var east = bounds.getEast();
-      var south = bounds.getSouth();
-      var north = bounds.getNorth();
-      return Math.abs(east - west) > 0.01 || Math.abs(north - south) > 0.01;
     }
 
     function extendBounds(bounds, coordinate) {
@@ -289,103 +665,91 @@ permalink: /trip-tracker/
       var bounds = routeBounds(geojson);
       if (!bounds || bounds.isEmpty()) return;
       map.resize();
-
-      if (!routeHasArea(geojson)) {
-        map.easeTo({
-          center: bounds.getCenter(),
-          zoom: 6,
-          duration: 0
-        });
-        fittedOnce = true;
-        return;
+      var hasArea = Math.abs(bounds.getEast() - bounds.getWest()) > 0.01
+        || Math.abs(bounds.getNorth() - bounds.getSouth()) > 0.01;
+      if (!hasArea) {
+        map.easeTo({ center: bounds.getCenter(), zoom: 6, duration: 0 });
+      } else {
+        map.fitBounds(bounds, { padding: 40, maxZoom: 11, duration: 0 });
       }
-
-      map.fitBounds(bounds, {
-        padding: 40,
-        maxZoom: 11,
-        duration: 0
-      });
       fittedOnce = true;
     }
 
-    function setText(id, value) {
-      var el = document.getElementById(id);
-      if (el) el.textContent = value;
+    function segmentDistanceMiles(coordinates) {
+      if (!Array.isArray(coordinates) || coordinates.length < 2) return null;
+      var first = coordinates[0];
+      var second = coordinates[coordinates.length - 1];
+      if (!Array.isArray(first) || !Array.isArray(second)) return null;
+      var earthRadiusMiles = 3958.7613;
+      var lat1 = degreesToRadians(first[1]);
+      var lat2 = degreesToRadians(second[1]);
+      var deltaLat = degreesToRadians(second[1] - first[1]);
+      var deltaLon = degreesToRadians(second[0] - first[0]);
+      var a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2)
+        + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+      return 2 * earthRadiusMiles * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    function relativeTime(isoTime) {
-      if (!isoTime) return "No published points yet";
-      var then = new Date(isoTime).getTime();
-      if (Number.isNaN(then)) return isoTime;
-      var seconds = Math.max(0, Math.round((Date.now() - then) / 1000));
-      if (seconds < 90) return "about a minute ago";
-      var minutes = Math.round(seconds / 60);
-      if (minutes < 90) return minutes + " minutes ago";
-      var hours = Math.round(minutes / 60);
-      if (hours < 48) return hours + " hours ago";
-      var days = Math.round(hours / 24);
-      return days + " days ago";
+    function degreesToRadians(value) {
+      return value * Math.PI / 180;
     }
 
-    function routePointCount(geojson) {
-      var features = geojson && geojson.features ? geojson.features : [];
-      for (var i = 0; i < features.length; i += 1) {
-        if (features[i].properties && features[i].properties.kind === "route") {
-          var coordinates = features[i].geometry && features[i].geometry.coordinates;
-          if (Array.isArray(coordinates)) return coordinates.length;
-        }
-      }
-      return 0;
+    function finiteNumber(value) {
+      if (value === null || value === undefined || value === "") return null;
+      var number = Number(value);
+      return Number.isFinite(number) ? number : null;
     }
 
-    function displayedPointCount() {
-      return routePointCount(archivedGeoJson) + routePointCount(liveGeoJson);
+    function roundOne(value) {
+      return Math.round(value * 10) / 10;
     }
 
-    function updateStatus(metadata) {
-      setText("tracker-feed-status", statusLabel(metadata.feedStatus, metadata));
-      setText("tracker-last-update", metadata.lastRecordedAt ? relativeTime(metadata.lastRecordedAt) : "No published points yet");
-      setText("tracker-privacy-mode", privacyLabel(metadata));
-      setText("tracker-point-count", String(displayedPointCount() || metadata.pointCount || 0));
-    }
-
-    function statusLabel(status, metadata) {
-      var delayLabel = formatDuration(metadata && metadata.publicDelayMinutes);
-      if (Date.now() > tripEnd || status === "trip_complete") return "Trip complete";
-      if (status === "delayed") return delayLabel ? "Live, delayed " + delayLabel + " for privacy" : "Live, delayed for privacy";
-      if (status === "live") return "Live";
-      if (status === "stale") return delayLabel ? "Stale or waiting for " + delayLabel + " delayed points" : "Stale or waiting for delayed points";
-      return status || "unknown";
-    }
-
-    function privacyLabel(metadata) {
-      var delay = metadata.publicDelayMinutes;
-      var decimals = metadata.coordinateDecimals;
-      if (delay === undefined || decimals === undefined) return "delayed and generalized";
-      return "delayed " + formatDuration(delay) + ", rounded to " + decimals + " decimals";
-    }
-
-    function formatDuration(minutes) {
-      if (minutes === undefined || minutes === null) return "";
-      if (minutes > 0 && minutes % 1440 === 0) {
-        var days = minutes / 1440;
-        return days + " " + (days === 1 ? "day" : "days");
-      }
-      if (minutes > 0 && minutes % 60 === 0) {
-        var hours = minutes / 60;
-        return hours + " " + (hours === 1 ? "hour" : "hours");
-      }
-      return minutes + " " + (minutes === 1 ? "minute" : "minutes");
+    function formatNumber(value, digits) {
+      return Number(value).toLocaleString(undefined, {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      });
     }
 
     function formatDistance(miles, kilometers, digits) {
-      if (!Number.isFinite(miles) || !Number.isFinite(kilometers)) return "Calculating...";
-      var options = { minimumFractionDigits: digits, maximumFractionDigits: digits };
-      return miles.toLocaleString(undefined, options) + " mi ("
-        + kilometers.toLocaleString(undefined, options) + " km)";
+      var milesNumber = finiteNumber(miles);
+      var kilometersNumber = finiteNumber(kilometers);
+      if (milesNumber === null || kilometersNumber === null) return "Not enough public points";
+      return formatNumber(milesNumber, digits) + " mi (" + formatNumber(kilometersNumber, digits) + " km)";
     }
 
-    function updateTicker() {
+    function isoToEpoch(value) {
+      if (!value) return null;
+      var milliseconds = new Date(value).getTime();
+      return Number.isFinite(milliseconds) ? Math.floor(milliseconds / 1000) : null;
+    }
+
+    function maxEpoch(values) {
+      var numbers = values.filter(function (value) { return Number.isFinite(value); });
+      return numbers.length ? Math.max.apply(Math, numbers) : null;
+    }
+
+    function formatEastern(epoch) {
+      var date = new Date(epoch * 1000);
+      if (Number.isNaN(date.getTime())) return null;
+      return new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      }).format(date) + " ET";
+    }
+
+    function setText(id, value) {
+      var element = document.getElementById(id);
+      if (element) element.textContent = value;
+    }
+
+    function updateFinalTicker(metadata) {
+      setText("tracker-total-distance", formatDistance(metadata.totalDistanceMiles, metadata.totalDistanceKilometers, 1));
+      setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers, 1));
       setText("tracker-tick-count", String(finalStats.ticksIntercepted));
       setText("tracker-fiance-call-count", String(finalStats.fianceCalls));
       setText("tracker-trip-percent", finalStats.tripCompleted);
@@ -396,49 +760,26 @@ permalink: /trip-tracker/
       setText("tracker-lockout-count", String(finalStats.carLockouts));
     }
 
-    function updateFinalTicker(metadata) {
-      if (metadata) {
-        setText("tracker-total-distance", formatDistance(metadata.totalDistanceMiles, metadata.totalDistanceKilometers, 1));
-        setText("tracker-foot-distance", formatDistance(metadata.footDistanceMiles, metadata.footDistanceKilometers, 1));
-      }
-      updateTicker();
-    }
-
-    function loadArchivedRoute() {
-      fetch(archiveUrl, { cache: "no-store" })
-        .then(function (response) {
-          if (!response.ok) throw new Error("Archived route returned " + response.status);
-          return response.json();
-        })
-        .then(function (geojson) {
-          archivedGeoJson = geojson || emptyGeoJson;
-          latestLngLat = getLatestLngLat(archivedGeoJson);
-          updateTrackerSource();
-          updateStatus(archivedGeoJson.metadata || {});
-          setText("tracker-last-received", archivedGeoJson.metadata && archivedGeoJson.metadata.lastReceivedAt
-            ? relativeTime(archivedGeoJson.metadata.lastReceivedAt)
-            : "Trip complete");
-          updateFinalTicker(archivedGeoJson.metadata || {});
-          fitRouteOnce(combinedTrackerGeoJson());
-        })
-        .catch(function () {
-          archivedGeoJson = emptyGeoJson;
-          updateTrackerSource();
-        });
-    }
+    document.querySelectorAll("[data-track-toggle]").forEach(function (checkbox) {
+      checkbox.addEventListener("change", function () {
+        if (checkbox.checked) visibleTracks.add(checkbox.value);
+        else visibleTracks.delete(checkbox.value);
+        applyTrackFilters();
+        updateLatestLngLat();
+      });
+    });
 
     document.getElementById("tracker-recenter").addEventListener("click", function () {
-      if (latestLngLat) {
-        map.easeTo({
-          center: latestLngLat,
-          zoom: Math.max(map.getZoom(), 9),
-          duration: 500
-        });
-      }
+      if (!latestLngLat) return;
+      map.easeTo({
+        center: latestLngLat,
+        zoom: Math.max(map.getZoom(), 9),
+        duration: 500
+      });
     });
 
-    window.addEventListener("resize", function () {
-      map.resize();
-    });
+    window.setTimeout(function () { map.resize(); }, 0);
+    window.addEventListener("resize", function () { map.resize(); });
+    updateFinalTicker({});
   })();
 </script>

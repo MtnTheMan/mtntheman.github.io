@@ -632,6 +632,109 @@ details.resume-details summary {
   font-size: 0.95em;
 }
 
+.tracker-track-statuses {
+  margin: 0.35em 0 0;
+  padding-left: 1.4em;
+}
+
+.tracker-legend {
+  align-items: center;
+  border: 2px dotted #00FF00;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75em 1.5em;
+  margin: 1em 0;
+  padding: 10px 12px 12px;
+}
+
+.tracker-legend legend {
+  color: #FFFF00;
+  font-weight: bold;
+  padding: 0 0.4em;
+}
+
+.tracker-legend label {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.45em;
+}
+
+.tracker-swatch {
+  border: 1px solid #FFFDD0;
+  display: inline-block;
+  height: 0.7em;
+  width: 1.5em;
+}
+
+.tracker-swatch-nhr {
+  background-color: #00ff66;
+}
+
+.tracker-swatch-maine {
+  background-color: #5ab0ff;
+}
+
+.tracker-detail {
+  background-color: #252504;
+  border: 2px solid #5ab0ff;
+  box-sizing: border-box;
+  min-height: 7.5em;
+  padding: 0.75em;
+}
+
+.tracker-detail p,
+.tracker-popup-detail p {
+  margin: 0.35em 0 0;
+}
+
+.tracker-live-stats {
+  border: 2px dotted #5ab0ff;
+  margin: 1em 0;
+  padding: 0.75em;
+}
+
+.tracker-live-stats h2 {
+  margin-top: 0;
+}
+
+.tracker-live-stats-grid {
+  display: grid;
+  gap: 0.75em;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.tracker-live-stats-grid p {
+  background-color: #252504;
+  margin: 0;
+  padding: 0.75em;
+}
+
+.tracker-live-stats-grid strong,
+.tracker-live-stats-grid span {
+  display: block;
+}
+
+.tracker-live-stats-grid span {
+  color: #FFDDA0;
+  margin-top: 0.35em;
+}
+
+.maplibregl-popup-content {
+  color: #1d1d08;
+  font-family: 'Open Sans', sans-serif;
+  max-width: min(310px, 75vw);
+}
+
+.maplibregl-popup-content strong {
+  color: #1d1d08;
+}
+
+.tracker-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .maplibregl-map {
   background: #b8d7ef;
   font-family: 'Open Sans', sans-serif;
