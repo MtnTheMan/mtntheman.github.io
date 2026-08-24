@@ -4,6 +4,7 @@ const path = require("path");
 
 const repoRoot = path.resolve(__dirname, "..");
 const finalPath = path.join(repoRoot, "assets", "data", "trip-route-final.geojson");
+const elevationProfilePath = path.join(repoRoot, "assets", "data", "trip-elevation-profile.json");
 const defaultCsvPath = path.join(os.homedir(), "trip-tracker-location-points.csv");
 const csvPath = process.argv[2] || defaultCsvPath;
 
@@ -18,6 +19,9 @@ const maxSpikeDistanceKm = 75;
 const maxSpikePointCount = 5;
 const exclusionCenter = { lat: 42.742557, lon: -84.452255 };
 const exclusionRadiusMeters = 200;
+const elevationProfileTargetPoints = 1600;
+const elevationSmoothingWindow = 7;
+const elevationSmoothingMaxGapSeconds = 900;
 const finalStats = {
   ticksIntercepted: 16,
   fianceCalls: 88,
@@ -228,6 +232,132 @@ function routeStats(rows) {
     totalDistanceKilometers: roundStat(totalDistanceKilometers),
     footDistanceMiles: roundStat(kilometersToMiles(footDistanceKilometers)),
     footDistanceKilometers: roundStat(footDistanceKilometers)
+  };
+}
+
+function median(values) {
+  const sorted = values.slice().sort((first, second) => first - second);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2
+    ? sorted[middle]
+    : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function smoothElevations(points) {
+  const radius = Math.floor(elevationSmoothingWindow / 2);
+  return points.map((point, index) => {
+    const nearby = [];
+    const firstIndex = Math.max(0, index - radius);
+    const lastIndex = Math.min(points.length - 1, index + radius);
+
+    for (let candidateIndex = firstIndex; candidateIndex <= lastIndex; candidateIndex += 1) {
+      const candidate = points[candidateIndex];
+      if (Math.abs(candidate.recordedAt - point.recordedAt) <= elevationSmoothingMaxGapSeconds) {
+        nearby.push(candidate.rawElevationMeters);
+      }
+    }
+
+    return {
+      ...point,
+      elevationMeters: Math.max(0, nearby.length ? median(nearby) : point.rawElevationMeters)
+    };
+  });
+}
+
+function downsampleLargestTriangle(points, threshold) {
+  if (threshold >= points.length || threshold === 0) return points.slice();
+
+  const sampled = [points[0]];
+  const every = (points.length - 2) / (threshold - 2);
+  let anchorIndex = 0;
+
+  for (let bucket = 0; bucket < threshold - 2; bucket += 1) {
+    const averageRangeStart = Math.floor((bucket + 1) * every) + 1;
+    const averageRangeEnd = Math.min(Math.floor((bucket + 2) * every) + 1, points.length);
+    const averageRangeLength = Math.max(1, averageRangeEnd - averageRangeStart);
+    let averageX = 0;
+    let averageY = 0;
+
+    for (let index = averageRangeStart; index < averageRangeEnd; index += 1) {
+      averageX += points[index].distanceMiles;
+      averageY += points[index].elevationMeters;
+    }
+    averageX /= averageRangeLength;
+    averageY /= averageRangeLength;
+
+    const rangeStart = Math.floor(bucket * every) + 1;
+    const rangeEnd = Math.min(Math.floor((bucket + 1) * every) + 1, points.length - 1);
+    const anchor = points[anchorIndex];
+    let maximumArea = -1;
+    let selectedIndex = rangeStart;
+
+    for (let index = rangeStart; index < rangeEnd; index += 1) {
+      const candidate = points[index];
+      const area = Math.abs(
+        (anchor.distanceMiles - averageX) * (candidate.elevationMeters - anchor.elevationMeters)
+        - (anchor.distanceMiles - candidate.distanceMiles) * (averageY - anchor.elevationMeters)
+      );
+      if (area > maximumArea) {
+        maximumArea = area;
+        selectedIndex = index;
+      }
+    }
+
+    sampled.push(points[selectedIndex]);
+    anchorIndex = selectedIndex;
+  }
+
+  sampled.push(points[points.length - 1]);
+  return sampled;
+}
+
+function buildElevationProfile(rows) {
+  const points = [];
+  let cumulativeDistanceMiles = 0;
+
+  rows.forEach((row, index) => {
+    if (index > 0) {
+      cumulativeDistanceMiles += kilometersToMiles(distanceKm(rows[index - 1], row));
+    }
+    if (!Number.isFinite(row.alt)) return;
+    points.push({
+      distanceMiles: cumulativeDistanceMiles,
+      rawElevationMeters: row.alt,
+      recordedAt: row.recorded_at
+    });
+  });
+
+  const smoothed = smoothElevations(points);
+  const sampled = downsampleLargestTriangle(smoothed, elevationProfileTargetPoints);
+  const elevationsMeters = smoothed.map((point) => point.elevationMeters);
+  const minimumMeters = elevationsMeters.length ? Math.min(...elevationsMeters) : null;
+  const maximumMeters = elevationsMeters.length ? Math.max(...elevationsMeters) : null;
+
+  return {
+    track_id: "nhr-megatrip-2026",
+    track_name: "NHR Megatrip 2026",
+    source: "OwnTracks GPS altitude matched to the privacy-filtered final route",
+    generated_at: new Date().toISOString(),
+    units: {
+      distance: "miles",
+      elevation: "feet",
+      recorded_at: "unix_seconds"
+    },
+    raw_route_point_count: rows.length,
+    altitude_point_count: points.length,
+    profile_point_count: sampled.length,
+    altitude_coverage_percent: rows.length ? Math.round(points.length / rows.length * 1000) / 10 : 0,
+    total_distance_miles: Math.round(cumulativeDistanceMiles * 10) / 10,
+    minimum_elevation_feet: minimumMeters === null ? null : Math.round(minimumMeters * 3.28084),
+    maximum_elevation_feet: maximumMeters === null ? null : Math.round(maximumMeters * 3.28084),
+    smoothing: `${elevationSmoothingWindow}-point rolling median within ${elevationSmoothingMaxGapSeconds / 60} minutes`,
+    caveat: "Phone GPS altitude is approximate; short-lived altitude errors are reduced with median smoothing.",
+    point_fields: ["distance_miles", "elevation_feet", "recorded_at"],
+    points: sampled.map((point) => [
+      Math.round(point.distanceMiles * 100) / 100,
+      Math.round(point.elevationMeters * 3.28084),
+      point.recordedAt
+    ])
   };
 }
 
@@ -453,6 +583,8 @@ function main() {
   };
 
   fs.writeFileSync(finalPath, `${JSON.stringify(finalGeoJson)}\n`);
+  const elevationProfile = buildElevationProfile(finalRows);
+  fs.writeFileSync(elevationProfilePath, `${JSON.stringify(elevationProfile)}\n`);
   console.log(`CSV rows: ${rawRows.length}`);
   console.log(`Public-safe rows after window/spike filtering: ${publicSafeRows.length}`);
   console.log(`Removed within ${exclusionRadiusMeters}m: ${filteredCount}`);
@@ -461,6 +593,9 @@ function main() {
   console.log(`Final route distance: ${stats.totalDistanceMiles} mi (${stats.totalDistanceKilometers} km)`);
   console.log(`Final foot distance: ${stats.footDistanceMiles} mi (${stats.footDistanceKilometers} km)`);
   console.log(`Wrote ${path.relative(repoRoot, finalPath)}`);
+  console.log(`Wrote ${elevationProfile.profile_point_count} elevation profile points to ${path.relative(repoRoot, elevationProfilePath)}`);
 }
 
-main();
+if (require.main === module) main();
+
+module.exports = { buildElevationProfile };

@@ -688,6 +688,127 @@ details.resume-details summary {
   margin: 0.35em 0 0;
 }
 
+.tracker-elevation {
+  border: 2px dotted #00FF00;
+  box-sizing: border-box;
+  margin: 1em 0;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0.75em;
+}
+
+.tracker-elevation h2 {
+  margin-top: 0;
+}
+
+.tracker-elevation-summary {
+  display: grid;
+  gap: 0.75em;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(150px, 0.7fr) minmax(260px, 1.6fr);
+  margin: 0.75em 0;
+}
+
+.tracker-elevation-summary p {
+  background-color: #252504;
+  margin: 0;
+  padding: 0.75em;
+}
+
+.tracker-elevation-summary strong,
+.tracker-elevation-summary span {
+  display: block;
+}
+
+.tracker-elevation-summary span {
+  color: #FFDDA0;
+  margin-top: 0.35em;
+}
+
+.tracker-elevation-chart-wrap {
+  background-color: #252504;
+  border: 1px solid #00FF00;
+  box-sizing: border-box;
+  contain: inline-size;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.tracker-elevation-chart {
+  display: block;
+  height: auto;
+  min-width: 700px;
+  width: 100%;
+}
+
+.tracker-elevation-grid-line {
+  stroke: #69690d;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.tracker-elevation-grid-line-vertical {
+  stroke-dasharray: 3 5;
+}
+
+.tracker-elevation-axis-label,
+.tracker-elevation-axis-title {
+  fill: #FFFDD0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+}
+
+.tracker-elevation-axis-title {
+  fill: #FFDDA0;
+  font-weight: bold;
+}
+
+.tracker-elevation-area {
+  fill: url(#tracker-elevation-fill);
+}
+
+.tracker-elevation-line {
+  fill: none;
+  stroke: #00ff66;
+  stroke-linejoin: round;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.tracker-elevation-marker-line {
+  opacity: 0;
+  stroke: #FFFF00;
+  stroke-dasharray: 4 4;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.tracker-elevation-marker {
+  fill: #FFFF00;
+  opacity: 0;
+  stroke: #1d1d08;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.tracker-elevation-marker-line.is-visible,
+.tracker-elevation-marker.is-visible {
+  opacity: 1;
+}
+
+.tracker-elevation-overlay {
+  cursor: crosshair;
+  fill: transparent;
+  touch-action: pan-x pan-y;
+}
+
+.tracker-elevation-chart:focus {
+  outline: 3px solid #FFFF00;
+  outline-offset: -3px;
+}
+
 .tracker-live-stats {
   border: 2px dotted #5ab0ff;
   margin: 1em 0;
@@ -779,6 +900,14 @@ details.resume-details summary {
     min-height: 420px;
   }
 
+  .tracker-elevation-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tracker-elevation-summary p:last-child {
+    grid-column: 1 / -1;
+  }
+
   .float-right-tight,
   .float-left-tight {
     float: none;
@@ -799,5 +928,19 @@ details.resume-details summary {
 
   .protected-logo {
     min-height: 130px;
+  }
+}
+
+@media (max-width: 520px) {
+  .tracker-elevation {
+    max-width: calc(100vw - 32px);
+  }
+
+  .tracker-elevation-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .tracker-elevation-summary p:last-child {
+    grid-column: auto;
   }
 }

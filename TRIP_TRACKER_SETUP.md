@@ -23,12 +23,17 @@ OwnTracks
 
 /assets/data/trip-route-final.geojson
   -> final static NHR route on the same MapLibre map
+
+/assets/data/trip-elevation-profile.json
+  -> privacy-safe, downsampled NHR GPS elevation profile
 ```
 
 Files:
 
 - `trip-tracker.html` loads and normalizes the archived route, loads public Worker GeoJSON, and provides track toggles and route details.
 - `assets/data/trip-route-final.geojson` is the existing final NHR archive. Do not remove it.
+- `assets/data/trip-elevation-profile.json` contains distance, smoothed GPS elevation, and archived timestamp values for the NHR elevation chart. It does not contain coordinates.
+- `scripts/build-final-trip-route.js` builds the final route and elevation profile together from the authenticated tracker CSV export.
 - `worker/tracker-worker.js` implements tracker and page-view API endpoints.
 - `worker/migrations/0001_create_tracker_points.sql` creates the original location table.
 - `worker/migrations/0002_add_track_support.sql` adds and indexes `track_id` without recreating the table or deleting rows.
@@ -120,6 +125,14 @@ The legend toggles NHR Megatrip 2026 and Maine August Trip independently. Both a
 On desktop, hovering updates the route-detail panel and opens a small popup. Clicking or tapping a point or segment pins its information in the panel and popup until another feature is selected. Details include route, Eastern date/time, segment-derived speed, accuracy when available, distance for segments, and whether the source is archived/static or delayed OwnTracks data. The archived NHR segment timestamps are normalized in the browser, and approximate archived segment speeds are calculated when timestamps are available. Missing values are described as unavailable rather than displayed as blank, `undefined`, or `NaN`.
 
 The final NHR ticker remains separate from Maine public stats. Maine values never overwrite final NHR totals or trip-complete counters.
+
+## NHR elevation profile
+
+The elevation chart below the map covers the complete privacy-filtered NHR archive. Its horizontal axis is cumulative route distance in miles, and its vertical axis is approximate elevation in feet. Hovering, tapping, clicking, or using the left/right arrow keys reveals the nearest trip mile, altitude, and Eastern timestamp.
+
+The source OwnTracks data contains altitude for every archived NHR point. The committed chart data is reduced to 1,600 representative points with largest-triangle downsampling after a seven-point rolling median, limited to readings no more than 15 minutes apart. The median reduces isolated phone-GPS altitude errors without smoothing across long recording gaps. The profile data omits latitude and longitude because the already-committed GeoJSON remains the canonical public route geometry.
+
+Phone GPS altitude is approximate and can differ from terrain elevation, especially during short fixes, inside vehicles, or around weak satellite geometry. Rebuilding `trip-route-final.geojson` with `scripts/build-final-trip-route.js` also rebuilds `trip-elevation-profile.json` from the same final, spike-filtered, home-excluded rows.
 
 ## Authentication and secrets
 

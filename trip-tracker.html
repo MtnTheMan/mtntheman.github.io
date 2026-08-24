@@ -100,6 +100,36 @@ permalink: /trip-tracker/
   speeds are approximate and calculated between consecutive published points.
 </p>
 
+<section class="tracker-elevation" aria-labelledby="tracker-elevation-heading">
+  <h2 id="tracker-elevation-heading">NHR Megatrip elevation profile</h2>
+  <p>
+    Elevation in feet across the final 7,896.5-mile route, from the first archived point to the last.
+  </p>
+  <div class="tracker-elevation-summary">
+    <p><strong>Profile distance</strong> <span id="tracker-elevation-distance">Loading...</span></p>
+    <p><strong>Elevation range</strong> <span id="tracker-elevation-range">Loading...</span></p>
+    <p><strong>Selected point</strong> <span id="tracker-elevation-selected">Loading...</span></p>
+  </div>
+  <div class="tracker-elevation-chart-wrap">
+    <svg
+      id="tracker-elevation-chart"
+      class="tracker-elevation-chart"
+      viewBox="0 0 960 320"
+      role="img"
+      tabindex="0"
+      aria-labelledby="tracker-elevation-chart-title tracker-elevation-chart-description"
+    >
+      <title id="tracker-elevation-chart-title">NHR Megatrip elevation profile</title>
+      <desc id="tracker-elevation-chart-description">
+        A line chart of approximate GPS elevation in feet by cumulative trip distance in miles.
+      </desc>
+    </svg>
+  </div>
+  <p id="tracker-elevation-note" class="tracker-note">
+    Loading the archived GPS elevation profile...
+  </p>
+</section>
+
 <section class="tracker-live-stats" aria-labelledby="maine-stats-heading">
   <h2 id="maine-stats-heading">Maine August Trip stats</h2>
   <div class="tracker-live-stats-grid">
@@ -143,6 +173,7 @@ permalink: /trip-tracker/
 <script>
   (function () {
     var archiveUrl = "{{ '/assets/data/trip-route-final.geojson' | relative_url }}";
+    var elevationProfileUrl = "{{ '/assets/data/trip-elevation-profile.json' | relative_url }}";
     var defaultApiBaseUrl = "https://mtntheman-trip-tracker.mtntheman.workers.dev";
     var apiBaseUrl = String(window.TRIP_TRACKER_API_BASE_URL || defaultApiBaseUrl).replace(/\/$/, "");
     var liveGeoJsonUrl = apiBaseUrl + "/api/tracker/geojson";
@@ -342,6 +373,14 @@ permalink: /trip-tracker/
           .catch(function () {
             liveGeoJson = emptyGeoJson;
             liveLoadFailed = true;
+          }),
+        fetchJson(elevationProfileUrl)
+          .then(renderElevationProfile)
+          .catch(function () {
+            setText("tracker-elevation-distance", "Unavailable");
+            setText("tracker-elevation-range", "Unavailable");
+            setText("tracker-elevation-selected", "Elevation profile unavailable");
+            setText("tracker-elevation-note", "The archived route remains available; its elevation profile could not be loaded.");
           })
       ]).then(function () {
         updateTrackerSource();
@@ -412,6 +451,252 @@ permalink: /trip-tracker/
         properties: geojson.properties || {},
         features: normalized
       };
+    }
+
+    function renderElevationProfile(profile) {
+      var svg = document.getElementById("tracker-elevation-chart");
+      var rawPoints = profile && Array.isArray(profile.points) ? profile.points : [];
+      var points = rawPoints.map(function (point) {
+        return {
+          distance: finiteNumber(point && point[0]),
+          elevation: finiteNumber(point && point[1]),
+          recordedAt: finiteNumber(point && point[2])
+        };
+      }).filter(function (point) {
+        return point.distance !== null && point.elevation !== null;
+      });
+
+      if (!svg || points.length < 2) throw new Error("Elevation profile has too few points");
+
+      var width = 960;
+      var height = 320;
+      var margin = { top: 20, right: 20, bottom: 52, left: 70 };
+      var plotWidth = width - margin.left - margin.right;
+      var plotHeight = height - margin.top - margin.bottom;
+      var maximumDistance = points[points.length - 1].distance;
+      var maximumElevation = Math.max.apply(Math, points.map(function (point) { return point.elevation; }));
+      var minimumElevation = Math.min.apply(Math, points.map(function (point) { return point.elevation; }));
+      var yMinimum = 0;
+      var yMaximum = Math.max(500, Math.ceil(maximumElevation / 500) * 500);
+
+      function xPosition(distance) {
+        return margin.left + distance / maximumDistance * plotWidth;
+      }
+
+      function yPosition(elevation) {
+        var bounded = Math.max(yMinimum, Math.min(yMaximum, elevation));
+        return margin.top + (yMaximum - bounded) / (yMaximum - yMinimum) * plotHeight;
+      }
+
+      function svgElement(name, attributes) {
+        var element = document.createElementNS("http://www.w3.org/2000/svg", name);
+        Object.keys(attributes || {}).forEach(function (key) {
+          element.setAttribute(key, attributes[key]);
+        });
+        return element;
+      }
+
+      function svgText(text, attributes) {
+        var element = svgElement("text", attributes);
+        element.textContent = text;
+        return element;
+      }
+
+      svg.replaceChildren();
+      var title = svgElement("title", { id: "tracker-elevation-chart-title" });
+      title.textContent = "NHR Megatrip elevation profile";
+      var description = svgElement("desc", { id: "tracker-elevation-chart-description" });
+      description.textContent = "Approximate GPS elevation in feet by cumulative trip distance in miles. Use the pointer or arrow keys to inspect a point.";
+      svg.append(title, description);
+
+      var definitions = svgElement("defs");
+      var gradient = svgElement("linearGradient", {
+        id: "tracker-elevation-fill",
+        x1: "0",
+        y1: "0",
+        x2: "0",
+        y2: "1"
+      });
+      gradient.append(
+        svgElement("stop", { offset: "0%", "stop-color": "#00ff66", "stop-opacity": "0.48" }),
+        svgElement("stop", { offset: "100%", "stop-color": "#00ff66", "stop-opacity": "0.05" })
+      );
+      definitions.appendChild(gradient);
+      svg.appendChild(definitions);
+
+      for (var elevationTick = yMinimum; elevationTick <= yMaximum; elevationTick += 500) {
+        var tickY = yPosition(elevationTick);
+        svg.append(
+          svgElement("line", {
+            class: "tracker-elevation-grid-line",
+            x1: margin.left,
+            y1: tickY,
+            x2: width - margin.right,
+            y2: tickY
+          }),
+          svgText(formatNumber(elevationTick, 0), {
+            class: "tracker-elevation-axis-label",
+            x: margin.left - 10,
+            y: tickY + 4,
+            "text-anchor": "end"
+          })
+        );
+      }
+
+      for (var distanceTickIndex = 0; distanceTickIndex <= 4; distanceTickIndex += 1) {
+        var distanceTick = maximumDistance * distanceTickIndex / 4;
+        var tickX = xPosition(distanceTick);
+        svg.append(
+          svgElement("line", {
+            class: "tracker-elevation-grid-line tracker-elevation-grid-line-vertical",
+            x1: tickX,
+            y1: margin.top,
+            x2: tickX,
+            y2: height - margin.bottom
+          }),
+          svgText(formatNumber(distanceTick, 0), {
+            class: "tracker-elevation-axis-label",
+            x: tickX,
+            y: height - margin.bottom + 22,
+            "text-anchor": distanceTickIndex === 0 ? "start" : distanceTickIndex === 4 ? "end" : "middle"
+          })
+        );
+      }
+
+      svg.append(
+        svgText("Elevation (ft)", {
+          class: "tracker-elevation-axis-title",
+          x: 18,
+          y: margin.top + plotHeight / 2,
+          transform: "rotate(-90 18 " + (margin.top + plotHeight / 2) + ")",
+          "text-anchor": "middle"
+        }),
+        svgText("Cumulative trip distance (mi)", {
+          class: "tracker-elevation-axis-title",
+          x: margin.left + plotWidth / 2,
+          y: height - 8,
+          "text-anchor": "middle"
+        })
+      );
+
+      var linePath = points.map(function (point, index) {
+        return (index ? "L" : "M") + xPosition(point.distance).toFixed(2) + " " + yPosition(point.elevation).toFixed(2);
+      }).join(" ");
+      var baseline = yPosition(yMinimum).toFixed(2);
+      var areaPath = linePath
+        + " L" + xPosition(maximumDistance).toFixed(2) + " " + baseline
+        + " L" + xPosition(0).toFixed(2) + " " + baseline
+        + " Z";
+
+      svg.append(
+        svgElement("path", { class: "tracker-elevation-area", d: areaPath }),
+        svgElement("path", { class: "tracker-elevation-line", d: linePath })
+      );
+
+      var markerLine = svgElement("line", {
+        class: "tracker-elevation-marker-line",
+        x1: margin.left,
+        y1: margin.top,
+        x2: margin.left,
+        y2: height - margin.bottom
+      });
+      var marker = svgElement("circle", {
+        class: "tracker-elevation-marker",
+        cx: margin.left,
+        cy: yPosition(points[0].elevation),
+        r: 6
+      });
+      var overlay = svgElement("rect", {
+        class: "tracker-elevation-overlay",
+        x: margin.left,
+        y: margin.top,
+        width: plotWidth,
+        height: plotHeight
+      });
+      svg.append(markerLine, marker, overlay);
+
+      var selectedIndex = null;
+      var pinnedIndex = null;
+
+      function nearestIndex(distance) {
+        var low = 0;
+        var high = points.length - 1;
+        while (low < high) {
+          var middle = Math.floor((low + high) / 2);
+          if (points[middle].distance < distance) low = middle + 1;
+          else high = middle;
+        }
+        if (low > 0 && Math.abs(points[low - 1].distance - distance) < Math.abs(points[low].distance - distance)) {
+          return low - 1;
+        }
+        return low;
+      }
+
+      function showPoint(index) {
+        selectedIndex = Math.max(0, Math.min(points.length - 1, index));
+        var point = points[selectedIndex];
+        var markerX = xPosition(point.distance);
+        var markerY = yPosition(point.elevation);
+        markerLine.setAttribute("x1", markerX);
+        markerLine.setAttribute("x2", markerX);
+        marker.setAttribute("cx", markerX);
+        marker.setAttribute("cy", markerY);
+        markerLine.classList.add("is-visible");
+        marker.classList.add("is-visible");
+        setText(
+          "tracker-elevation-selected",
+          "Mile " + formatNumber(point.distance, 1)
+            + " · " + formatNumber(point.elevation, 0) + " ft"
+            + (point.recordedAt === null ? "" : " · " + formatEastern(point.recordedAt))
+        );
+        svg.setAttribute(
+          "aria-label",
+          "NHR elevation profile. Selected mile " + formatNumber(point.distance, 1)
+            + ", elevation " + formatNumber(point.elevation, 0) + " feet."
+        );
+      }
+
+      function pointerIndex(event) {
+        var bounds = svg.getBoundingClientRect();
+        var chartX = (event.clientX - bounds.left) / bounds.width * width;
+        var ratio = Math.max(0, Math.min(1, (chartX - margin.left) / plotWidth));
+        return nearestIndex(ratio * maximumDistance);
+      }
+
+      overlay.addEventListener("pointermove", function (event) {
+        if (pinnedIndex === null) showPoint(pointerIndex(event));
+      });
+      overlay.addEventListener("pointerleave", function () {
+        if (pinnedIndex !== null) showPoint(pinnedIndex);
+      });
+      overlay.addEventListener("click", function (event) {
+        pinnedIndex = pointerIndex(event);
+        showPoint(pinnedIndex);
+      });
+      svg.addEventListener("keydown", function (event) {
+        var nextIndex = pinnedIndex === null ? (selectedIndex === null ? 0 : selectedIndex) : pinnedIndex;
+        if (event.key === "ArrowRight") nextIndex += 1;
+        else if (event.key === "ArrowLeft") nextIndex -= 1;
+        else if (event.key === "Home") nextIndex = 0;
+        else if (event.key === "End") nextIndex = points.length - 1;
+        else return;
+        event.preventDefault();
+        pinnedIndex = Math.max(0, Math.min(points.length - 1, nextIndex));
+        showPoint(pinnedIndex);
+      });
+
+      setText("tracker-elevation-distance", formatNumber(maximumDistance, 1) + " mi");
+      setText(
+        "tracker-elevation-range",
+        formatNumber(minimumElevation, 0) + "–" + formatNumber(maximumElevation, 0) + " ft"
+      );
+      setText("tracker-elevation-selected", "Hover, tap, or use the arrow keys to inspect the profile");
+      setText(
+        "tracker-elevation-note",
+        (profile.caveat || "Phone GPS altitude is approximate.")
+          + " The chart uses " + formatNumber(points.length, 0) + " representative points from "
+          + formatNumber(finiteNumber(profile.altitude_point_count) || points.length, 0) + " archived readings."
+      );
     }
 
     function normalizeLiveGeoJson(geojson) {
