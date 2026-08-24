@@ -726,8 +726,8 @@ details.resume-details summary {
 }
 
 .tracker-elevation-chart-wrap {
-  background-color: #252504;
-  border: 1px solid #00FF00;
+  background-color: #f4f0c2;
+  border: 1px solid #8b921b;
   box-sizing: border-box;
   contain: inline-size;
   max-width: 100%;
@@ -744,7 +744,7 @@ details.resume-details summary {
 }
 
 .tracker-elevation-grid-line {
-  stroke: #69690d;
+  stroke: #b7b878;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -755,23 +755,19 @@ details.resume-details summary {
 
 .tracker-elevation-axis-label,
 .tracker-elevation-axis-title {
-  fill: #FFFDD0;
+  fill: #272707;
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
 }
 
 .tracker-elevation-axis-title {
-  fill: #FFDDA0;
+  fill: #31540d;
   font-weight: bold;
-}
-
-.tracker-elevation-area {
-  fill: url(#tracker-elevation-fill);
 }
 
 .tracker-elevation-line {
   fill: none;
-  stroke: #00ff66;
+  stroke: #006f32;
   stroke-linejoin: round;
   stroke-width: 2.5;
   vector-effect: non-scaling-stroke;
@@ -779,16 +775,16 @@ details.resume-details summary {
 
 .tracker-elevation-marker-line {
   opacity: 0;
-  stroke: #FFFF00;
+  stroke: #8c4100;
   stroke-dasharray: 4 4;
   stroke-width: 1.5;
   vector-effect: non-scaling-stroke;
 }
 
 .tracker-elevation-marker {
-  fill: #FFFF00;
+  fill: #ffcc00;
   opacity: 0;
-  stroke: #1d1d08;
+  stroke: #4b2700;
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }

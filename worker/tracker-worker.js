@@ -16,6 +16,7 @@ const TRACKS = {
     publicWindowStart: "2026-05-17T08:00:00-04:00",
     publicWindowEnd: "2026-06-22T19:00:00-04:00",
     staticRouteCutoff: "2026-06-09T15:39:56Z",
+    publicArchiveOnly: true,
     color: "#00ff66"
   },
   "maine-august-trip": {
@@ -319,6 +320,18 @@ function requestedTracks(url) {
 
 async function publicTrackData(env, track) {
   const config = trackConfig(track, env);
+
+  // The finalized NHR archive is the canonical public route. Keep its raw
+  // OwnTracks rows for authenticated export and health counts, but never emit
+  // them as public segments, points, or a latest marker.
+  if (track.publicArchiveOnly) {
+    return buildTrackData(track, config, [], {
+      stored_count: 0,
+      latest_recorded_at: null,
+      latest_received_at: null
+    });
+  }
+
   const windowStart = epochFromIso(track.publicWindowStart);
   const windowEnd = epochFromIso(track.publicWindowEnd);
   const cutoff = epochSeconds() - config.publicDelayMinutes * 60;
@@ -473,6 +486,8 @@ function buildTrackData(track, config, rows, summary) {
     metadata: {
       track_id: track.id,
       track_name: track.name,
+      public_source: track.publicArchiveOnly ? "static_archive" : "owntracks",
+      archive_only: Boolean(track.publicArchiveOnly),
       public_delay_minutes: config.publicDelayMinutes,
       public_window_start: track.publicWindowStart,
       public_window_end: track.publicWindowEnd,
