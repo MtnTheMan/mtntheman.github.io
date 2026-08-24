@@ -3,7 +3,7 @@
 The tracker publishes two routes on `/trip-tracker/`:
 
 - **NHR Megatrip 2026** (`nhr-megatrip-2026`) uses only the committed, privacy-filtered final archive at `/assets/data/trip-route-final.geojson` for public geometry. Its stored OwnTracks rows are retained but are not returned by public GeoJSON.
-- **Maine August Trip** (`maine-august-trip`) is built from OwnTracks points and is delayed 15 hours before appearing in public GeoJSON or on the map.
+- **Maine Trip August 2026** (`maine-august-trip`) is built from OwnTracks points and is delayed 15 hours before appearing in public GeoJSON or on the map.
 
 The active API is the workers.dev fallback:
 
@@ -52,7 +52,7 @@ Track metadata is centralized in `TRACKS` in `worker/tracker-worker.js`.
 | Track | Public window (Eastern) | Public delay | Rounding | Color |
 | --- | --- | ---: | ---: | --- |
 | NHR Megatrip 2026 | `2026-05-17T08:00:00-04:00` through `2026-06-22T19:00:00-04:00` | 600 minutes / 10 hours | 3 decimals | `#00ff66` |
-| Maine August Trip | `2026-08-24T13:00:00-04:00` through `2026-08-28T20:00:00-04:00` | 900 minutes / 15 hours | 3 decimals | `#5ab0ff` |
+| Maine Trip August 2026 | `2026-08-24T13:00:00-04:00` through `2026-08-28T20:00:00-04:00` | 900 minutes / 15 hours | 3 decimals | `#5ab0ff` |
 
 `PUBLIC_DELAY_MINUTES` remains the fallback for a track that does not define its own delay. Maine explicitly defines 900 minutes, so changing the fallback does not remove its 15-hour delay.
 
@@ -66,7 +66,7 @@ Default/original ingest (defaults to NHR Megatrip 2026):
 
 `https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/ingest`
 
-Maine August Trip ingest:
+Maine Trip August 2026 ingest:
 
 `https://mtntheman-trip-tracker.mtntheman.workers.dev/api/tracker/ingest?track=maine-august-trip`
 
@@ -120,7 +120,7 @@ Zero or negative elapsed time produces no speed. A point uses the speed of the s
 
 The map loads the archived NHR GeoJSON and the public Worker GeoJSON for live tracks such as Maine. It displays NHR archive segments only, without archive points or a completed-trip latest marker. It also defensively ignores any NHR feature from the live feed, so an older or overridden Worker cannot recreate the duplicate NHR line or point cloud. `window.TRIP_TRACKER_API_BASE_URL` can override the API base before the page script runs; otherwise the working workers.dev base is used.
 
-The legend toggles NHR Megatrip 2026 and Maine August Trip independently. Both are visible by default. The three interactive MapLibre layers are:
+The legend toggles NHR Megatrip 2026 and Maine Trip August 2026 independently. Both are visible by default. The three interactive MapLibre layers are:
 
 - `tracker-route-segments`
 - `tracker-route-points`
@@ -204,7 +204,7 @@ Expected results:
 - `/health` lists both configured tracks and may show Maine stored points immediately.
 - NHR-only public GeoJSON contains zero features because the final archive is the sole public NHR geometry.
 - The original ingest still stores points as `nhr-megatrip-2026`.
-- Maine ingest returns `track_id: "maine-august-trip"` and `track_name: "Maine August Trip"`.
+- Maine ingest returns `track_id: "maine-august-trip"` and `track_name: "Maine Trip August 2026"`.
 - Maine-only GeoJSON may have zero public features until a stored point is 15 hours old.
 - Public Maine stats and the latest marker advance only with delay-eligible points.
 - The public map shows both selected tracks and exposes Eastern time, mph, accuracy when available, and source on hover/click.

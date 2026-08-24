@@ -57,19 +57,19 @@ permalink: /trip-tracker/
 
 <p>
   The map keeps the final NHR Megatrip 2026 archive visible alongside the
-  Maine August Trip. Maine locations are published only after a 15-hour
+  Maine Trip August 2026. Maine locations appear only after a 15-hour
   privacy delay and are rounded before display.
 </p>
 
 <section class="tracker-status" aria-live="polite">
   <p><strong>Status:</strong> <span id="tracker-feed-status">Loading...</span></p>
-  <p><strong>Last published location:</strong> <span id="tracker-last-update">Loading...</span></p>
-  <p><strong>Latest public report received:</strong> <span id="tracker-last-received">Loading...</span></p>
+  <p><strong>Latest displayed location:</strong> <span id="tracker-last-update">Loading...</span></p>
+  <p><strong>Latest delayed report:</strong> <span id="tracker-last-received">Loading...</span></p>
   <p><strong>Privacy mode:</strong> <span id="tracker-privacy-mode">Loading...</span></p>
   <p><strong>Points shown:</strong> <span id="tracker-point-count">Loading...</span></p>
   <ul id="tracker-track-statuses" class="tracker-track-statuses">
     <li>NHR Megatrip 2026: loading archive...</li>
-    <li>Maine August Trip: loading delayed public feed...</li>
+    <li>Maine Trip August 2026: loading delayed tracker...</li>
   </ul>
   <button id="tracker-recenter" class="tracker-button" type="button">Recenter on latest</button>
 </section>
@@ -84,7 +84,7 @@ permalink: /trip-tracker/
   <label>
     <input type="checkbox" data-track-toggle value="maine-august-trip" checked />
     <span class="tracker-swatch tracker-swatch-maine" aria-hidden="true"></span>
-    Maine August Trip
+    Maine Trip August 2026
   </label>
 </fieldset>
 
@@ -96,16 +96,16 @@ permalink: /trip-tracker/
 <div id="trip-map" class="trip-map" role="application" aria-label="Trip tracker map"></div>
 
 <p class="tracker-note">
-  Markers are delayed public locations, not real-time positions. Times are shown in Eastern Time;
-  speeds are approximate and calculated between consecutive published points.
+  Maine markers are delayed by 15 hours and are not real-time positions. Times are shown in Eastern Time;
+  speeds are approximate and calculated between consecutive displayed points.
 </p>
 
 <section class="tracker-live-stats" aria-labelledby="maine-stats-heading">
-  <h2 id="maine-stats-heading">Maine August Trip stats</h2>
+  <h2 id="maine-stats-heading">Maine Trip August 2026 stats</h2>
   <div class="tracker-live-stats-grid">
-    <p><strong>Public points</strong> <span id="maine-public-points">Waiting...</span></p>
-    <p><strong>Public distance</strong> <span id="maine-public-distance">Waiting...</span></p>
-    <p><strong>Public miles on foot</strong> <span id="maine-foot-distance">Waiting...</span></p>
+    <p><strong>Displayed points</strong> <span id="maine-public-points">Waiting...</span></p>
+    <p><strong>Displayed distance</strong> <span id="maine-public-distance">Waiting...</span></p>
+    <p><strong>Displayed miles on foot</strong> <span id="maine-foot-distance">Waiting...</span></p>
     <p><strong>Average speed</strong> <span id="maine-average-speed">Waiting...</span></p>
   </div>
 </section>
@@ -179,7 +179,7 @@ permalink: /trip-tracker/
     var liveGeoJsonUrl = apiBaseUrl + "/api/tracker/geojson";
     var trackDefinitions = {
       "nhr-megatrip-2026": { name: "NHR Megatrip 2026", color: "#00ff66" },
-      "maine-august-trip": { name: "Maine August Trip", color: "#5ab0ff" }
+      "maine-august-trip": { name: "Maine Trip August 2026", color: "#5ab0ff" }
     };
     var finalStats = {
       ticksIntercepted: 16,
@@ -671,7 +671,7 @@ permalink: /trip-tracker/
       }).map(function (feature) {
         var properties = Object.assign({}, feature.properties || {});
         var definition = trackDefinitions[properties.track_id] || {};
-        properties.track_name = properties.track_name || definition.name || properties.track_id || "Route";
+        properties.track_name = definition.name || properties.track_name || properties.track_id || "Route";
         properties.color = properties.color || definition.color || "#ffffff";
         properties.source = properties.source || "owntracks";
         return { type: "Feature", geometry: feature.geometry, properties: properties };
@@ -782,7 +782,7 @@ permalink: /trip-tracker/
     function sourceLabel(source) {
       var normalized = String(source || "").toLowerCase();
       if (normalized.indexOf("archive") !== -1 || normalized.indexOf("static") !== -1) return "Archived/static";
-      if (normalized.indexOf("owntracks") !== -1) return "OwnTracks (delayed public data)";
+      if (normalized.indexOf("owntracks") !== -1) return "OwnTracks (15-hour delay)";
       return source ? String(source) : "Source unavailable";
     }
 
@@ -792,7 +792,7 @@ permalink: /trip-tracker/
       var maine = findTrackMetadata(tracks, "maine-august-trip");
       setText(
         "tracker-feed-status",
-        liveLoadFailed ? "NHR archive loaded; delayed live feed unavailable" : "NHR archive plus 15-hour-delayed Maine public feed"
+        liveLoadFailed ? "NHR archive loaded; delayed Maine tracker unavailable" : "NHR archive plus 15-hour-delayed Maine tracker"
       );
 
       var latestPublished = maxEpoch([
@@ -803,8 +803,8 @@ permalink: /trip-tracker/
         isoToEpoch(archivedGeoJson.metadata && archivedGeoJson.metadata.lastReceivedAt),
         maxTrackValue(tracks, "latest_received_at")
       ]);
-      setText("tracker-last-update", latestPublished === null ? "No published points yet" : formatEastern(latestPublished));
-      setText("tracker-last-received", latestReceived === null ? "No public reports yet" : formatEastern(latestReceived));
+      setText("tracker-last-update", latestPublished === null ? "No displayed points yet" : formatEastern(latestPublished));
+      setText("tracker-last-received", latestReceived === null ? "No delayed reports yet" : formatEastern(latestReceived));
       setText("tracker-privacy-mode", "NHR final archive; Maine delayed 15 hours and rounded to 3 decimals");
 
       var archivePointCount = finiteNumber(archivedGeoJson.metadata && archivedGeoJson.metadata.pointCount) || 0;
@@ -820,21 +820,21 @@ permalink: /trip-tracker/
       var list = document.getElementById("tracker-track-statuses");
       if (!list) return;
       list.replaceChildren();
-      appendStatus(list, "NHR Megatrip 2026: final privacy-filtered archive; live OwnTracks points are not published");
+      appendStatus(list, "NHR Megatrip 2026: final privacy-filtered archive only");
 
       var maineText;
       if (liveLoadFailed) {
-        maineText = "Maine August Trip: delayed public feed unavailable";
+        maineText = "Maine Trip August 2026: delayed tracker unavailable";
       } else if (!maine) {
-        maineText = "Maine August Trip: waiting for delayed public feed metadata";
+        maineText = "Maine Trip August 2026: waiting for delayed tracker information";
       } else if (maine.status === "scheduled") {
-        maineText = "Maine August Trip: scheduled; public route will be delayed 15 hours";
+        maineText = "Maine Trip August 2026: scheduled; route delayed 15 hours";
       } else if ((finiteNumber(maine.public_point_count) || 0) === 0) {
-        maineText = "Maine August Trip: receiving points, waiting for 15-hour privacy delay";
+        maineText = "Maine Trip August 2026: receiving points, waiting for 15-hour privacy delay";
       } else if (maine.status === "trip_complete") {
-        maineText = "Maine August Trip: trip complete; published route remained delayed 15 hours";
+        maineText = "Maine Trip August 2026: trip complete; route remained delayed 15 hours";
       } else {
-        maineText = "Maine August Trip: receiving points; public route delayed 15 hours";
+        maineText = "Maine Trip August 2026: receiving points; route delayed 15 hours";
       }
       appendStatus(list, maineText);
     }
@@ -862,7 +862,7 @@ permalink: /trip-tracker/
       setText("maine-public-distance", formatDistance(maine.total_distance_miles, maine.total_distance_kilometers, 1));
       setText("maine-foot-distance", formatDistance(maine.foot_distance_miles, maine.foot_distance_kilometers, 1));
       var averageSpeed = finiteNumber(maine.average_speed_mph);
-      setText("maine-average-speed", averageSpeed === null ? "Not enough public points" : formatNumber(averageSpeed, 1) + " mph");
+      setText("maine-average-speed", averageSpeed === null ? "Not enough displayed points" : formatNumber(averageSpeed, 1) + " mph");
     }
 
     function findTrackMetadata(tracks, trackId) {
@@ -967,7 +967,7 @@ permalink: /trip-tracker/
     function formatDistance(miles, kilometers, digits) {
       var milesNumber = finiteNumber(miles);
       var kilometersNumber = finiteNumber(kilometers);
-      if (milesNumber === null || kilometersNumber === null) return "Not enough public points";
+      if (milesNumber === null || kilometersNumber === null) return "Not enough displayed points";
       return formatNumber(milesNumber, digits) + " mi (" + formatNumber(kilometersNumber, digits) + " km)";
     }
 

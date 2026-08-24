@@ -21,7 +21,7 @@ const TRACKS = {
   },
   "maine-august-trip": {
     id: "maine-august-trip",
-    name: "Maine August Trip",
+    name: "Maine Trip August 2026",
     publicDelayMinutes: 900,
     coordinateDecimals: 3,
     publicWindowStart: "2026-08-24T13:00:00-04:00",
