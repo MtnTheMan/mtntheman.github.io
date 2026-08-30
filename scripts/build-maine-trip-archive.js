@@ -5,7 +5,9 @@ const path = require("path");
 
 const TRACK_ID = "maine-august-trip";
 const TRACK_NAME = "Maine Trip August 2026";
-const TRACK_COLOR = "#5ab0ff";
+const TRACK_COLOR = "#ff7a00";
+const TRACK_START_DATE = "2026-08-24";
+const DAILY_WARM_HUES = [2, 28, 50, 8, 36];
 const PUBLIC_DELAY_MINUTES = 900;
 const WINDOW_START = "2026-08-24T13:00:00-04:00";
 const WINDOW_END = "2026-08-28T20:00:00-04:00";
@@ -57,6 +59,7 @@ const retainedSegments = sourceSegments
     const properties = feature.properties || {};
     const start = segmentStart(feature);
     const end = segmentEnd(feature);
+    const midpoint = start + (end - start) / 2;
     const distanceMiles = haversineMiles(feature?.geometry?.coordinates?.[0], feature?.geometry?.coordinates?.[1]);
     const segmentHours = end > start ? (end - start) / 3600 : 0;
     const speedMph = segmentHours > 0 && distanceMiles !== null ? distanceMiles / segmentHours : null;
@@ -79,9 +82,11 @@ const retainedSegments = sourceSegments
         segment_index: index,
         start_recorded_at: start,
         end_recorded_at: end,
+        day_number: routeDayIndex(midpoint) + 1,
+        local_date: localDateLabel(midpoint),
         distance_miles: distanceMiles === null ? null : roundOne(distanceMiles),
         speed_mph: speedMph === null ? null : roundOne(speedMph),
-        color: TRACK_COLOR,
+        color: routeColor(midpoint),
         source: "archived",
         original_source: properties.original_source || properties.source || "owntracks"
       }
@@ -101,7 +106,7 @@ const archivedPoints = retainedPoints.map((feature) => {
       track_name: TRACK_NAME,
       recorded_at: epoch,
       speed_mph: endingSpeedByEpoch.has(epoch) ? endingSpeedByEpoch.get(epoch) : null,
-      color: TRACK_COLOR,
+      color: routeColor(epoch),
       source: "archived",
       original_source: properties.original_source || properties.source || "owntracks"
     }
@@ -170,6 +175,7 @@ const archive = {
     footDistanceMiles: trackMetadata.foot_distance_miles,
     footDistanceKilometers: trackMetadata.foot_distance_kilometers,
     averageSpeedMph: trackMetadata.average_speed_mph,
+    colorMode: "warm hue by Eastern trip day with a light-to-dark time-of-day gradient",
     tracks: [trackMetadata]
   },
   properties: {
@@ -178,6 +184,7 @@ const archive = {
     track_name: TRACK_NAME,
     name: TRACK_NAME,
     color: TRACK_COLOR,
+    color_mode: "warm daily red, orange, and yellow gradients",
     source: "archived",
     point_count: retainedPoints.length,
     segment_count: retainedSegments.length,
@@ -220,6 +227,63 @@ function isHidden(epoch) {
   return epoch > HIDDEN_AFTER_EPOCH && epoch < HIDDEN_UNTIL_EPOCH;
 }
 
+function routeColor(epoch) {
+  const dayIndex = routeDayIndex(epoch);
+  const dayProgress = localSecondsIntoDay(epoch) / 86400;
+  const hue = DAILY_WARM_HUES[dayIndex % DAILY_WARM_HUES.length];
+  const lightness = 78 - (78 - 26) * dayProgress;
+  return hslString(hue, 95, lightness);
+}
+
+function routeDayIndex(epoch) {
+  return Math.max(0, calendarDayDifference(TRACK_START_DATE, localDateLabel(epoch)));
+}
+
+function localDateLabel(epoch) {
+  const parts = easternDateTimeParts(epoch);
+  return `${parts.year}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(2, "0")}`;
+}
+
+function localSecondsIntoDay(epoch) {
+  const parts = easternDateTimeParts(epoch);
+  return (parts.hour % 24) * 3600 + parts.minute * 60 + parts.second;
+}
+
+function easternDateTimeParts(epoch) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hourCycle: "h23",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  }).formatToParts(new Date(epoch * 1000));
+  const value = (type) => Number(parts.find((part) => part.type === type)?.value || 0);
+  return {
+    year: value("year"),
+    month: value("month"),
+    day: value("day"),
+    hour: value("hour"),
+    minute: value("minute"),
+    second: value("second")
+  };
+}
+
+function calendarDayDifference(firstDate, secondDate) {
+  return Math.round((dateOnlyUtc(secondDate) - dateOnlyUtc(firstDate)) / 86400000);
+}
+
+function dateOnlyUtc(dateLabel) {
+  const [year, month, day] = dateLabel.split("-").map(Number);
+  return Date.UTC(year, month - 1, day);
+}
+
+function hslString(hue, saturation, lightness) {
+  return `hsl(${hue}, ${saturation}%, ${Math.round(lightness * 10) / 10}%)`;
+}
+
 function haversineMiles(start, end) {
   if (!validCoordinate(start) || !validCoordinate(end)) return null;
   const earthRadiusKilometers = 6371.0088;
@@ -255,9 +319,11 @@ function verifyArchive(geojson, firstEpoch, lastEpoch) {
   const overlappingSegments = segments.filter((feature) => (
     segmentEnd(feature) > HIDDEN_AFTER_EPOCH && segmentStart(feature) < HIDDEN_UNTIL_EPOCH
   ));
+  const uncoloredSegments = segments.filter((feature) => !/^hsl\(\d+, \d+%, \d+(?:\.\d+)?%\)$/.test(feature?.properties?.color || ""));
 
   if (hiddenPoints.length > 0) throw new Error("Archive verification found a point in the hidden interval.");
   if (overlappingSegments.length > 0) throw new Error("Archive verification found a segment crossing the hidden interval.");
+  if (uncoloredSegments.length > 0) throw new Error("Archive verification found a segment without a warm gradient color.");
   if (recordedAt(points[0]) !== firstEpoch || recordedAt(points[points.length - 1]) !== lastEpoch) {
     throw new Error("Archive points are not in chronological order.");
   }

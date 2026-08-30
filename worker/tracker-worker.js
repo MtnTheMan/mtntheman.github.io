@@ -28,7 +28,7 @@ const TRACKS = {
     publicWindowEnd: "2026-08-28T20:00:00-04:00",
     staticRouteCutoff: null,
     publicArchiveOnly: true,
-    color: "#5ab0ff"
+    color: "#ff7a00"
   }
 };
 const EASTERN_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {

@@ -60,7 +60,7 @@ Track metadata is centralized in `TRACKS` in `worker/tracker-worker.js`.
 | Track | Public window (Eastern) | Public delay | Rounding | Color |
 | --- | --- | ---: | ---: | --- |
 | NHR Megatrip 2026 | `2026-05-17T08:00:00-04:00` through `2026-06-22T19:00:00-04:00` | 600 minutes / 10 hours | 3 decimals | `#00ff66` |
-| Maine Trip August 2026 | `2026-08-24T13:00:00-04:00` through `2026-08-28T20:00:00-04:00` | 900 minutes / 15 hours | 3 decimals | `#5ab0ff` |
+| Maine Trip August 2026 | `2026-08-24T13:00:00-04:00` through `2026-08-28T20:00:00-04:00` | 900 minutes / 15 hours | 3 decimals | warm daily red/orange/yellow gradients |
 
 `PUBLIC_DELAY_MINUTES` remains the fallback for a track that does not define its own delay. Maine explicitly defines 900 minutes. That delay governed the feed used to produce the final static snapshot.
 
@@ -149,6 +149,8 @@ node scripts/build-maine-trip-archive.js "PATH_TO_COMPLETED_MAINE_GEOJSON"
 ```
 
 The command is also safe to run against the committed archive itself as a verification/rewrite pass. It preserves the original source and excluded-point counts. The script fails if verification finds a point in the hidden interval or a segment overlapping it. It never connects to D1 and never deletes a stored row.
+
+Maine segment colors follow the NHR archive convention: the segment midpoint determines its Eastern calendar day and its progress through that day. Maine alternates red, orange, yellow, deeper red, and amber across August 24–28, with each day fading from a lighter morning shade to a darker evening shade. The warm gradient is stored directly in each segment feature's `color` property.
 
 ## NHR elevation profile
 

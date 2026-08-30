@@ -97,7 +97,8 @@ permalink: /trip-tracker/
 <p class="tracker-note">
   These routes are completed archives, not real-time positions. Times are shown in Eastern Time;
   speeds are approximate and calculated between consecutive displayed points. The Maine route intentionally
-  omits the interval after 2:32 PM ET on August 27 until August 28.
+  omits the interval after 2:32 PM ET on August 27 until August 28. Maine colors alternate between red,
+  orange, and yellow by day, with a lighter-to-darker gradient over each day.
 </p>
 
 <section class="tracker-live-stats" aria-labelledby="maine-stats-heading">
@@ -180,7 +181,7 @@ permalink: /trip-tracker/
     var liveGeoJsonUrl = apiBaseUrl + "/api/tracker/geojson";
     var trackDefinitions = {
       "nhr-megatrip-2026": { name: "NHR Megatrip 2026", color: "#00ff66", archiveOnly: true },
-      "maine-august-trip": { name: "Maine Trip August 2026", color: "#5ab0ff", archiveOnly: true }
+      "maine-august-trip": { name: "Maine Trip August 2026", color: "#ff7a00", archiveOnly: true }
     };
     var finalStats = {
       ticksIntercepted: 16,
