@@ -40,6 +40,11 @@ permalink: /trip-tracker/
     padding: 0.75rem;
   }
 
+  .tracker-ticker h2 {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
   .tracker-ticker strong,
   .tracker-ticker span {
     display: block;
@@ -96,9 +101,8 @@ permalink: /trip-tracker/
 
 <p class="tracker-note">
   These routes are completed archives, not real-time positions. Times are shown in Eastern Time;
-  speeds are approximate and calculated between consecutive displayed points. The Maine route intentionally
-  omits the interval after 2:32 PM ET on August 27 until August 28. Maine colors alternate between red,
-  orange, and yellow by day, with a lighter-to-darker gradient over each day.
+  speeds are approximate and calculated between consecutive displayed points. Maine colors alternate
+  between red, orange, and yellow by day, with a lighter-to-darker gradient over each day.
 </p>
 
 <section class="tracker-live-stats" aria-labelledby="maine-stats-heading">
@@ -111,7 +115,8 @@ permalink: /trip-tracker/
   </div>
 </section>
 
-<section class="tracker-ticker" aria-label="Final NHR trip counters">
+<section class="tracker-ticker" aria-labelledby="megatrip-stats-heading">
+  <h2 id="megatrip-stats-heading">Mega Trip 2026 stats</h2>
   <p><strong>Total distance covered</strong> <span id="tracker-total-distance">Loading...</span></p>
   <p><strong>Miles on foot</strong> <span id="tracker-foot-distance">Loading...</span></p>
   <p><strong>Ticks intercepted</strong> <span id="tracker-tick-count">16</span></p>
