@@ -672,7 +672,7 @@ details.resume-details summary {
 }
 
 .tracker-swatch-maine {
-  background-color: #5ab0ff;
+  background: linear-gradient(90deg, #c1121f 0%, #ff7a00 52%, #ffd60a 100%);
 }
 
 .tracker-detail {
@@ -806,7 +806,7 @@ details.resume-details summary {
 }
 
 .tracker-live-stats {
-  border: 2px dotted #5ab0ff;
+  border: 2px dotted #ff7a00;
   margin: 1em 0;
   padding: 0.75em;
 }

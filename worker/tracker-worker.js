@@ -27,7 +27,8 @@ const TRACKS = {
     publicWindowStart: "2026-08-24T13:00:00-04:00",
     publicWindowEnd: "2026-08-28T20:00:00-04:00",
     staticRouteCutoff: null,
-    color: "#5ab0ff"
+    publicArchiveOnly: true,
+    color: "#ff7a00"
   }
 };
 const EASTERN_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
@@ -321,9 +322,9 @@ function requestedTracks(url) {
 async function publicTrackData(env, track) {
   const config = trackConfig(track, env);
 
-  // The finalized NHR archive is the canonical public route. Keep its raw
+  // Finalized static archives are the canonical map routes. Keep the raw
   // OwnTracks rows for authenticated export and health counts, but never emit
-  // them as public segments, points, or a latest marker.
+  // them as route segments, points, or a latest marker.
   if (track.publicArchiveOnly) {
     return buildTrackData(track, config, [], {
       stored_count: 0,
