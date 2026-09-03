@@ -27,6 +27,16 @@ That kind of task-level credential is not common outside Ontario. Across the nor
 
 ## Voluntary standards and what they do
 
+<figure class="nhr-figure float-right-tight protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-3-sustainable-forestry-trail-sign.jpg"
+    alt="Sustainable Forestry Trail sign listing Pennsylvania forestry, museum, agriculture, hardwoods, and certification partners"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>On Pennsylvania's Sustainable Forestry Trail, a single sign names the state forestry bureau, a state forest, the historical and museum commission, the agriculture department, the hardwoods council, and the Sustainable Forestry Initiative. Voluntary standards reach the woods through coalitions as well as licenses.</figcaption>
+</figure>
+
 Licensure is not the only way standards reach the woods. Voluntary certification programs shape behavior too, just through different tools. The American Tree Farm System includes about 74,000 family forests and roughly 20 million acres nationwide, using management plans, recognition, and market incentives rather than legal permission (Alabama Forestry Foundation). Enrolled landowners receive documented management plans and program signage, and in some supply chains certified timber can matter to mills (Canadian Institute of Forestry). State Forest Stewardship programs and international systems such as the Forest Stewardship Council work in a similar policy space, where the standard travels through access, recognition, and market preference more than through a license.
 
 That matters because much of northern hardwood governance is not only a question of law. It is also a question of who has the time, money, training, and institutional support to do careful work. The useful question is where each model fits. Targeted credentials can make sense when a task is technical, repeated, and important enough to deserve a shared standard. A full license can make more sense when the public needs one accountable professional standard across many services. Voluntary systems fit somewhere else again, especially where regulation is politically difficult or where landowners enter through markets and incentive programs instead of permits.

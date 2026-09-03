@@ -47,6 +47,16 @@ All three forests manage northern hardwood stands within the same broad region. 
 
 Those differences can stay in the model without automatically creating another practice bundle. Local species composition, deer pressure, invasive species, stand history, winter conditions, and topography will affect what a treatment produces. The local market may affect whether a sale receives bids and what kind of work can pay for itself. These conditions can be represented as geographic, ecological, or market context surrounding the management bundle.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-35-treated-stand-central-maine.jpg"
+    alt="Recently treated hardwood stand in central Maine with retained trees, slash, and dense understory vegetation"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A treated stand in central Maine. One local prescription can help define a practice bundle, but it cannot stand in for every forest, ownership, or implementation context in the Northeast.</figcaption>
+</figure>
+
 If White Mountain falls within the same expected range after those factors are considered, the eventual bundle could include Finger Lakes, Green Mountain, and White Mountain across New York, Vermont, New Hampshire, and Maine. The forests would remain distinct places, and the model would treat their managers as actors operating under sufficiently similar circumstances.
 
 ## Comparing plans with implemented management

@@ -29,6 +29,16 @@ But even when a formal plan is absent, the stand still has inertia.
 
 That word keeps coming back to me. Inertia is the direction the system is already moving. In a northern hardwood stand, inertia might be high-grading legacy, too much deer pressure, invasive plants slowly taking more of an impact on the landscape, a lack of sufficient regeneration, a poor diameter structure, or a stand that is overstocked and waiting for some disturbance to decide its future. It might also be a healthy understory, decent regeneration, good vertical structure, and a canopy that is aging into something locally valuable.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-13-backus-woods-trail-ontario.jpg"
+    alt="Sunlit trail through a dense green hardwood forest at Backus Woods in southern Ontario"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A quiet trail through Backus Woods in southern Ontario. A forest can look settled from the path without telling us whether its trajectory has been examined or simply accepted.</figcaption>
+</figure>
+
 The Northern Hardwoods Resilience Study is trying to get at that inertia directly. We took data from Forest Inventory and Analysis plots and many different state and local inventorying efforts on northern hardwood forests, and we tried to summarize what is happening across different northern hardwood stands. Are we seeing valuable tree species regenerating in sufficient capacities? Are we lacking sufficient regeneration? Across much of the range, we are seeing stands where sufficient regeneration of desirable or merchantable tree species is not where we would want it to be.
 
 So when we talk about no plan being technically still a plan, that is not a clever little phrase floating above the woods. It is directly connected to forest outcomes. A stand can be left alone into resilience, or it can be left alone into decline. The difference depends on what is already happening in that stand and whether anyone is paying enough attention to notice.

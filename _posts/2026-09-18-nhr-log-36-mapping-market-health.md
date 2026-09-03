@@ -33,6 +33,16 @@ Those assumptions would need to remain visible. The map should distinguish an es
 
 Once we have some idea of what the forest can produce, the next problem is figuring out which mills and buyers are available in practice. Simply placing a point for every mill on a map would not answer that question. A useful outlet has to be within an economically reasonable hauling distance, accept the relevant species and grades, have demand for that material, and be able to receive it in enough volume to influence management.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-36-menominee-tribal-enterprises-mill.jpg"
+    alt="Menominee Tribal Enterprises wood-products mill across a pond near Neopit, Wisconsin"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>The Menominee Tribal Enterprises mill near Neopit, Wisconsin. A point on a map becomes a meaningful market outlet only after species, grade, dimensions, capacity, price, and hauling distance are considered.</figcaption>
+</figure>
+
 Transportation distance would change by product. Veneer can travel much farther because its value relative to its weight can support a longer haul. Low-value pulp, biomass, and similar materials usually cannot carry the same transportation cost. Rather than drawing one fixed radius around every mill, I picture a road-based model in which the possible sourcing area changes depending on the product and perhaps on other assumptions about cost.
 
 The mill information would also have to include accepted species, grade requirements, common product mixes, mill capacity, and the typical volume moving through the facility. Demand matters at the level of individual species and quantities. A mill may buy hardwood while having little interest in the particular mix that a nearby stand produces.
@@ -42,6 +52,16 @@ Operating status adds another complication. Some mills are open but operating at
 There are also many small mills scattered throughout the Northern Hardwood range that do specialized work. Their activity may be recorded in the Forest Service Timber Products Output database, state databases, or tax records that capture the economic activity of the mill itself. They may not handle the volume of a large facility, but in some places they could be the difference between having an outlet for a particular product and having nowhere for it to go.
 
 Putting those pieces together would give us a way to compare the amount and type of material a region can produce with the amount and type that nearby markets can receive. The gap between those two sides is probably where market health begins to become measurable.
+
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-36-central-ontario-log-yard.jpg"
+    alt="Several piles of sorted roundwood in a muddy log yard in central Ontario"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A log yard in central Ontario with several sorts of roundwood. Market health depends on whether each product has a reachable destination, not simply whether harvested wood exists.</figcaption>
+</figure>
 
 ## Mapping utilization and underutilization
 

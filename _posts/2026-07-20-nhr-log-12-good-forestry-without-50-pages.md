@@ -27,6 +27,16 @@ I think the answer is yes, with caveats hanging all over it.
 
 A good marking plan should usually incorporate good silvicultural practice, but good silvicultural practice does not always arrive attached to a complete marking plan. Sometimes the plan is in the paint. Sometimes it is in the forester walking tree by tree, deciding what stays, what goes, what the next cohort might look like, and what kind of residual canopy they are trying to leave behind.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-12-field-flagging-massachusetts.jpg"
+    alt="Pink forestry flagging tied to a tree in a dense conifer stand in Massachusetts"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>Pink flagging inside a Massachusetts stand is a small field record of a larger decision. Documentation can be brief, but the judgment still has to survive contact with the trees.</figcaption>
+</figure>
+
 I saw an example of this with a forester working primarily on private lands in a procurement capacity. There was no large written apparatus around the work. There was no 50-page document explaining how they were going to mark responsibly. But they were still doing a full marking operation. They were marking trees to a spec, thinking through merchantable trees, ugly trees, residual canopy, and what would remain for the next entry.
 
 Nobody had written, in formal language, "we will be leaving a responsible cohort." That was still ostensibly what they were doing.

@@ -15,6 +15,16 @@ The thought I kept returning to in New Brunswick was what I started calling the 
 
 In many situations, softwood work is simply easier to make repeatable. It is easier to write a prescription that can be used again. It is easier to train people into production forestry where the stand is clearcut, regenerated, planted, tended, and moved into the next rotation. The seed is often available. The seedlings are available. The market may already know what to do with the wood. The contractors may already know how to operate in that setup. If you spend the first few years of your profession learning that softwood work is the normal work, the easier work, and the work the market rewards, then the path of least resistance starts to look less like a choice and more like gravity.
 
+<figure class="nhr-figure float-right-tight protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-16-new-brunswick-softwood-road.jpg"
+    alt="Road descending between dense softwood stands in New Brunswick"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A softwood-dominated roadside in New Brunswick. The visual simplicity of a relatively uniform stand hints at why standardized operations can be easier to repeat than decisions in mixed northern hardwoods.</figcaption>
+</figure>
+
 A northern hardwood system asks something different of people. It asks for familiarity, patience, and comfort with complexity. If forestry is like being a car mechanic, then working in a softwood system might be like knowing your way around the same familiar trucks year after year. You know the parts. You know the common failures. You know where to look when something sounds wrong. A hardwood stand can feel more like getting underneath the hood of an imported Audi where everything is in metric units and it gets hairy really fast. That does not mean the mechanic is bad. It means the machine is different, and skill is partly what someone has spent years learning to see.
 
 Foresters can be extremely good at working in softwood systems. Foresters can be extremely good at working in hardwood systems. A lot of it comes down to familiarity. If the institutions, markets, contractors, nurseries, mills, and early-career training all point in one direction, then the profession gets better at that work. Meanwhile, the other set of skills can become less common, less rewarded, and harder to pass along.

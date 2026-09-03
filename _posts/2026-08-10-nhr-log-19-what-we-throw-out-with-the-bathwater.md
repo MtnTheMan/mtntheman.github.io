@@ -17,6 +17,16 @@ A forester may consult old township surveys to learn which species and sizes wer
 
 One of the uncomfortable parts of this discussion is that responsible management does not always look gentle. A relatively light harvest can be high grading if it removes the best stems and leaves the stand with poor prospects, while an aggressive cut can be aimed at creating enough light for the next cohort of trees. Counting stumps will not tell you which one happened. You have to know what was removed, what was retained, what is expected to regenerate, and whether anyone is thinking about the stand ten, twenty, or fifty years from now.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-19-treated-stand-ontario.jpg"
+    alt="Recently treated Ontario forest with scattered retained canopy trees and dense green understory"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A treated stand in Ontario with retained overstory trees, new growing space, and a vigorous understory. The visible disturbance is only one moment in the stand's longer response.</figcaption>
+</figure>
+
 A good forester also has to tell a landowner things they may not want to hear. Landowner goals shape a management plan, but those goals can conflict with one another or with the biology of the trees. A forester who cares about the future success of the stand may discourage an owner from overharvesting, even when taking more valuable timber would produce a larger check today. The relationship may last for decades, with ten years or more between entries, so professional reputation and good word of mouth have to rest on what remains after the harvest.
 
 What I want from a skeptical reader is fairly modest: reserve judgment when you see trees being cut. That pause is not automatic approval. It is time to ask what the cut is meant to accomplish and what will grow there afterward. Everything that lives will die, and trees are no different, so every forest will experience disturbance at some level, whether it comes from a harvest, wind, insects, disease, or the ordinary death of individual trees. The visible disturbance is one moment in a much longer process.

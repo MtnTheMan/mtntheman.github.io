@@ -17,6 +17,16 @@ That type of visual assessment can contain a great deal of professional judgment
 
 Formal regeneration monitoring, when it did occur, was most often discussed as something conducted after a harvest, sometimes in connection with Sustainable Forestry Initiative certification. That timing can help document how a stand responded to an entry, although it does less to inform the prescription that produced the response in the first place.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-34-regeneration-field-group-maine.jpg"
+    alt="Forestry field group gathered amid dense regeneration in a treated hardwood stand in central Maine"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A field group examines regeneration in a treated stand in central Maine in August 2026. Monitoring becomes useful when it can connect what is growing now to the treatment and decisions that produced it.</figcaption>
+</figure>
+
 Advance regeneration describes the forest’s next cohort already being in place before a harvest gets underway. I want to be precise about the wording here: it is advance regeneration, rather than advanced regeneration, because the seedlings and saplings have arrived in advance of the harvest. When that cohort is present, a forester can conduct operations around it, try to avoid damaging it during removals or entries, and give those trees an opportunity to grow into the light spaces left behind.
 
 Much of the older silvicultural guidance for northern hardwoods assumes that hundreds or thousands of seedlings and saplings will remain after a harvest and eventually take the place of the overstory. Management guidebooks can recommend far, far, far more stocking of seedlings and regeneration than what we may actually have in the forest. The guidance generally assumes that regeneration will occur as intended, without fully accounting for the pressures affecting the regenerating layer in many northern hardwood stands. As we work through the Northern Hardwoods Resilience project, we are finding a gap between that expectation and what managers are working with on the ground.

@@ -27,6 +27,16 @@ I also heard an underlying disgruntlement from some managers toward city residen
 
 Foresters, at their heart of hearts, have to believe in both conservation and utilitarianism. Those ideas can appear conflicting to someone without training in forestry, although much of a forester's job involves finding a workable balance between them. The public may picture a no-harvest scenario as the healthiest thing that can happen to a forest, when in actuality harvesting can either be detrimental or provide considerably more benefit over the long run than simply leaving the forest alone.
 
+<figure class="nhr-figure float-left-tight protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-25-our-daily-wood-display-vermont.jpg"
+    alt="Wooden wall plaque titled Our Daily Wood describing everyday uses of forest products"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>An “Our Daily Wood” display in Vermont connects ordinary products to the forests that supply them. Public familiarity with that connection changes how much explanation a working forest needs.</figcaption>
+</figure>
+
 Many northern hardwood stands have been influenced by high grading and other practices that removed desirable trees without creating the composition or structure needed for future resilience. Some stands may be overstocked or increasingly susceptible to disease and disturbance, and an active entry may improve growing conditions, encourage a more diverse or resilient cohort, or move the stand toward a better condition. I think Ethan Tapper does a good job of explaining this dichotomy in *How to Love a Forest*: management can harm a forest, and positively oriented management can also help it.
 
 Foresters have to bridge the divide between what the public expects a healthy forest to look like and what good management could accomplish on a particular site at a particular time. In places where people already understand what a working forest looks and sounds like, the divide may be fairly narrow. In places where most people encounter forestry through a visible harvest along a road, a public meeting, or a controversy after the work has begun, managers have much more explaining to do. Keeping a working forest working can benefit both people and the forest in the long run, but the profession has to communicate how and why.

@@ -9,6 +9,16 @@ excerpt: "Across the northern hardwood range, forest managers are at different s
 
 Okay, the title is kind of like a Paul Revere thing, and maybe it is a little dramatic, but it fits what I heard from forest managers across the northern hardwood range. Most managers seem to know that, if they do not currently have a forest pest, pathogen, or major invasive species concern, one is likely going to be on the way pretty soon. There is an almost universal concern about which species will be affected next, what stage each problem has reached, and what managers will be able to do when it arrives. Everywhere in the northern hardwood range seems to be at a different stage of bracing for one of these problems, actively dealing with it, or trying to manage the stand that remains afterward.
 
+<figure class="nhr-figure float-left-tight protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-28-beech-leaf-disease-watch-sign.jpg"
+    alt="Invasive species watch sign asking visitors to look for beech leaf disease in a southern Ontario forest"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A beech leaf disease watch sign in southern Ontario makes one emerging pressure legible at the stand scale. Across the range, managers are encountering the same threats at very different stages.</figcaption>
+</figure>
+
 What struck me initially was how much concern some managers expressed about the issues approaching their forests, and then, upon reflection, it became apparent that the design of the Northern Hardwoods mega trip had allowed me to see those concerns geographically. I have to give myself a little bit of credit for that, because I was making this kind of sweeping motion across the whole northern hardwood belt, physically moving into and out of territories where managers faced different regimes of problems. A series of disjunct Zoom interviews might have given me many of the same individual accounts, but traveling across the range allowed me to experience the transitions between them. I could leave an area where a pest had already changed management and enter one where people were still anticipating it, or where that particular issue was barely part of the conversation because foresters were more concerned about establishing the next cohort of trees.
 
 You would be having these conversations and realize that you had actively moved into or out of an area where the management concerns were different, even though the forests were still part of the same larger northern hardwood region. The problems appeared in different pockmarks throughout the range, without a clean gradient or a universal amount of severity that any one forest would experience. Every stand is different, and every manager has a particular set of issues that they either have to attack or play defense against. Some of those issues have a lot of salience because managers are already making decisions around them, while another problem might remain out of mind until it moves closer or begins affecting the species they work with most often.

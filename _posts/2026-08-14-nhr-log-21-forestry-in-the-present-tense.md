@@ -11,11 +11,31 @@ I am about 36 hours from doing another interview when I get an email saying that
 
 In the Adirondacks, I went to the Adirondack Experience. In New Brunswick, I visited the Central New Brunswick Woodmen's Museum, which was way larger than I expected. In Algonquin Park, I found the Algonquin Logging Museum. The museum itself did not normally open until later in June when I was there, but its interpretive trail was still available, with a booklet that followed a series of numbered posts through the history of logging in the park.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-21-wisconsin-logging-museum.jpg"
+    alt="Parker Hopkins in front of the Wisconsin Logging Museum sign"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A roadside stop at the Wisconsin Logging Museum during the Megatrip. Forestry museums became a recurring way to see how each region chooses to describe its relationship with the woods.</figcaption>
+</figure>
+
 After about half a dozen local history museums, forestry museums, logging museums, and interpretive sites, I have started to think of these places as locations where forestry looks in the mirror. Each one has made decisions about the tools, people, photographs, machines, stories, and ideas that represent forestry in that region. I like going through them with one question in mind: How does forestry describe itself here? More often than not, it describes itself in the past tense.
 
 There are good reasons for that. The historical material is visually compelling. You have black-and-white photographs of massive log jams, horse-skidding teams, river drives, dangerous camps, early chain skidders, and the first cable skidder models. You have hard-nosed, rough, individualistic pioneers doing work that clearly drove the engine of early America and Canada. Staring at an ArcGIS terminal does not give a museum quite the same raw material as a crew trying to clear a log jam in a river.
 
 The trouble comes when the story more or less stops there. Some museums offer a nod toward present-day forestry, but even the present-day portions of the exhibits I have seen were often developed in the late 1990s or early 2000s. There are certainly people still using equipment from that period, so the equipment belongs in the story. It becomes a problem when it stands in for the whole current profession, especially when the exhibit has no cut-to-length machines, very little about current planning tools, and almost no sense of how safety, efficiency, or different levels of automation have changed the work.
+
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-21-algonquin-logging-museum-exhibit.jpg"
+    alt="Algonquin Logging Museum display titled A Typical Logging Operation of Today, with text, photographs, and a forest diorama"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>The Algonquin Logging Museum's “A Typical Logging Operation of Today” display does reach toward the present, but the equipment and framing show how quickly a current exhibit can become another historical layer.</figcaption>
+</figure>
 
 The forestry exhibit at the Adirondack Experience gave me the most literal sign I could have asked for. Forestry and active timber harvesting are represented in several places across the museum, but this particular exhibit is specifically supposed to explain forestry, and the museum is planning to replace it because of its dated nature. It briefly shows equipment from around the turn of the 21st century and includes a list of universities that teach forestry, although that list appeared to be many decades out of date. I believe Michigan State University was still shown under one of its earlier names. Walking through it, I could see why the exhibit had reached the end of its useful life. Elsewhere in the Adirondack Experience, there was a newer and much more interactive treatment of logging history that I thought worked really well. You could experience something of what forestry had been like rather than reading a series of labels. Even there, though, the experience passed up an opportunity to carry the story into the present. It gave visitors a stronger feel for forestry's history without giving them much sense of what forestry looks and feels like now.
 

@@ -17,6 +17,16 @@ When I use the phrase *magic forest*, I am usually describing a forest with a lo
 
 A magic forest will also have healthy and diverse regeneration of different species, especially what we would call advanced regeneration. Those young trees are already established beneath the canopy and are in a position to respond when a harvest or other disturbance creates more light and growing space.
 
+<figure class="nhr-figure float-right-tight protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-27-manitoulin-advance-regeneration.jpg"
+    alt="Straight hardwood trunks above a dense carpet of maple regeneration on Manitoulin Island"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A northern hardwood stand on Manitoulin Island with advance regeneration spread across the forest floor. The apparent ease of a “magic forest” is a present condition with a history behind it.</figcaption>
+</figure>
+
 It also helps if the site has been worked for a while and continues to be responsive to different harvest actions. Some magic forests are continuously worked woods with long management histories. They have gone through repeated entries and disturbances, but they still have the ability to regenerate. The species may shift, and an individual stand may respond differently from the one next to it, but the forest continues to produce enough regeneration to sustain a diverse hardwood stand.
 
 There are many factors that can quickly prohibit a magic forest from being magic. If any one part of the equation becomes badly imbalanced, managers can have a hard time regenerating successfully, or at least sufficiently. Heavy deer or moose browse can remove desirable seedlings before they recruit into larger size classes. Invasive plants can occupy the growing space that becomes available after a harvest. Pests and pathogens can alter composition by removing a species that previously played a large role in the stand.

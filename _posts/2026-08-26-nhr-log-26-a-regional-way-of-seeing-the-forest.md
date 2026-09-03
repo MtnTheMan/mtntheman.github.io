@@ -23,6 +23,16 @@ These books are often used outside the forestry profession as well. A landowner,
 
 There is a difference, though, between a guide devoted strictly to tree identification and one that also teaches forest ecology or the larger working systems at play. A tree guide may help distinguish sugar maple from red maple through leaves, buds, bark, twigs, and branching patterns. An ecological guide may describe the plants growing underneath those trees, the soils beneath them, the disturbances that helped create the stand, and the combinations of species that indicate a particular kind of site.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-26-maple-leaves-algonquin.jpg"
+    alt="Sunlit green maple leaves in a forest at Algonquin Provincial Park"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>Maple leaves in Algonquin Provincial Park. A regional guide turns a familiar species into clues about site, stand, and neighboring forest communities.</figcaption>
+</figure>
+
 That second kind of guide became increasingly interesting to me during the Megatrip. On several forest walks, foresters pointed out species of fern, flowers, and relatively rare understory plants that they used as indicators of site quality. These plants could be sensitive to disturbance, light conditions, invasive species pressure, moisture, or other aspects of the growing environment. If the conditions had aligned well enough for a sensitive species to persist, its presence could tell an experienced forester quite a bit about the site.
 
 I have sometimes described that process as "almost pseudoscientific," although the phrase is probably harsher than what I mean. One presence-or-absence observation can compress a large number of contributing factors into something that feels like a check-the-box assessment. If the habitat is suitable enough for a particular indicator species, then the site may be "in the green, so to speak," with many of the conditions associated with a productive native forest already aligned. The plant does not explain every process operating there, but its presence can verify several things at once for a forester who knows what to look for.

@@ -35,6 +35,16 @@ That first paper was basically a way to turn scattered occurrence records into a
 
 The prediction language in that paper is the part I want to hone in on. Geographic proximity gives you a useful first approximation: if an invasive plant is repeatedly reported around a management unit, it may eventually arrive within the unit. But a circular buffer cannot tell you how it will get there, how quickly it might move, whether the area between those locations is suitable, or where a manager should look first.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-32-new-brunswick-forest-agriculture-edge.jpg"
+    alt="Road through a New Brunswick agricultural landscape bordered by hardwood forest"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>Forest and agricultural land meet along a road in New Brunswick. An invasion model has to treat edges like this as pathways shaped by propagule pressure, disturbance, land use, and access.</figcaption>
+</figure>
+
 Some of the mechanics for answering those questions were already appearing in the modeling literature before my original watch-list paper. Horvitz and colleagues used historical records to compare the apparent contributions of roads, rivers, and more generalized dispersal to the spread of an invasive plant across China. Their model estimated arrival times and found that rivers best explained the rapid expansion of the species they studied (Horvitz et al. 2014). Straight-line distance did a poor job of representing the time involved when seeds were moving with rivers, vehicles, animals, or some other vector.
 
 Later work has brought more of those processes together. Botella and colleagues developed a Bayesian model that combined short-distance spread, human-mediated long-distance dispersal, plant age and reproduction, habitat suitability, and uneven observation effort (Botella et al. 2022). Runghen and colleagues treated human-mediated dispersal as a network connecting people, vectors, and destinations, with the structure of that network helping to identify vulnerable sites (Runghen et al. 2023).

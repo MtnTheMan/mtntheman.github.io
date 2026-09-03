@@ -15,6 +15,16 @@ At the northernmost Canadian extent, these interactions included the taiga, or b
 
 Other competing forest types were other "hardwood" systems that are normally treated differently because of their light regimes and sensitivity to disturbance. Oak-hickory systems become prominent through southern New England, along coastal areas, and near the southern and eastern reaches of the northern hardwood range. The Allegheny hardwoods shape management in Pennsylvania and southern New York, while the Carolinian forests enter the southernmost parts of Ontario. Pretty much everywhere we went, there were mixtures or overlaps with another forest type, whether that overlap had a widely used name or not, and foresters could not help but talk about some of their experience managing those other forests.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-30-new-brunswick-forest-mosaic.jpg"
+    alt="Broad New Brunswick forest landscape with mixed hardwood and softwood cover, openings, and distant hills"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A New Brunswick overlook shows hardwoods, softwoods, openings, and distant settled land in one view. Transition zones occur inside landscapes as well as along the outer edge of the northern hardwood range.</figcaption>
+</figure>
+
 Some of what I am calling overlaps are extensive forest categories in their own right and could be considered as large as the extant northern hardwood forest. I do not think that makes northern hardwoods too broad or any less useful as a category than FIA's maple/beech/birch group or other broad stand descriptions. Northern hardwoods still gives us a way to describe a major forest resource across a large region, but interpreting the state of management requires us to consider what might be weighing on managers in different parts of that region and what the local mixture says about the expertise and applied experience they have developed.
 
 The competition became most noticeable when markets drove foresters toward commodities other than hardwoods. Hardwood markets really are not what they used to be across the range. There was a heyday, as recently as the 1990s in some places, when moving hardwoods was seen as a guaranteed profitable venture, and when producing quality logs and regeneration was simultaneously treated as a comparatively easy thing across much of the northern hardwood belt.

@@ -16,6 +16,16 @@ Some of the variables I originally placed in that list, including current tree m
 
 I still want the larger project to produce a fuller picture of resiliency within a region or an explicit spatial unit of some sort. Pressure, sensitivity, potential impact, vulnerability, and adaptive capacity would remain separate but connected layers. When several pressure layers accumulate in the same place, the Atlas could demonstrate the amount of difficulty we might have in managing Northern Hardwood stands in the near future and why the response will probably have to be multifaceted, drawing from several different categories of management.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-37-northern-minnesota-canopy.jpg"
+    alt="Wide view across layered northern Minnesota forest canopy under a gray sky"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>Looking over the northern Minnesota canopy from above, multiple forest conditions collapse into one green surface. A pressure atlas has to make those layers comparable without pretending they are equally visible or equally certain.</figcaption>
+</figure>
+
 ## What other cumulative-pressure maps have done
 
 The examples I found during a quick literature review approach cumulative-pressure mapping from several directions, and each one raises a design question for the Northern Hardwood Pressure Atlas.

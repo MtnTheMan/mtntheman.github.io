@@ -23,6 +23,16 @@ There are many other businesses and organizations that operate on extremely smal
 
 That is where partnerships start doing work. Partnerships between firms can help accomplish needs. Partnerships between agencies that represent similar interests can help move work from an idea into an action. A procurement forester may rely on loggers to get the work done, but may also rely on state grants to kind of pursue a positive forestry mission in the woods. A state with a ton of acres to manage may rely on good consulting foresters and good loggers to carry out the work. A conservation organization may have a cultural or ecological objective, but need money, operators, permitting knowledge, and local trust before that objective can become a job in the woods.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-11-forest-field-walk-massachusetts.jpg"
+    alt="Group walking single file beside a stream through a Massachusetts forest"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A field walk in southern New England turns a forest into shared ground for discussion. Partnerships become practical when people can compare their objectives against the same stand.</figcaption>
+</figure>
+
 In the end, the hope is that the different tenets of good forestry are still being held together. A vertically integrated company may be able to keep many of those pieces under one roof. In other places, it is the partnerships that enable something to work like that.
 
 Southern New England offers a good case study in what forestry looks like when it is struggling, when it is treading a lot of water. In Massachusetts, Connecticut, and Rhode Island, there are foresters who are really striving to do good work, and they are not very well noticed. They are occupying a space that is densely populated. It is a tough place to do forestry, and a tough crowd to please.

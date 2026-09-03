@@ -11,6 +11,16 @@ Forestry governance does not line up neatly on a scale from more regulation to l
 
 That is the basic premise I keep circling around. Every state or province has different mandates, reporting requirements, professional norms, and policy traditions, and all of those have been formed by years of political pushing and pulling. They have also been formed by the different masters that foresters have had to answer to. Agencies, landowners, mills, certification bodies, municipalities, markets, Indigenous governments, local publics, and professional organizations can all shape the space where forestry happens. After decades of that pressure, the outcomes on the ground start to diverge.
 
+<figure class="nhr-figure float-left-tight protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-10-sustainable-woodlands-sign-ontario.jpg"
+    alt="Mosaic Sustainable Woodlands project sign beside a forest road in southern Ontario"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A roadside sign in southern Ontario identifies a private sustainable woodlands project. The compact label sits over a much larger stack of ownership, professional, market, and local governance arrangements.</figcaption>
+</figure>
+
 Political science gives us a little language for this, although the daily work is usually more practical than theoretical. Multi-level governance describes the way authority moves across national, provincial, state, local, and sometimes non-governmental levels (Hooghe and Marks 2003). Polycentric governance describes systems where multiple actors at different scales make decisions, experiment, adapt, and sometimes conflict with one another (Ostrom 2010). Policy design scholars also talk about policy instruments: rules, incentives, reporting systems, standards, penalties, planning requirements, and voluntary programs that work together in particular contexts (Howlett 2009). I like that framing for forestry because governance often feels like a stack of obligations, permissions, habits, expectations, and workarounds.
 
 I think about Ontario here because it gives such a clear example of a layered system. In parts of Ontario, county or municipal rules can shape what happens on private lands, and those local rules sit alongside province-wide professional structures, forestry marking certification programs, and substantial requirements for reporting and planning. Ontario's tree-marking program, which I wrote about earlier in this series, is a good example of incrementalism in professional oversight: a targeted credential for a specific task, rather than a single all-encompassing license for every part of forestry practice. A person can be trained and certified to do a particular piece of work within a particular institutional setting because the system has decided that task deserves its own standard.

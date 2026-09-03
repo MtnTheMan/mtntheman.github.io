@@ -13,6 +13,16 @@ Michigan is why my mind went to deer first. We are so hyper-focused on deer here
 
 That explanation is so familiar in Michigan that it is easy to carry it everywhere. During this project, though, that assumption did not continue to hold across the whole Northern Hardwood Belt. It was very prescient in a lot of places, but in some regions regeneration occurs just fine with no significant deer browse pressure. The trip turned what sounded like a universal explanation into a regional question: where are deer actually exerting enough pressure to change regeneration, and where are we repeating the explanation because it is the problem we know best?
 
+<figure class="nhr-figure float-right-tight protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-31-white-tailed-deer-forest-edge.jpg"
+    alt="Two white-tailed deer standing in tall grass at the edge of a hardwood forest in East Lansing"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>White-tailed deer at a hardwood edge in East Lansing, Michigan. A useful range-wide model has to move beyond presence and estimate where populations are dense enough to alter recruitment.</figcaption>
+</figure>
+
 ## The problem changes across the range
 
 In warmer parts of the Northern Hardwood Belt, and in some of the more densely human-populated areas we visited, deer browse was one of the largest and most commonly used explanations for poor regeneration. That is still a field impression, however, and I would want a consistent map before treating it as a settled geographic relationship. One national analysis using deer-density classes from around 2003 actually found lower deer density with increasing residential development within the regions it studied, a useful complication to any simple suburban-deer story ([Hanberry 2021](https://doi.org/10.1002/ece3.8084)).

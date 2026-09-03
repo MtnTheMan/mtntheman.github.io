@@ -37,6 +37,16 @@ For species that need light, an overly conservative treatment can undermine the 
 
 That difference in how a treatment is read is where the word *aggressive* becomes difficult. An opening can look aggressive from the trail because the slash is visible and the remaining trees no longer create the enclosed forest experience people remember. From the forester’s perspective, the treatment may be a fairly specific attempt to create enough light, retain selected legacy trees, and move a stand toward a more diverse composition.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-20-recent-harvest-central-new-york.jpg"
+    alt="Recent forest harvest on a sunny slope in central New York with scattered retained trees and visible slash"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>A recent harvest in central New York can look severe at first glance. Evaluating it requires asking what structure was retained, which species the opening was meant to favor, and what the stand is expected to become.</figcaption>
+</figure>
+
 Several foresters described being softer about certain treatments because of the public response they expected. They might reduce the size of an opening, leave more canopy, avoid a highly visible location, or decide that the administrative and political fight attached to a treatment would be greater than the organization could absorb. Some of those adjustments are reasonable. Public forests have to accommodate recreation, aesthetics, habitat, local history, and other values that do not disappear because a prescription is silviculturally defensible.
 
 The problem shows up when the visually acceptable treatment and the treatment needed to regenerate the desired species move too far apart. At that point, a forester can end up choosing between what the public will tolerate and what seems most likely to produce the stand described in the management objectives. If that pattern happens repeatedly, public perception begins shaping species composition through all of the prescriptions that never get written or are softened before implementation.

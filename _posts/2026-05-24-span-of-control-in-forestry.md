@@ -11,6 +11,16 @@ I was talking recently with a state forester about a concept that rarely makes i
 
 When an agency or land management firm assigns one forester a large area, say 20,000 acres, there is usually an assumption that the land is being actively managed. Raw acreage can hide the problem. The better question is how many acres require decisions this year, and how much work follows each harvest once the trees are marked and the contract is signed.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-4-manitoulin-forest-overlook.jpg"
+    alt="Wide view of northern hardwood forest and distant wind turbines from the Cup and Saucer Trail on Manitoulin Island"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>From the Cup and Saucer Trail on Manitoulin Island, management responsibility looks like one continuous canopy. The workload still arrives stand by stand, sale by sale, and acre by acre.</figcaption>
+</figure>
+
 ## The first attempt: the back-of-the-napkin calculation
 
 Start with a simple version of the problem. A 5,000-acre forest on a 20-year re-entry interval, meaning the time between scheduled harvests in the same stand, would need about 250 active treatment acres per year. If the average timber sale unit is 40 acres, the math is simple:

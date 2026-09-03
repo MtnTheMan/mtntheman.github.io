@@ -17,6 +17,16 @@ What happens with our low-value wood products? If they are not sent to firewood,
 
 When I say low-value wood, I am talking about a whole category of material that can look different depending on the stand, the harvest, the markets, and the region. It could be the tops of trees. It could be small-diameter wood. It could be wood that is under a certain size threshold, or wood from species that simply do not carry much value in a given market. It could be what people sometimes call "uggo wood," as in ugly wood, the stuff with imperfections, defects, poor form, or whatever other issue keeps it from becoming a higher-value product.
 
+<figure class="nhr-figure full-width nhr-photo protected-image" oncontextmenu="return false;">
+  <img
+    src="{{ site.baseurl }}/assets/images/northern-hardwoods-megatrip/nhr-log-14-northern-wisconsin-log-stacks.jpg"
+    alt="Large stacks of cut roundwood along a forest road in northern Wisconsin"
+    loading="lazy"
+    draggable="false"
+  >
+  <figcaption>Roundwood stacked beside a forest road in northern Wisconsin. A piece of wood becomes low-value partly through its condition and partly through the distance, specifications, and buyers between the landing and an outlet.</figcaption>
+</figure>
+
 Low-value wood is an economic label, but it is also an operational headache and, in degraded woods especially, a pretty common outcome of history. In woods that have had a lot of human impact over the years, what we are often left with is a lot of low-value product. That does not mean the material is meaningless. It means the available market may not know what to do with it, may not want it, may only want it within a tight radius, or may only accept it under quotas.
 
 Historically, parts of the Northeast and the broader northern hardwood belt had stronger markets for low-value products. Paper markets, pulp markets, and other wood fiber outlets could help absorb material that would never become sawlogs. Those markets have faded in many places. Maine is only one piece of the northern hardwood world, but a recent forecasting paper put one version of that change pretty bluntly: from 2000 to 2017, 64 percent of Maine's pulp and paper processing mills shut down (Crawley et al. 2025). Where pulp markets still exist, they are often heavily localized. A mill may only take material from so far away. A buyer may set limits on how much they will accept. A market can technically exist and still be unavailable to a particular job.
