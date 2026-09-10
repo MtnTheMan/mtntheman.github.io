@@ -940,3 +940,272 @@ details.resume-details summary {
     grid-column: auto;
   }
 }
+
+/* Public curriculum vitae */
+.cv-page {
+  --cv-green: #18453B;
+  --cv-link: #1F5E78;
+  background: #fffdf4;
+  border: 3px solid var(--cv-green);
+  box-sizing: border-box;
+  color: #1c2421;
+  line-height: 1.55;
+  margin: 0 auto;
+  padding: clamp(18px, 4vw, 38px);
+}
+
+.cv-page h1,
+.cv-page h2,
+.cv-page h3,
+.cv-page h4 {
+  color: var(--cv-green);
+  text-transform: none;
+}
+
+.cv-page h1 {
+  font-size: clamp(2rem, 7vw, 3.1rem);
+  margin: 0;
+}
+
+.cv-page a:link,
+.cv-page a:visited,
+.cv-page a:hover,
+.cv-page a:focus {
+  color: var(--cv-link);
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.14em;
+}
+
+.cv-header {
+  border-bottom: 3px solid var(--cv-green);
+  padding-bottom: 1.25rem;
+}
+
+.cv-eyebrow {
+  color: var(--cv-green);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+}
+
+.cv-role-line {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0.4rem 0 0;
+}
+
+.cv-updated,
+.cv-meta,
+.cv-date {
+  color: #555;
+}
+
+.cv-updated {
+  margin: 0.25rem 0 0.8rem;
+}
+
+.cv-actions,
+.cv-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.85rem;
+}
+
+.cv-actions {
+  margin: 0.75rem 0 1rem;
+}
+
+.cv-actions a,
+.cv-button {
+  border: 2px solid var(--cv-green, #18453B);
+  display: inline-block;
+  font-weight: 700;
+  padding: 0.35rem 0.65rem;
+}
+
+.cv-button:link,
+.cv-button:visited,
+.cv-button:hover,
+.cv-button:focus {
+  background: var(--cv-green, #18453B);
+  color: #fffdf4;
+}
+
+.resume-details .cv-button:link,
+.resume-details .cv-button:visited,
+.resume-details .cv-button:hover,
+.resume-details .cv-button:focus {
+  background: #333300;
+  border-color: #00FF00;
+  color: #FFFDD0;
+}
+
+.cv-privacy-note {
+  background: rgba(24, 69, 59, 0.07);
+  border-left: 4px solid var(--cv-green);
+  font-size: 0.9rem;
+  margin: 1rem 0 0;
+  padding: 0.75rem 0.9rem;
+}
+
+.cv-toc {
+  border-bottom: 2px solid var(--cv-green);
+  padding: 1rem 0;
+}
+
+.cv-toc a {
+  font-weight: 700;
+}
+
+.cv-section {
+  scroll-margin-top: 1rem;
+}
+
+.cv-section > h2 {
+  border-bottom: 2px solid var(--cv-green);
+  font-size: 1.75rem;
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.3rem;
+}
+
+.cv-subheading {
+  font-size: 1.18rem;
+  margin: 1.6rem 0 0.65rem;
+}
+
+.cv-entry {
+  border-left: 3px solid var(--cv-green);
+  margin: 0 0 1.5rem;
+  padding-left: 1rem;
+}
+
+.cv-entry-heading {
+  align-items: start;
+  display: grid;
+  gap: 0.35rem 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.cv-entry-heading h3 {
+  font-size: 1.17rem;
+  margin: 0;
+}
+
+.cv-date {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0.1rem 0 0;
+  text-align: right;
+}
+
+.cv-meta,
+.cv-position {
+  margin: 0.2rem 0;
+}
+
+.cv-page ul,
+.cv-page ol {
+  padding-left: 1.35rem;
+}
+
+.cv-page li {
+  margin-bottom: 0.45rem;
+}
+
+.cv-page li::marker {
+  color: var(--cv-green);
+  font-weight: 700;
+}
+
+.cv-citations li {
+  margin-bottom: 0.9rem;
+}
+
+.cv-skills {
+  margin: 0;
+}
+
+.cv-skills dt {
+  color: var(--cv-green);
+  font-weight: 700;
+  margin-top: 0.9rem;
+}
+
+.cv-skills dd {
+  margin: 0.2rem 0 0;
+}
+
+.cv-back-to-top {
+  border-top: 2px solid var(--cv-green);
+  margin-top: 2rem;
+  padding-top: 1rem;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .cv-page {
+    border-width: 2px;
+    padding: 16px;
+  }
+
+  .cv-entry-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .cv-date {
+    margin-top: 0;
+    text-align: left;
+  }
+
+  .cv-section > h2 {
+    font-size: 1.45rem;
+  }
+}
+
+@media print {
+  body,
+  .site-table,
+  #content,
+  .cv-page {
+    background: #fff;
+    border: 0;
+    color: #000;
+    margin: 0;
+    max-width: none;
+    padding: 0;
+  }
+
+  #nav,
+  .site-footer,
+  .cv-toc,
+  .cv-actions,
+  .cv-back-to-top {
+    display: none;
+  }
+
+  .cv-page h1,
+  .cv-page h2,
+  .cv-page h3,
+  .cv-page h4,
+  .cv-page a,
+  .cv-skills dt,
+  .cv-page li::marker {
+    color: #000;
+  }
+
+  .cv-header,
+  .cv-section > h2,
+  .cv-entry,
+  .cv-back-to-top {
+    border-color: #000;
+  }
+
+  .cv-entry,
+  .cv-citations li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
