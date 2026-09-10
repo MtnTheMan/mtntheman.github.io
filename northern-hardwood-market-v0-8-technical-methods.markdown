@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Northern Hardwood Market Map v0.8 Technical Methods
+title: Technical methods for the Northern Hardwood Market Map v0.8
 permalink: /northern-hardwood-market-v0-8-technical-methods/
-excerpt: Detailed v0.8 data lineage, assumptions, equations, scenario results, QA, claim boundaries, and unfinished validation work.
+excerpt: Data lineage, model assumptions, equations, scenario results, QA, claim boundaries, and remaining validation work for v0.8.
 ---
 
 
@@ -66,11 +66,11 @@ excerpt: Detailed v0.8 data lineage, assumptions, equations, scenario results, Q
   <a href="/northern-hardwood-market-v0-8-documentation/">Read the stage-by-stage guide</a>
 </div>
 
-<div class="nhr-note"><strong>How to use this page:</strong> numerical results are conditional model outputs. “Assigned” does not mean purchased or delivered, and unassigned potential offer is not an estimate of harvested wood going unsold.</div>
+<div class="nhr-note"><strong>Interpretation limit:</strong> numerical results are conditional model outputs. “Assigned” does not mean purchased or delivered, and unassigned potential offer is not an estimate of harvested wood going unsold.</div>
 
-# Version 0.8 Methods, Production, and Validation Status
+# Version 0.8 methods and validation status
 
-## Northern Hardwood Market Strength and Weakness Research Preview
+## Research preview of northern hardwood market strength and weakness
 
 **Last updated:** 2026-09-08
 **Scope:** northern-hardwood portions of Connecticut, Maine, Massachusetts, Michigan, Minnesota, New Hampshire, New Jersey, New York, Pennsylvania, Rhode Island, Vermont, and Wisconsin
@@ -82,11 +82,11 @@ Version 0.8 is a belt-wide screening model for a practical forestry question:
 
 > Where do the product mixes produced by hardwood forest management appear to have strong or weak market access?
 
-It does more than count mills or draw circular buffers. The model represents a joint annual basket of five forest-product classes in each 5-kilometre supply cell, admits only buyer-product combinations that meet explicit evidence rules, assigns finite demand bands to those buyers, estimates delivered access over an OpenStreetMap road network, and solves all cells and buyers together under capacity constraints. The map shows where a greater or smaller share of modeled offer can find a compatible destination, which product has the weakest native channel, which buyers receive modeled volume, and how complete the local evidence is.
+Rather than count mills or draw circular buffers, the model represents a joint annual basket of five forest-product classes in each 5-kilometre supply cell. It admits only buyer-product combinations that meet explicit evidence rules, assigns finite demand bands to those buyers, estimates delivered access over an OpenStreetMap road network, and solves all cells and buyers together under capacity constraints. The map then shows where a greater or smaller share of modeled offer can find a compatible destination, which product has the weakest native channel, which buyers receive modeled volume, and how complete the local evidence is.
 
-Under the default assumptions—base offered supply, base haul cost, central facility demand, and a 20% additional reserve for competition from within-state wood outside the mapped belt—the model assigns about **12.10 million of 39.89 million green short tons per year**, or **30.34%** of potential annual offer. Across the six displayed demand/reserve scenarios, the assigned share ranges from **21.26% to 40.09%**.
+Under the default assumptions of base offered supply, base haul cost, central facility demand, and a 20% additional reserve for competition from within-state wood outside the mapped belt, the model assigns about **12.10 million of 39.89 million green short tons per year**, or **30.34%** of potential annual offer. Across the six displayed demand/reserve scenarios, the assigned share ranges from **21.26% to 40.09%**.
 
-Those percentages are **not estimates of how much harvested wood actually goes unsold**. Offered supply is a modeled potential annual offer. Facility intake is partly inferred from state Timber Products Output (TPO) totals and public mill evidence. About **4.08 million tons** in the five displayed product envelopes remain known only at state/product level and cannot yet be placed at eligible facilities; the broader demand reconciliation contains about **11.54 million tons** when balancing and residual products are included. Prices and harvest costs are absent, and no district has completed the independent Tier 2 outcome-validation procedure.
+Those percentages do not estimate how much harvested wood actually goes unsold. Offered supply is a modeled potential annual offer, and facility intake is partly inferred from state Timber Products Output (TPO) totals and public mill evidence. About **4.08 million tons** in the five displayed product envelopes remain known only at state/product level and cannot yet be placed at eligible facilities; the broader demand reconciliation contains about **11.54 million tons** when balancing and residual products are included. Prices and harvest costs are absent, and no district has completed the independent Tier 2 outcome-validation procedure.
 
 A cold cell can therefore indicate a plausible market constraint, incomplete facility evidence, a conservative assumption, or a combination of the three. The defensible interpretation today is:
 
@@ -98,23 +98,23 @@ It is not yet defensible to state that a mapped amount of timber will go unsold,
 
 Two production tracks must be distinguished.
 
-1. The **formal unattended pipeline** completed and passed through the merged full-belt road-access cache at stage 60. Official stages 65–90—accepted evidence snapshot, global allocation, map build, and release QA—remain unavailable and fail-closed.
+1. The **formal unattended pipeline** completed and passed through the merged full-belt road-access cache at stage 60. Official stages 65–90 (accepted evidence snapshot, global allocation, map build, and release QA) remain unavailable and fail-closed.
 2. The **published research preview** was built afterward through a separate, checked sequence using the final v0.8 route cache and the inherited v0.7.2 supply and demand contracts. It passed numerical and browser QA but did not open or bypass the stage-65 evidence gate.
 
 The map is publicly reachable at <https://www.mtntheman.com/assets/maps/us-northern-hardwood-market-v0-8.html>, but “published” must not be used as a synonym for “empirically validated” or “formal stage-90 release.”
 
-## 2. What v0.8 is—and is not
+## 2. What v0.8 includes and excludes
 
-### It is
+### Included
 
-- A transparent regional **market-access and finite-demand stress test**.
+- A regional **market-access and finite-demand stress test** with stated assumptions.
 - A joint model of veneer logs, sawlogs, industrial/pallet logs, pulpwood, and forest energy wood.
 - A capacity-constrained transportation allocation across all 25,810 supply cells and admitted buyers at once.
 - A delivered-road-cost improvement over radial distance.
 - A tool for keeping modeled market weakness separate from weak underlying evidence.
 - A research preview for prioritizing field validation, mill research, scenario testing, and later investment or policy analysis.
 
-### It is not
+### Excluded
 
 - A census of actual timber movements or mill purchases.
 - An estimate of unsold harvested wood.
@@ -128,13 +128,13 @@ The map is publicly reachable at <https://www.mtntheman.com/assets/maps/us-north
 
 <div class="nhr-flow"><strong>Model flow:</strong> forest inventory and annual-growth controls → 5-km potential offer → conserved five-product basket; public mill evidence and state TPO receipts → finite buyer-product demand; OpenStreetMap roads → delivered haul access; all three enter the regional allocation, while district evidence and observed outcomes remain a separate validation layer.</div>
 
-This separation is intentional. Inventory supports facility existence and approximate location; TPO supports state/product demand envelopes; roads support access costs; the optimization produces conditional assignments; and observed bid or market evidence is reserved for comparing predictions with real outcomes. One evidence type is not silently substituted for another.
+Each evidence source has a distinct role. Inventory supports facility existence and approximate location; TPO supports state/product demand envelopes; roads support access costs; the optimization produces conditional assignments; and observed bid or market evidence is reserved for comparing predictions with real outcomes. The model does not silently substitute one evidence type for another.
 
 ## 4. Spatial scope and product units
 
 The supply domain is the user-provided Northern Hardwood Range Objective 1 boundary intersected with the 12 included U.S. states. It contains **25,810 approximately 5 × 5 km cells** analyzed in **EPSG:5070**. Every cell belongs to exactly one of **233 adopted evidence districts**.
 
-A context buffer inherited from earlier versions allows mills outside the ecological core to appear where evidence and route rules permit. Supply remains limited to the core. Québec, Ontario, and New Brunswick facilities appear as context, but v0.8 does **not** allocate U.S. supply across the international border.
+A context buffer inherited from earlier versions allows mills outside the ecological core to appear where evidence and route rules permit. Supply remains limited to the core. Québec, Ontario, and New Brunswick facilities appear as context, while U.S. supply remains on the U.S. side of the international border in v0.8.
 
 The five product channels are:
 
@@ -199,13 +199,13 @@ The preview fixes supply at the base case: a growth multiplier of **1.00**, like
 | Forest energy wood | 20% | 15% | 10% | 5,983,322.085 |
 | **Total** | **100%** | **100%** | **100%** | **39,888,813.901** |
 
-Supply QA contains 387,150 records—25,810 cells × five products × three supply cases—with no negative values and no cell basket exceeding annual growth. Low/base/high total offers are about **24.85 / 39.89 / 57.38 million tons**. The displayed v0.8 allocation uses only the base total and base basket.
+Supply QA contains 387,150 records (25,810 cells × five products × three supply cases), with no negative values and no cell basket exceeding annual growth. Low/base/high total offers are about **24.85 / 39.89 / 57.38 million tons**. The displayed v0.8 allocation uses only the base total and base basket.
 
-The most important supply limitation is that product recovery is a regional scenario basket, not yet a cell-specific function of TreeMap/FIA species, diameter, size class, tree class, and forest type. The total annual basis is more defensible than the local product mix.
+Supply has one central limitation: product recovery is a regional scenario basket, not yet a cell-specific function of TreeMap/FIA species, diameter, size class, tree class, and forest type. The total annual basis is better supported than the local product mix.
 
 There is also a regional harmonization issue. Lake States hardwood share was estimated primarily with live-tree trees-per-acre weights and species/forest-type fallbacks; Mid-Atlantic and New England processing used live trees at least five inches in diameter and basal-area weighting. The combined table is structurally consistent, but the estimator is not identical across all regions. In addition, **45.6% of cells** carry a low-confidence supply-input flag, concentrated in Wisconsin (99.6%), Minnesota (93.8%), and Michigan (87.4%). These are warnings, not automatic tonnage deductions.
 
-Slope, wetlands, protected land, roads, and data coverage are retained as operability cautions but are not silently multiplied into offered tons. Lake States cells also have fewer assembled operability components than the later regional builds.
+Slope, wetlands, protected land, roads, and data coverage remain as operability cautions and do not reduce offered tons. Lake States cells also have fewer assembled operability components than the later regional builds.
 
 ## 7. Mill inventory, buyer admission, and evidence confidence
 
@@ -223,15 +223,15 @@ Evidence is separated into seven dimensions:
 6. Procurement-activity confidence
 7. Cross-border relevance
 
-This prevents a precise coordinate from masquerading as proof that a site is active and buys a particular feedstock.
+A precise coordinate therefore carries no implied evidence that a site is active or buys a particular feedstock.
 
-The inventory includes **376 Canadian context records**—242 Québec, 101 Ontario, and 33 New Brunswick—but none has a sufficiently supported cross-border capacity role to enter the U.S. allocation. Minnesota retains its different evidence streams separately: 253 named DNR records and 254 anonymous public TPO locations.
+The inventory includes **376 Canadian context records** (242 Québec, 101 Ontario, and 33 New Brunswick), but none has a sufficiently supported cross-border capacity role to enter the U.S. allocation. Minnesota retains its different evidence streams separately: 253 named DNR records and 254 anonymous public TPO locations.
 
 ### 7.2 Admission rules
 
 A facility-product record enters the allocation only when evidence supports the relevant input direction and product role. Closed, output-only, producer-only, explicit softwood-only, and unlocated records are not routable buyers. Unknown demand is finite; it is never treated as unlimited absorption.
 
-A hardwood pulpwood outlet requires evidence of current operation, hardwood acceptance, roundwood or an explicitly compatible low-grade form, usable location, and procurement activity. Capacity may remain uncertain, but the site then receives a bounded inferred band—not an unlimited market radius.
+A hardwood pulpwood outlet requires evidence of current operation, hardwood acceptance, roundwood or an explicitly compatible low-grade form, usable location, and procurement activity. Capacity may remain uncertain, but the site then receives a bounded inferred band rather than an unlimited market radius.
 
 Veneer evidence distinguishes:
 
@@ -240,7 +240,7 @@ Veneer evidence distinguishes:
 3. Sawmill or log yard with documented veneer sorting or resale
 4. Ordinary sawlog fallback through economic downgrade
 
-The display can therefore separate premium veneer access, aggregation access, downgrade-only access, and no supported outlet.
+The display separates premium veneer access, aggregation access, downgrade-only access, and the absence of a supported outlet.
 
 ### 7.3 Conservative quarantine
 
@@ -271,7 +271,7 @@ The reconciliation preserves, by state, product, and scenario:
 
 <pre class="nhr-equation"><code>\text{TPO envelope} = \text{located demand} + \text{unlocated residual} + \text{outside-domain reserve} + \text{other unmodeled demand, where applicable}</code></pre>
 
-Explicit softwood evidence in Michigan and Minnesota remains residual rather than being reassigned to hardwood buyers. About **1.48 million tons** of reported receipts are already reserved as imports originating outside the 12 modeled states. The displayed `r20` scenarios then withhold an additional 20% of otherwise available facility demand to test competition from same-state wood outside the mapped ecological belt. That 20% is an uncalibrated sensitivity, not a measured procurement share.
+Explicit softwood evidence in Michigan and Minnesota remains residual rather than being reassigned to hardwood buyers. About **1.48 million tons** of reported receipts are already reserved as imports originating outside the 12 modeled states. The displayed `r20` scenarios then withhold an additional 20% of otherwise available facility demand to test competition from same-state wood outside the mapped ecological belt. That 20% is an uncalibrated sensitivity rather than a measured procurement share.
 
 Demand QA covers 1,493 reconciliation rows, including 1,342 originally route-eligible rows and 84 unlocated-residual rows. It passed 736 of 738 checks and retained two warnings concerning external-reserve scope and residue-table interpretation.
 
@@ -284,9 +284,9 @@ All inherited capacity-bearing records are classified as `modeled_state_calibrat
 - **9.8%** uses `soft_assumption_primary_input` feedstock direction; and
 - **9.9%** goes to nodes whose hardwood status is `unknown`.
 
-Across the full inventory, 1,953 of 3,107 records are anonymous, 2,356 have unknown intake confidence, and only 31 have high procurement confidence. These facts do not make the allocation mathematically invalid; they make buyer validation the highest-value empirical reinforcement step.
+Across the full inventory, 1,953 of 3,107 records are anonymous, 2,356 have unknown intake confidence, and only 31 have high procurement confidence. The allocation remains mathematically valid, but buyer validation is the most urgent empirical task.
 
-About 4.08 million tons across the five displayed central product envelopes remain unlocated before solving, concentrated in Minnesota (~2.02M), Wisconsin (~1.05M), Michigan (~0.81M), and New York (~0.16M). Unlocated demand means public evidence could not place it at qualified sites—not that the demand is absent.
+About 4.08 million tons across the five displayed central product envelopes remain unlocated before solving, concentrated in Minnesota (~2.02M), Wisconsin (~1.05M), Michigan (~0.81M), and New York (~0.16M). Unlocated demand means public evidence could not place it at qualified sites. It does not mean the demand is absent.
 
 ## 9. Delivered-cost road access
 
@@ -312,7 +312,7 @@ Product-specific straight-line envelopes determine which pairs are sent to road 
 | Pulpwood | 150 km |
 | Forest energy wood | 100 km |
 
-These are candidate bounds, not findings that all trips inside them are economically viable.
+These bounds determine which pairs become route candidates; they do not establish that every trip inside them is economically viable.
 
 ### 9.3 Delivered-haul cost
 
@@ -335,7 +335,7 @@ Conceptually:
 
 The full run evaluated 1,297 destination units and produced **8,674,211 candidate pairs** or **26,022,633 low/base/high records** in four nonoverlapping, restartable shards. There were 1,267 completed units, 30 valid empty units, and zero failed units. Merge QA passed. The allocation uses all **4,485,878** admitted, economically eligible base-haul arcs after supply/product/demand joins; it does not retain only a few nearest buyers.
 
-Routes are access evidence, not observed deliveries. Map connections are straight visual lines between centroid and buyer; road distance and cost come from the network, but the displayed line is not the route geometry.
+Routes provide evidence of access rather than observed deliveries. Map connections are straight visual lines between centroid and buyer. Road distance and cost come from the network, but the displayed line does not reproduce the route geometry.
 
 ## 10. Regional allocation
 
@@ -352,7 +352,7 @@ The solution enforces cell-product supply, buyer-product capacity, shared-site c
 
 The model uses 0.01-ton integer units and cent-per-ton costs. Flooring leaves about 635 tons below retained integer increments across the 39.89-million-ton basket.
 
-This is not a maximum-net-value model. It omits stumpage, harvest, loading or processing beyond trucking, mill-gate value, current utilization, contracts, and forest-owner profit. It also does not require every coproduct of a proposed treatment to find a buyer before declaring that treatment feasible.
+The objective maximizes throughput and then minimizes haul cost; it does not maximize net value. The model omits stumpage, harvest, loading or processing beyond trucking, mill-gate value, current utilization, contracts, and forest-owner profit. It also does not require every coproduct of a proposed treatment to find a buyer before declaring that treatment feasible.
 
 ### Scenarios
 
@@ -367,7 +367,7 @@ Supply and haul are fixed at base. Facility demand and additional nonbelt reserv
 | `base_r00` | Base | 0% | 13,995,246 | 35.09% |
 | `high_r00` | High | 0% | 15,992,083 | 40.09% |
 
-These are sensitivities, not statistical confidence intervals.
+These scenarios are sensitivity tests rather than statistical confidence intervals.
 
 ### Default product results
 
@@ -395,7 +395,7 @@ District outlines communicate evidence maturity separately:
 - Dashed: research complete but packet not independently passed.
 - Dotted: research incomplete.
 
-The outline is not a market grade. A frozen taxonomy exists for a future categorical market/evidence classification, but the present map is a continuous matched-share surface. It does not yet implement calibrated “strong,” “difficult,” or “weak” categories.
+The outline reports evidence maturity, not a market grade. A frozen taxonomy exists for a future categorical market/evidence classification, but the present map is a continuous matched-share surface. It does not yet implement calibrated “strong,” “difficult,” or “weak” categories.
 
 | Visible combination | Appropriate reading |
 |---|---|
@@ -418,15 +418,15 @@ At the map snapshot:
 - zero had completed Tier 2 validation; and
 - zero were eligible for formal stage 65.
 
-Research remained incomplete in 117 districts: Maine 6, Michigan 46, Minnesota 37, New York 10, and Wisconsin 18. Five research-complete districts lacked canonical packets, and 78 existing packets had not passed independent Tier 1 gating. Later tightened audits rejected several earlier passes for missing current intake/procurement proof, weak district-linked outcomes, identity/hash problems, or unresolved conflicts. “Initial packet pass” is therefore deliberately cautious language.
+Research remained incomplete in 117 districts: Maine 6, Michigan 46, Minnesota 37, New York 10, and Wisconsin 18. Five research-complete districts lacked canonical packets, and 78 existing packets had not passed independent Tier 1 gating. Later audits applied stricter standards and rejected several earlier passes for missing current intake/procurement proof, weak district-linked outcomes, identity/hash problems, or unresolved conflicts. “Initial packet pass” is therefore deliberately cautious language.
 
 A Grayling-parity packet should contain a manifest, zone context, facility/product claims, seven confidence dimensions, source ledger, negative and conflicting evidence, observed performance, demand reconciliation, frozen prediction comparison, validation summary, and QA. See `GRAYLING_PARITY_VALIDATION_STANDARD.md` and `EVIDENCE_RESEARCH_OPERATING_PROTOCOL.md`.
 
 ### 12.2 What local evidence currently changes
 
-The **111 packets do not yet revise buyer admission, demand bands, routes, or allocation**. The solver manifest records `evidence_admission_changed: false`, and no accepted stage-65 snapshot exists. District packet status and source notes are display context and assembled research—not hidden model calibration.
+The **111 packets do not yet revise buyer admission, demand bands, routes, or allocation**. The solver manifest records `evidence_admission_changed: false`, and no accepted stage-65 snapshot exists. The map displays district packet status and source notes as research context; neither affects the model.
 
-The map includes 14 independently reconciled Michigan bid-opening examples from four DNR summaries: seven bid and seven no-bid events. They demonstrate the intended observation workflow but do not validate the belt because they are selected, office-linked rather than sale-polygon-linked, mixed-product, and not representative. A no-bid does not identify a hardwood product cause; a bid does not prove award, harvest, delivery, or destination. Observations never create mill capacity.
+The map includes 14 independently reconciled Michigan bid-opening examples from four DNR summaries: seven bid and seven no-bid events. The examples show how observations enter the workflow, but they do not validate the belt because they are selected, office-linked rather than sale-polygon-linked, mixed-product, and not representative. A no-bid does not identify a hardwood product cause; a bid does not prove award, harvest, delivery, or destination. Observations never create mill capacity.
 
 A Grayling identity issue also needs resolution. The preregistered panel's Grayling district is `EZ63_4d5648586fc90709` (183 cells), while the map's Grayling–Crawford examples use `EZ63_0bafc0848c71fb05` (34 cells). They cannot be treated as the same validation unit without an explicit crosswalk and scope decision.
 
@@ -438,9 +438,9 @@ No district has passed Tier 2. One collection batch was quarantined after prohib
 
 ## 13. Product and geographic findings that require targeted checking
 
-These are not established conclusions; they are high-value validation targets created by the current model:
+The current model identifies the following points for targeted validation. None is an established conclusion:
 
-- **Energy wood:** 4.8% assigned; 91.5% of cells have no admitted buyer. Missing feedstock-direction or procurement evidence could readily resemble market weakness.
+- **Energy wood:** 4.8% assigned; 91.5% of cells have no admitted buyer. Missing feedstock-direction or procurement evidence can resemble market weakness.
 - **Pulpwood:** 27.1% assigned; roughly two-thirds of cells have no admitted buyer. Wisconsin's 77.5% modeled fit contrasts with New York's 3.6%, Vermont's 0.2%, and near-zero southern New England results.
 - **Industrial logs:** 24.9% assigned. Apparent Michigan and Wisconsin strength depends on panel/industrial roles that remain incompletely verified.
 - **Sawlogs:** 43.1% assigned. High modeled results in New Jersey and Pennsylvania versus low Massachusetts/New Hampshire results may reflect localized demand, small denominators, cross-state competition, or anonymous-site assumptions.
@@ -521,9 +521,9 @@ Use “assigned,” “matched,” and “unassigned modeled offer.” Avoid “
 
 ## 17. What still needs to be done
 
-Documentation and evidence reinforcement are the immediate critical path, but they are not the only unfinished work.
+The immediate work centers on documentation and stronger evidence, alongside the remaining tasks below.
 
-### Priority 0 — Preserve and document the release
+### Priority 0: Preserve and document the release
 
 Required:
 
@@ -537,7 +537,7 @@ Required:
 
 **Acceptance:** another analyst can trace every input, reproduce the six totals from a clean environment, and match the accepted HTML hash.
 
-### Priority 1 — Finish Tier 1 evidence for all 233 districts
+### Priority 1: Finish Tier 1 evidence for all 233 districts
 
 Required:
 
@@ -548,7 +548,7 @@ Required:
 
 **Acceptance:** 233 canonical, independently reviewed packets with five explicit product dispositions, seven confidence dimensions, source locators/dates/tiers, conflict treatment, hashes, and no unresolved schema blockers.
 
-### Priority 2 — Validate flow-dominant facilities and locate demand
+### Priority 2: Validate flow-dominant facilities and locate demand
 
 Required:
 
@@ -560,7 +560,7 @@ Required:
 
 **Acceptance:** facilities accounting for at least 90% of modeled flow in each state-product combination are currently evidenced or explicitly excluded, and remaining unlocated demand is represented as a visible sensitivity.
 
-### Priority 3 — Complete independent outcome validation
+### Priority 3: Complete independent outcome validation
 
 Required:
 
@@ -572,7 +572,7 @@ Required:
 
 **Acceptance:** useful out-of-sample agreement is demonstrated and failures are reported, not tuned away.
 
-### Priority 4 — Spatialize and validate the product basket
+### Priority 4: Spatialize and validate the product basket
 
 Required:
 
@@ -582,7 +582,7 @@ Required:
 
 **Acceptance:** product shares respond credibly to local forest composition and reproduce independent regional utilization totals within documented tolerances.
 
-### Priority 5 — Separate growth, operability, willingness, and actual offer
+### Priority 5: Separate growth, operability, willingness, and actual offer
 
 Required:
 
@@ -592,7 +592,7 @@ Required:
 
 **Acceptance:** standing resource, sustainable growth, operable volume, likely offer, and economic offer can be reported separately.
 
-### Priority 6 — Add value and treatment economics
+### Priority 6: Add value and treatment economics
 
 Required:
 
@@ -602,7 +602,7 @@ Required:
 
 **Acceptance:** the map can distinguish “a buyer might take it” from “it can plausibly move at a positive margin.”
 
-### Priority 7 — Improve routes and cross-border context
+### Priority 7: Improve routes and cross-border context
 
 Required:
 
@@ -612,7 +612,7 @@ Required:
 
 **Acceptance:** reviewed local routes and border behavior agree with model access closely enough for district-scale use.
 
-### Priority 8 — Test stability and establish maintenance
+### Priority 8: Test stability and establish maintenance
 
 Required:
 
@@ -634,7 +634,7 @@ Required:
 7. The standalone HTML is portable but approximately 32 MB and can be slow on constrained connections.
 8. The research-preview sequence is not yet wrapped in the restartable runner.
 
-These are production issues, not cosmetic documentation gaps, and should be resolved before calling v0.8 a reproducible formal release.
+A reproducible formal v0.8 release requires both the documentation and the production fixes listed here.
 
 ## 19. Version lineage
 

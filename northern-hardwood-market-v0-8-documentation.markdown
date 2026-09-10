@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Northern Hardwood Market Map v0.8 Documentation
+title: Documentation for the Northern Hardwood Market Map v0.8
 permalink: /northern-hardwood-market-v0-8-documentation/
-excerpt: How the v0.8 hardwood-market map assesses supply, buyers, finite demand, road access, allocation, evidence, and validation.
+excerpt: How the v0.8 hardwood-market map estimates supply, buyer access, finite demand, road cost, and allocation, and how its evidence is checked.
 ---
 
 
@@ -68,16 +68,16 @@ excerpt: How the v0.8 hardwood-market map assesses supply, buyers, finite demand
 
 <div class="nhr-note"><strong>Release status:</strong> v0.8 is a technically checked research preview, not yet a belt-wide empirically validated market-health classification. The formal unattended pipeline completed through stage 60; the evidence and release gates at stages 65–90 remain closed.</div>
 
-# How v0.8 Assesses Markets
+# How the v0.8 market map is built
 
-## Analytical and evidence-stage lifecycle
+## From the market question to evidence review
 
 **Last updated:** 2026-09-08
-**Purpose:** explain the complete path from the forestry-market question to a publishable and independently tested map, including the substantial evidence work represented by stages 62.x and 65.
+**Purpose:** explain how the forestry-market question becomes a publishable, independently tested map, including the evidence work in stages 62.x and 65.
 
-## 1. The market question comes first
+## 1. Start with the market question
 
-The project is not trying to answer only “is a mill nearby?” It asks:
+A nearby mill is only the starting point. The project asks:
 
 > If a forest manager offers the joint mix of products that a plausible hardwood treatment produces, which products can reach compatible buyers, how much finite demand is available after competition, and where does a product channel remain difficult?
 
@@ -92,7 +92,7 @@ The present map calculates the first three under stated assumptions and displays
 
 ## 2. End-to-end analytical stages
 
-These are the substantive market-assessment stages, independent of the runner's numeric stage labels.
+The table follows the market assessment itself, apart from the runner's numeric stage labels.
 
 | Analytical stage | Question answered | Current v0.8 implementation | What remains |
 |---|---|---|---|
@@ -107,79 +107,79 @@ These are the substantive market-assessment stages, independent of the runner's 
 | 9. Compare with actual market behavior | Do predicted hot and cold areas agree with bids, no-bids, reoffers, prices, procurement changes, and local expert evidence? | 14 selected Michigan examples and a preregistered 30-district panel | Complete development panel, freeze calibration, and evaluate the untouched holdout |
 | 10. Release and maintain | Can another analyst reproduce the map, understand its claims, and refresh it without changing definitions silently? | Extensive contracts and QA; checked standalone preview | Accepted stage-65 snapshot, official stages 70–90, environment lock, versioned source archive, refresh policy |
 
-This progression explains why the map is useful now but is still labeled a research preview. Numerical optimization is only one stage. The market-health claim becomes defensible only when its inputs are locally reinforced and its predictions are compared with independent outcomes.
+This is why the map can be useful now and still remain a research preview. Numerical optimization is one part of the work. A market-health claim requires stronger local evidence for its inputs and a comparison between its predictions and independent outcomes.
 
 ## 3. Formal production stages 00–90
 
 The unattended runner uses numeric stages for deterministic production and restartability.
 
-### Stage 00 — General preflight
+### Stage 00: General preflight
 
-Checks that inherited supply, demand, geography, software, frozen Grayling artifacts, and free disk space exist and match expected structure. It prevents a long run from starting with missing or drifted inputs.
+This stage checks the inherited supply, demand, geography, software, frozen Grayling artifacts, and free disk space against their expected structure. It stops a long run when inputs are missing or have drifted.
 
 **Current status:** passed 35 of 35 checks.
 
-### Stage 05 — Road preflight
+### Stage 05: Road preflight
 
-Checks OpenStreetMap extracts, road-building software, geography, facility inputs, and the legacy network needed for diagnosis. It establishes that the road work can start without claiming that the inherited graph is suitable.
+This stage checks the OpenStreetMap extracts, road-building software, geography, facility inputs, and legacy network used for diagnosis. Passing means road work can begin; it does not make the inherited graph suitable for production.
 
 **Current status:** passed.
 
-### Stage 07 — Coordination-contract preflight
+### Stage 07: Coordination-contract preflight
 
-Validates the frozen product definitions, terminology, scenario axes, delivered-cost formula, status taxonomy, and route-shard contract. This protects later work from different agents or scripts using different meanings for “pulpwood,” “buyer,” “matched,” or “route.”
+This stage validates the frozen product definitions, terminology, scenario axes, delivered-cost formula, status taxonomy, and route-shard contract. It keeps later scripts and reviews from assigning different meanings to “pulpwood,” “buyer,” “matched,” or “route.”
 
 **Current status:** passed 62 of 62 checks.
 
-### Stage 10 — Frozen Grayling regression
+### Stage 10: Frozen Grayling regression
 
 Confirms that the Grayling pilot's accepted supply, demand, route, allocation, and map behavior have not changed accidentally while the process scales to the belt.
 
 **Current status:** passed.
 
-### Stage 20 — Legacy graph diagnostic
+### Stage 20: Legacy graph diagnostic
 
 Tests the inherited Lake States and Northeast graph components and demonstrates that they do not form an acceptable continuous production network. A diagnostic can pass while the graph itself remains blocked.
 
 **Current status:** diagnostic passed; legacy graph correctly blocked.
 
-### Stage 25 — Bounded route smoke test
+### Stage 25: Bounded route smoke test
 
 Runs a very small set of destinations through the routing engine and checks row counts, status codes, nonnegative cost, and graph-component behavior before expensive work begins.
 
 **Current status:** passed.
 
-### Stage 30 — Multi-state route benchmark
+### Stage 30: Multi-state route benchmark
 
 Runs a deterministic 70-destination sample spanning all 12 states, both road-network trunks, and all five products. It tests correctness, speed, memory, and realistic candidate behavior.
 
 **Current status:** passed.
 
-### Stage 40 — Production graph build
+### Stage 40: Production graph build
 
 Parses the Midwest and Northeast OpenStreetMap extracts and connects them through the lower-Michigan/Ohio/Pennsylvania/New York corridor while preserving node and way identity.
 
 **Current status:** completed; 15,478,116 nodes and 28,315,923 directed edges.
 
-### Stage 42 — Production snapping
+### Stage 42: Production snapping
 
 Snaps supply origins and located facilities to the released graph, records distances and graph components, and quarantines coordinate outliers rather than forcing them into the network.
 
 **Current status:** completed; one facility coordinate outlier.
 
-### Stage 45 — Deep graph audit
+### Stage 45: Deep graph audit
 
-Audits components, edge and node identity, connector integrity, road-class structure, snapping coverage, and release thresholds. This is the gate that declares the graph fit for full-belt routing, not fit for market-health claims.
+This stage audits components, edge and node identity, connector integrity, road-class structure, snapping coverage, and release thresholds. It determines whether the graph is fit for full-belt routing; it does not assess market-health claims.
 
 **Current status:** passed with `production_release_ready=true` for routing.
 
-### Stage 50 — Full-belt route shards
+### Stage 50: Full-belt route shards
 
 Computes restartable, destination-keyed route work for low/base/high haul assumptions. Product search envelopes limit candidate generation; road paths and costs then determine physical and economic eligibility.
 
 **Current status:** completed in four shards; 8,674,211 candidate pairs, 26,022,633 scenario rows, zero failed units.
 
-### Stage 60 — Strict route merge
+### Stage 60: Strict route merge
 
 Verifies that all shards are complete, nonoverlapping, correctly fingerprinted, scenario-complete, and row-count consistent before creating one content-addressed route cache.
 
@@ -187,9 +187,9 @@ Verifies that all shards are complete, nonoverlapping, correctly fingerprinted, 
 
 ## 4. The evidence branch between stages 60 and 65
 
-The evidence work is not a small annotation step. It is a parallel validation and model-admission system.
+Evidence review runs alongside the model as a separate validation and admission process.
 
-### Stage 62.3 — Adopt the evidence districts
+### Stage 62.3: Adopt the evidence districts
 
 Stage 62.3 creates the current local research geography:
 
@@ -202,7 +202,7 @@ Stage 62.3 creates the current local research geography:
 
 The older 177-zone geography is superseded. Old packets can provide screening context, but their children do not inherit validation status.
 
-### Stage 62.4 r2 — Freeze predictions before local evaluation
+### Stage 62.4 r2: Freeze predictions before local evaluation
 
 Stage 62.4 r2 creates **1,165 immutable rows: 233 districts × five products**. Each row preserves the model's pre-evidence prediction and distinguishes:
 
@@ -212,7 +212,7 @@ Stage 62.4 r2 creates **1,165 immutable rows: 233 districts × five products**. 
 - a capacity-bearing compatible outlet; and
 - no physical route.
 
-The freeze uses model inputs only—no local research, outcomes, return queues, or state evidence—so later validation cannot redefine the prediction after seeing the answer. Each row has stable hashes and must be carried into its district packet with `tuning_performed=false`.
+The freeze uses model inputs only, without local research, outcomes, return queues, or state evidence. Later validation therefore cannot redefine the prediction after seeing the answer. Each row has stable hashes and must be carried into its district packet with `tuning_performed=false`.
 
 ### Local research and Tier 1 packet gate
 
@@ -238,9 +238,9 @@ The preregistered panel contains 20 development districts and 10 untouched holdo
 
 Outcome evidence includes bidder counts, no-bid and reoffer rates, bid-to-appraisal relationships, prices, closures or curtailments, procurement changes, and geographically relevant forester or buyer confirmation. Packet completeness and truth-positive performance are separate gates.
 
-## 5. Stage 65 — Immutable evidence reconciliation
+## 5. Stage 65: Immutable evidence reconciliation
 
-Stage 65 is significant because it determines which local evidence is allowed to change the model. It is not simply a documentation checkpoint, and it does not itself allocate wood.
+Stage 65 governs which local evidence may change the model and enforces the related documentation contract. Allocation occurs later.
 
 ### Inputs expected by stage 65
 
@@ -256,7 +256,7 @@ Stage 65 is significant because it determines which local evidence is allowed to
 
 ### Deterministic reconciliation
 
-The proposed gate is designed to:
+The proposed gate would:
 
 1. Verify frozen hashes, schemas, and unique keys.
 2. Normalize product IDs, statuses, feedstock direction, units, scenarios, and dates without changing source values.
@@ -276,7 +276,7 @@ Blocking issues include demand mass-balance failure, duplicate or unresolved sit
 
 A passing stage creates a new **content-addressed, immutable evidence snapshot** containing packet IDs, district IDs, sorted input hashes, code and contract hashes, ordered evidence deltas, reviewer decision, issue counts, and an explicit record that stage 70 is still disabled until promotion completes. Upstream route, supply, and demand files are never overwritten. A failed candidate produces diagnostics only.
 
-This snapshot is the auditable bridge between local research and formal allocation. Without it, local discoveries may be visible in memos or on the map but cannot silently change buyers, capacity, or results.
+This snapshot connects local research to the formal allocation in an auditable form. Until it exists, local findings may appear in memos or on the map but cannot change buyers, capacity, or results without review.
 
 ### Why stage 65 is currently closed
 
@@ -286,33 +286,33 @@ This snapshot is the auditable bridge between local research and formal allocati
 - Important operation, product, procurement, capacity, and identity conflicts remain.
 - Large portions of state demand remain unlocated.
 - One attempted blinded collection batch was compromised; clean/remediated work is not evaluator-ready.
-- The existing proposed stage-65 contract and failure memo were written against the superseded 177-zone system and old `EZ###` identity convention. They are valuable design records, but the formal contract and automated gate must be reissued for the adopted 233 hashed district IDs and stage-62.4 r2 prediction freeze before promotion.
+- The existing proposed stage-65 contract and failure memo were written against the superseded 177-zone system and old `EZ###` identity convention. They still document the design, but the formal contract and automated gate must be reissued for the adopted 233 hashed district IDs and stage-62.4 r2 prediction freeze before promotion.
 
 Therefore the current state is not “stage 65 failed for the final 233-district evidence set.” The accurate statement is: **the earlier prototype gate failed closed, the research geography and prediction freeze were subsequently replaced, and no current 233-district stage-65 candidate has been accepted.**
 
 ## 6. Stages 70, 80, and 90
 
-### Stage 70 — Formal global allocation
+### Stage 70: Formal global allocation
 
 Stage 70 will consume only the accepted stage-65 evidence snapshot, frozen supply, and final route cache. It will rebuild admitted buyers and finite demand, solve the agreed scenarios, preserve quarantine and residual accounting, and produce machine-readable conservation and capacity QA.
 
 The research-preview solve demonstrates this machinery, but it deliberately uses inherited buyer admission and records `evidence_admission_changed=false`. It is not stage 70.
 
-### Stage 80 — Formal map build
+### Stage 80: Formal map build
 
 Stage 80 will assemble the accepted scenario outputs, inventory, evidence-condition layer, district summaries, observed outcomes, source locators, and release metadata into the manager-facing map. It must distinguish modeled market condition from evidence condition and expose assumptions without overwhelming the user.
 
-The present map is a successful preview of this display, not the formal stage-80 artifact.
+The present map previews this display. It is not the formal stage-80 artifact.
 
-### Stage 90 — Release QA
+### Stage 90: Release QA
 
 Stage 90 will verify analytical hashes, feature counts, scenario behavior, interaction behavior, responsive layout, accessibility, terminology, source links, evidence labels, absence of external runtime dependencies, and equality between the accepted local artifact and hosted copy.
 
 Only after this gate should the product be described as the formal v0.8 release. Empirical validity still must be described according to the Tier 2 and holdout results; technical release QA cannot substitute for outcome validation.
 
-## 7. Current position
+## 7. Work completed and remaining
 
-The current project has completed the difficult engineering path through full-belt road access and demonstrated a checked global allocation and usable map. It has also built the architecture for rigorous local evidence. The unfinished critical path is to complete that evidence conveyor, reconcile it into a current immutable stage-65 snapshot, rerun the formal allocation, evaluate the preregistered development and holdout panels, and publish a stage-90 artifact with claims calibrated to the observed performance.
+The project now has full-belt road access, a checked global allocation, and a working map. It also has a structure for collecting and reviewing local evidence. The remaining work is to complete that evidence, reconcile it into a current immutable stage-65 snapshot, rerun the formal allocation, evaluate the preregistered development and holdout panels, and publish a stage-90 artifact whose claims reflect the observed performance.
 
 Continue to the [detailed numerical methods, results, limitations, and acceptance criteria](/northern-hardwood-market-v0-8-technical-methods/).
 
@@ -320,17 +320,17 @@ Continue to the [detailed numerical methods, results, limitations, and acceptanc
 
 ---
 
-# Stage governance and supersession note
+# Which stage records are current
 
 **Last updated:** 2026-09-08
 
-Several v0.8 evidence-stage records are historically important but no longer describe the current geography or prediction contract. They must be labeled carefully in documentation and future automation.
+Several v0.8 evidence-stage records document earlier work but no longer describe the current geography or prediction contract. Future documentation and automation should identify them as superseded.
 
 - Stage 62.1 and stage 62.2 were unsuccessful district-design iterations and are not current assignment geographies.
 - Stage 62.3 supersedes them with 233 adopted evidence districts covering all 25,810 cells exactly once.
 - Stage 62.4 version 1 failed its route-status semantics audit. Stage 62.4 r2 supersedes it with 1,165 immutable prediction rows: 233 districts × five products.
 - The September 2 stage-65 reviewer memo tested the obsolete 177-zone geography and found zero accepted packets. Its `FAIL_CLOSED` decision remains the latest formal stage-65 decision, but its individual zone and issue counts are historical and must not be reported as the current 233-district audit.
-- The proposed stage-65 contract predates the 233 hashed district IDs and has not been operationalized as a runner stage, assembler, or accepted output. It must be reissued against stage 62.3 and stage 62.4 r2 before a new promotion attempt.
+- The proposed stage-65 contract predates the 233 hashed district IDs and has not been implemented as a runner stage, assembler, or accepted output. It must be reissued against stage 62.3 and stage 62.4 r2 before a new promotion attempt.
 - The Grayling parity standard permits a provisional Tier 1 snapshot with explicit limitations, while the implemented district ledger currently requires Tier 2 plus explicit stage-65 approval. That governance conflict must be resolved before the automated gate is implemented.
 - The public research preview deliberately does not use the newer district packets to change buyer admission or capacity. It is not evidence that stage 65 or stage 70 has run.
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>Northern hardwood market evidence · v0.7.1</title>
+  <title>U.S. northern hardwood market evidence · v0.7.1</title>
   <style>:root{--ink:#17251f;--muted:#61736b;--paper:#f3f5ef;--panel:#fffef8;--line:#cbd6cd;--forest:#255f46;--water:#dceceb;--gold:#ad741f;--red:#923b36;--orange:#d47743;--shadow:0 12px 34px rgba(20,40,31,.12)}
 *{box-sizing:border-box}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
@@ -35,17 +35,44 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
 @media(max-width:1100px){.layout{grid-template-columns:1fr}.panel{grid-template-columns:1fr 1fr}.methods{grid-column:1/-1}.map-wrap,.map-wrap svg{height:660px;min-height:660px}}
 @media(max-width:760px){.page{padding:8px}.mast{grid-template-columns:1fr}.mast h1{font-size:28px}.controls{align-items:flex-start}.field{flex:1 1 170px}.product-field{flex-basis:100%}.products button{flex:1 1 112px}#layer-status{width:100%;margin-left:0}.panel{grid-template-columns:1fr}.methods{grid-column:auto}.map-wrap,.map-wrap svg{height:510px;min-height:510px}.legend{left:8px;bottom:8px;min-width:220px;max-width:290px}.symbol-key{display:none}.zoom{right:8px;top:8px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Editorial interface pass: flatter hierarchy, tighter spacing, fewer template-like UI effects. */
+:root{--paper:#f2f1eb;--panel:#fbfbf8;--line:#cbd1cc;--shadow:none}
+body{font-size:13px;line-height:1.48}
+.page{padding:0 22px 20px}
+.mast{margin:0 -22px 14px;padding:20px 22px 17px;background:#f8f7f1;border-top:4px solid var(--forest);border-bottom:1px solid var(--line);align-items:end}
+.mast h1,h1{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:clamp(25px,2.6vw,36px);font-weight:680;line-height:1.12;letter-spacing:-.6px}
+.eyebrow,.kicker{font-size:10px;letter-spacing:.1em}
+.sub{font-size:13px;line-height:1.55}
+.notice,.model-status{background:transparent;border-left-width:2px;padding-left:12px}
+#release-badge{border-radius:2px;background:#6b5837}
+.critical{font-weight:400}.critical strong{font-weight:700}
+button,select{border-radius:2px;box-shadow:none}
+.controls{padding:10px 11px;margin-bottom:8px;background:#fafaf7;box-shadow:none}
+.layerbar{margin-bottom:10px;background:#f0f3ee}
+.layout{gap:0}
+.map-card,.map-shell,.mapwrap,.card,.panel-section{box-shadow:none}
+.map-card,.map-shell,.mapwrap{border-right:0}
+.panel{gap:0}
+.card,.panel-section{padding:14px 16px;border-bottom:0}
+.card:last-child,.panel-section:last-child{border-bottom:1px solid var(--line)}
+.card h2,.panel-section h2{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:660;letter-spacing:-.25px}
+.legend{border-radius:0;box-shadow:none}
+.badge,.access-class,.access-badge{border-radius:2px}
+.footer,footer{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}
+@media(max-width:1020px){.mast{display:block}.notice,.model-status,.status-note{max-width:none;margin-top:12px}.layout{gap:10px}.map-card,.map-shell,.mapwrap{border-right:1px solid var(--line)}.panel{gap:10px}}
+@media(max-width:670px){.page{padding:0 8px 12px}.mast{margin:0 -8px 10px;padding:15px 8px 14px;border-top-width:3px}.mast h1,h1{font-size:clamp(25px,8vw,32px)}.controls{padding:9px}.layout{gap:8px}}
 </style>
 </head>
 <body>
 <main class="page">
   <header class="mast">
     <div>
-      <div class="eyebrow">Northern Hardwood Mill Feed Map · evidence correction v0.7.1</div>
-      <h1>Where do hardwood markets look deep—and where do product channels look thin?</h1>
-      <p class="sub">The heat always shows modeled annual offered wood. Cell outlines summarize evidence of current compatible outlets; they do not claim that nearby mills can absorb the wood.</p>
+      <div class="eyebrow">Northern hardwood market evidence · U.S. belt v0.7.1</div>
+      <h1>U.S. northern hardwood market evidence by product channel</h1>
+      <p class="sub">The heat surface shows modeled annual offered wood. Cell outlines summarize evidence for current compatible outlets without assigning absorption capacity to nearby mills.</p>
     </div>
-    <div class="status-note"><strong>Screening model</strong><br>Presence ≠ demand. Distance ≠ procurement. State TPO receipts ≠ facility capacity.</div>
+    <div class="status-note"><strong>Screening model</strong><br>Outlet presence does not establish demand; distance does not establish procurement; state TPO receipts do not establish facility capacity.</div>
   </header>
 
   <section class="controls" aria-label="Map controls">
@@ -125,7 +152,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
     <aside class="panel" aria-live="polite">
       <section class="card summary-card">
         <div class="kicker" id="summary-kicker">Base offer · overall basket</div>
-        <h2>Whole-belt screening view</h2>
+        <h2>Whole-belt evidence summary</h2>
         <div class="big" id="regional-supply">—</div>
         <div class="muted">green tons/year modeled offered supply</div>
         <div class="stats">
@@ -138,8 +165,8 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
 
       <section class="card" id="detail-card">
         <div class="kicker">Selected tile or facility evidence</div>
-        <h2 id="detail-title">Click a heat cell or mill point</h2>
-        <p id="detail-copy" class="muted">A selected cell reports modeled offer, current compatible-outlet evidence, and the state TPO demand context. Links orient you to evidence sites; they are not flows.</p>
+        <h2 id="detail-title">Select a heat cell or mill point</h2>
+        <p id="detail-copy" class="muted">The selected cell reports modeled offered supply, current compatible-outlet evidence, and state TPO demand context. Links locate evidence sites; they do not represent flows.</p>
         <div id="access-class"></div>
         <div class="stats detail-stats">
           <div class="stat"><small>Modeled offered supply</small><b id="detail-supply">—</b></div>
@@ -153,11 +180,11 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
 
       <section class="card methods">
         <details open>
-          <summary>How to read “markets looking good”</summary>
-          <p>Higher modeled offer plus several evidence-complete outlet clusters is a stronger market-access signal. One outlet means dependence; an outlet 120–150 km away means long-haul exposure. None of these classes proves sufficient demand.</p>
+          <summary>Reading market-access evidence</summary>
+          <p>Cells with a higher modeled offer and several evidence-complete outlet clusters have a stronger market-access signal. One outlet means dependence; an outlet 120–150 km away means long-haul exposure. None of these classes proves sufficient demand.</p>
         </details>
         <details>
-          <summary>Veneer access hierarchy</summary>
+          <summary>Veneer outlet classes</summary>
           <ol>
             <li><strong>Premium:</strong> direct processor or explicit veneer-log buyer/exporter.</li>
             <li><strong>Aggregation:</strong> documented sawmill/log-yard sorting or resale.</li>
@@ -166,16 +193,16 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
           </ol>
         </details>
         <details>
-          <summary>Why a pulp point does not absorb the tile</summary>
-          <p>A hardwood pulpwood outlet must have evidence for current operation, hardwood acceptance, compatible roundwood or low-grade feedstock, location, and procurement activity. If intake is unknown it is labeled <em>active compatible outlet—demand unknown</em>. Offered tons remain visible and are never removed.</p>
+          <summary>Pulpwood outlet qualification</summary>
+          <p>A hardwood pulpwood outlet must have evidence for current operation, hardwood acceptance, compatible roundwood or low-grade feedstock, location, and procurement activity. If intake is unknown, it is labeled <em>active compatible outlet—demand unknown</em>. Offered tons remain visible and are never removed.</p>
         </details>
         <details>
-          <summary>TPO and tonnage contract</summary>
+          <summary>Supply units and TPO demand context</summary>
           <p>Supply is annual FIA-controlled TreeMap hardwood growth converted at 35 cubic feet per green ton, multiplied by the selected likely-offer case, then divided once among a joint product basket. Public TPO state receipts provide a separate demand benchmark. Public TPO mill coordinates are anonymous and cannot be joined to facility receipts.</p>
           <p>If a state/product TPO row is absent, the map says “not published / possibly suppressed,” not zero. Operability and input-quality evidence remain cautions; they are not silently multiplied into offered supply.</p>
         </details>
         <details>
-          <summary>Canadian context and remaining limits</summary>
+          <summary>Canadian context and model limits</summary>
           <p>Ontario, Québec, and New Brunswick facilities are visible. They do not count as U.S. outlets unless product, hardwood acceptance, current procurement, and cross-border relevance are all supported. Straight-line distances remain lower bounds; no routing, prices, utilization, facility-demand balancing, or delivered-margin solution is claimed.</p>
         </details>
       </section>
@@ -262,7 +289,7 @@ function siteDecision(site,product=state.product){
     if(qualified(site,product))return {className:"good",label:`Counts for ${productList(site.qualifiedProducts)}`,note:"Outlet presence is supported; no tile absorption is assigned."};
     if(compatible(site,product)){
       const candidate=site.contextProducts[0],reasons=candidate?gateFailures(site,candidate):[];
-      return {className:"warn",label:"Inventory evidence—not yet counted",note:reasons.length?`Missing: ${reasons.slice(0,2).join("; ")}`:"No product channel meets the outlet-evidence gate."};
+      return {className:"warn",label:"Inventory evidence; not counted",note:reasons.length?`Missing: ${reasons.slice(0,2).join("; ")}`:"No product channel meets the outlet-evidence gate."};
     }
     return {className:"muted",label:"Inventory context only",note:"No hardwood product channel is established in this record."};
   }
@@ -277,7 +304,7 @@ function siteDecision(site,product=state.product){
   }
   if(compatible(site,product)){
     const reasons=gateFailures(site,product);
-    return {className:"warn",label:"Compatible lead—not counted",note:reasons.length?`Missing: ${reasons.slice(0,2).join("; ")}`:"The outlet-evidence gate is incomplete."};
+    return {className:"warn",label:"Compatible evidence; not counted",note:reasons.length?`Missing: ${reasons.slice(0,2).join("; ")}`:"The outlet-evidence gate is incomplete."};
   }
   return {className:"muted",label:`Inventory context—not a ${PRODUCT_LABELS[product].toLowerCase()} match`,note:"The record stays visible so the complete mill inventory remains auditable."};
 }
@@ -397,7 +424,7 @@ function updateLegend(cuts){
 
 function siteTip(site){
   const decision=siteDecision(site),vintage=site.sourceVintage?` · ${site.sourceVintage}`:"";
-  return `<div class="tip-title">${escapeHtml(site.name)}</div><div class="tip-meta">${escapeHtml(site.stateProvince)} · ${escapeHtml(evidenceTypeLabel(site))}${escapeHtml(vintage)}</div><div class="tip-status ${decision.className}">${escapeHtml(decision.label)}</div><div class="tip-note">${escapeHtml(decision.note)}</div><div class="tip-prompt">Click for the evidence record</div>`;
+  return `<div class="tip-title">${escapeHtml(site.name)}</div><div class="tip-meta">${escapeHtml(site.stateProvince)} · ${escapeHtml(evidenceTypeLabel(site))}${escapeHtml(vintage)}</div><div class="tip-status ${decision.className}">${escapeHtml(decision.label)}</div><div class="tip-note">${escapeHtml(decision.note)}</div><div class="tip-prompt">Select to view the evidence record</div>`;
 }
 function cellTip(index){
   const cell=P.cells[index],desc=accessDescription(index),row=accessAt(index),product=PRODUCT_LABELS[state.product].toLowerCase();
@@ -405,7 +432,7 @@ function cellTip(index){
   if(state.product==="overall")evidence=`${row[0]} of 5 channels within 120 km · weakest: ${PRODUCT_LABELS[PRODUCTS[row[2]]]}`;
   else if(row[0]===null)evidence="No qualified outlet evidence within 150 km";
   else evidence=`Nearest qualified evidence: ${fmt1(row[0])} km · ${row[1]} cluster${row[1]===1?"":"s"} within 120 km`;
-  return `<div class="tip-title">5 km supply cell · ${escapeHtml(cell[4])}</div><div class="tip-meta">Modeled offered ${escapeHtml(product)}: <b>${escapeHtml(fmtTons(supplyFor(index)))}</b></div><div class="tip-status ${desc.className==="good"?"good":desc.className==="cold"?"warn":"muted"}">${escapeHtml(desc.label)}</div><div class="tip-note">${escapeHtml(evidence)}</div><div class="tip-prompt">Click for supply and market evidence</div><div class="tip-cell-id">Cell ${escapeHtml(cell[0])}</div>`;
+  return `<div class="tip-title">5 km supply cell · ${escapeHtml(cell[4])}</div><div class="tip-meta">Modeled offered ${escapeHtml(product)}: <b>${escapeHtml(fmtTons(supplyFor(index)))}</b></div><div class="tip-status ${desc.className==="good"?"good":desc.className==="cold"?"warn":"muted"}">${escapeHtml(desc.label)}</div><div class="tip-note">${escapeHtml(evidence)}</div><div class="tip-prompt">Select to view supply and market evidence</div><div class="tip-cell-id">Cell ${escapeHtml(cell[0])}</div>`;
 }
 function positionTip(event){
   const tip=g("tooltip"),gap=14,pad=10,rect=tip.getBoundingClientRect();
@@ -481,13 +508,13 @@ function selectSite(index){
   g("detail-copy").innerHTML=`${escapeHtml(site.stateProvince)} · ${escapeHtml(site.facilityType||"facility type not stated")} · <strong>${escapeHtml(evidenceTypeLabel(site))}</strong>. This record remains visible as part of the complete inventory; highlighting depends on the selected product and evidence test.`;
   g("access-class").innerHTML=`<span class="access-badge ${decision.className==="good"?"good":decision.className==="warn"?"":"muted"}">${escapeHtml(decision.label)}</span>`;
   q(".detail-stats").style.display="none";
-  g("product-table").innerHTML=`<li><strong>Why it counts—or does not count</strong><br><span class="muted">${escapeHtml(decision.note)}</span></li><li><strong>Product compatibility</strong><br>${escapeHtml(contexts)}</li><li><strong>Outlet-evidence qualification</strong><br>${escapeHtml(qualifiedText)}</li><li><strong>Veneer role</strong><br>${escapeHtml(roleLabel(site.veneerRole))}</li><li><strong>Demand / capacity knowledge</strong><br>${escapeHtml(site.demandLabel)}. The map assigns no absorption capacity to this facility. Available capacity evidence: ${escapeHtml(capacityStatusLabel(site.capacityStatus))}.</li><li><div class="confidence-grid"><span>Location</span><b>${confidenceLabel(site.locationConfidence)}</b><span>Operating status</span><b>${confidenceLabel(site.operatingConfidence)}</b><span>Product</span><b>${confidenceLabel(site.productConfidence)}</b><span>Hardwood species</span><b>${confidenceLabel(site.hardwoodConfidence)}</b><span>Intake / capacity</span><b>${confidenceLabel(site.intakeConfidence)}</b><span>Procurement activity</span><b>${confidenceLabel(site.procurementConfidence)}</b><span>Cross-border relevance</span><b>${confidenceLabel(site.crossBorderConfidence)}</b></div></li>`;
+  g("product-table").innerHTML=`<li><strong>Evidence qualification</strong><br><span class="muted">${escapeHtml(decision.note)}</span></li><li><strong>Product compatibility</strong><br>${escapeHtml(contexts)}</li><li><strong>Outlet-evidence qualification</strong><br>${escapeHtml(qualifiedText)}</li><li><strong>Veneer role</strong><br>${escapeHtml(roleLabel(site.veneerRole))}</li><li><strong>Demand / capacity knowledge</strong><br>${escapeHtml(site.demandLabel)}. The map assigns no absorption capacity to this facility. Available capacity evidence: ${escapeHtml(capacityStatusLabel(site.capacityStatus))}.</li><li><div class="confidence-grid"><span>Location</span><b>${confidenceLabel(site.locationConfidence)}</b><span>Operating status</span><b>${confidenceLabel(site.operatingConfidence)}</b><span>Product</span><b>${confidenceLabel(site.productConfidence)}</b><span>Hardwood species</span><b>${confidenceLabel(site.hardwoodConfidence)}</b><span>Intake / capacity</span><b>${confidenceLabel(site.intakeConfidence)}</b><span>Procurement activity</span><b>${confidenceLabel(site.procurementConfidence)}</b><span>Cross-border relevance</span><b>${confidenceLabel(site.crossBorderConfidence)}</b></div></li>`;
   g("source-list").innerHTML=`<li><strong>Evidence source</strong><br><span class="muted">${escapeHtml(evidenceTypeLabel(site))} · layer ${escapeHtml(site.sourceLayer)}</span></li><li><strong>Evidence vintage</strong><br><span class="muted">${escapeHtml(site.sourceVintage||"not stated")}</span></li><li><strong>Evidence note</strong><br><span class="muted">${escapeHtml(site.notes||"No additional note")}</span></li>${site.sourceUrl?`<li><a href="${escapeHtml(site.sourceUrl)}" target="_blank" rel="noreferrer">Open public evidence source</a></li>`:""}`;
 }
 
 function resetDetail(){
   state.selected=null;clearLinks();renderCells();renderSites();q(".detail-stats").style.display="grid";
-  g("detail-title").textContent="Click a heat cell or mill point";g("detail-copy").textContent="A selected cell reports modeled offer, current compatible-outlet evidence, and the state TPO demand context. Links orient you to evidence sites; they are not flows.";g("access-class").innerHTML="";
+  g("detail-title").textContent="Select a heat cell or mill point";g("detail-copy").textContent="The selected cell reports modeled offered supply, current compatible-outlet evidence, and state TPO demand context. Links locate evidence sites; they do not represent flows.";g("access-class").innerHTML="";
   ["detail-supply","detail-nearest","detail-sites","detail-demand"].forEach(id=>g(id).textContent="—");g("product-table").innerHTML="";g("source-list").innerHTML="";
 }
 

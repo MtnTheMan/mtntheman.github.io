@@ -13,7 +13,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>U.S. northern hardwood market-access map · v0.7</title>
+  <title>U.S. northern hardwood market access · v0.7</title>
   <style>:root{
   --ink:#17251f;--muted:#61736b;--paper:#f3f5ef;--panel:#fffef8;
   --line:#cbd6cd;--forest:#255f46;--water:#dceceb;--gold:#ae741f;
@@ -84,25 +84,52 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
 
 /* v0.7 overall belt adjustments */
 .state-label{paint-order:stroke;stroke:#f3f5ef;stroke-width:2.6px;stroke-linejoin:round}.cell{stroke-width:.36}.site{opacity:.92}
+
+/* Editorial interface pass: flatter hierarchy, tighter spacing, fewer template-like UI effects. */
+:root{--paper:#f2f1eb;--panel:#fbfbf8;--line:#cbd1cc;--shadow:none}
+body{font-size:13px;line-height:1.48}
+.page{padding:0 22px 20px}
+.mast{margin:0 -22px 14px;padding:20px 22px 17px;background:#f8f7f1;border-top:4px solid var(--forest);border-bottom:1px solid var(--line);align-items:end}
+.mast h1,h1{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:clamp(25px,2.6vw,36px);font-weight:680;line-height:1.12;letter-spacing:-.6px}
+.eyebrow,.kicker{font-size:10px;letter-spacing:.1em}
+.sub{font-size:13px;line-height:1.55}
+.notice,.model-status{background:transparent;border-left-width:2px;padding-left:12px}
+#release-badge{border-radius:2px;background:#6b5837}
+.critical{font-weight:400}.critical strong{font-weight:700}
+button,select{border-radius:2px;box-shadow:none}
+.controls{padding:10px 11px;margin-bottom:8px;background:#fafaf7;box-shadow:none}
+.layerbar{margin-bottom:10px;background:#f0f3ee}
+.layout{gap:0}
+.map-card,.map-shell,.mapwrap,.card,.panel-section{box-shadow:none}
+.map-card,.map-shell,.mapwrap{border-right:0}
+.panel{gap:0}
+.card,.panel-section{padding:14px 16px;border-bottom:0}
+.card:last-child,.panel-section:last-child{border-bottom:1px solid var(--line)}
+.card h2,.panel-section h2{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:660;letter-spacing:-.25px}
+.legend{border-radius:0;box-shadow:none}
+.badge,.access-class,.access-badge{border-radius:2px}
+.footer,footer{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}
+@media(max-width:1020px){.mast{display:block}.notice,.model-status,.status-note{max-width:none;margin-top:12px}.layout{gap:10px}.map-card,.map-shell,.mapwrap{border-right:1px solid var(--line)}.panel{gap:10px}}
+@media(max-width:670px){.page{padding:0 8px 12px}.mast{margin:0 -8px 10px;padding:15px 8px 14px;border-top-width:3px}.mast h1,h1{font-size:clamp(25px,8vw,32px)}.controls{padding:9px}.layout{gap:8px}}
 </style>
 </head>
 <body>
 <main class="page">
   <header class="mast">
     <div>
-      <div class="eyebrow">Northern Hardwood Mill Feed Map · U.S. belt v0.7</div>
-      <h1>Where are hardwood markets deep—and where are they thin?</h1>
-      <p class="sub">A linked 5 km heat map of modeled annual offered hardwood supply and public buyer-site access across the Lake States, Mid-Atlantic, and New England. Switch products to see why a place with many sawlog outlets can still lack a pulpwood, industrial-log, veneer, or residue channel.</p>
+      <div class="eyebrow">Northern hardwood market-access model · U.S. belt v0.7</div>
+      <h1>U.S. northern hardwood market access</h1>
+      <p class="sub">This linked 5 km heat map combines modeled annual offered hardwood supply with public buyer-site access across the Lake States, Mid-Atlantic, and New England. Product views keep sawlog access separate from pulpwood, industrial-log, veneer, and residue channels.</p>
     </div>
     <details class="notice">
-      <summary>Market-access screen, not observed procurement</summary>
+      <summary>Scope of the market-access screen</summary>
       <p>Heat cells combine TreeMap, NALCMS, and state FIA controls with explicit offer and joint product-basket assumptions. Buyer links are straight-line orientation links. Mill intake, utilization, price, willingness to procure, and routed haul costs remain unobserved.</p>
     </details>
   </header>
 
   <section class="controls" aria-label="Map controls">
     <div class="field question-field">
-      <label for="metric">Map question</label>
+      <label for="metric">Metric</label>
       <select id="metric">
         <option value="no_buyer_supply">No-buyer offered volume</option>
         <option value="nearest">Nearest compatible buyer site</option>
@@ -213,7 +240,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
     <aside class="panel" aria-live="polite">
       <section class="card">
         <div class="kicker" id="summary-kicker">Base offer · Pulpwood · best available evidence</div>
-        <h2>Whole-belt screening view</h2>
+        <h2>Whole-belt model summary</h2>
         <div class="big" id="regional-supply">—</div>
         <div class="muted">green tons/year modeled offered supply</div>
         <div class="stats">
@@ -226,8 +253,8 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
 
       <section class="card" id="detail-card">
         <div class="kicker">Selected place or evidence site</div>
-        <h2 id="detail-title">Click a heat cell or buyer site</h2>
-        <div id="detail-copy" class="muted">Selecting a cell reveals its product-specific supply and nearest public buyer evidence. Up to three straight-line links are drawn for orientation; they are not wood flows or truck routes.</div>
+        <h2 id="detail-title">Select a heat cell or buyer site</h2>
+        <div id="detail-copy" class="muted">The selected cell reports product-specific supply and the nearest public buyer evidence. Up to three straight-line links provide orientation; they do not represent wood flows or truck routes.</div>
         <div id="access-class"></div>
         <div class="stats">
           <div class="stat"><small>Offered supply</small><b id="detail-supply">—</b></div>
@@ -241,15 +268,15 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
 
       <section class="card methods">
         <details open>
-          <summary>How to read the heat</summary>
+          <summary>Reading the heat map</summary>
           <p id="metric-explanation">Warm cells contain modeled pulpwood supply with no confirmed compatible public buyer site inside a 150 km straight-line screen. A warm cell is an investigation priority, not proof that wood is unmarketable.</p>
         </details>
         <details>
-          <summary>What “confirmed” and “exploratory” mean</summary>
+          <summary>Buyer-evidence classes</summary>
           <p><strong>Confirmed</strong> retains public product-channel evidence with a source-reported location. <strong>Exploratory</strong> also includes feedstock proxies and Minnesota geocoded locations that need confirmation. Facility intake and procurement willingness remain unknown in both views.</p>
         </details>
         <details>
-          <summary>Limits of v0.7</summary>
+          <summary>Scope and limits: v0.7</summary>
           <ul>
             <li>No facility-level intake capacity, utilization, delivered prices, or procurement radii.</li>
             <li>No capacity-constrained allocation, delivered-margin, or stranded-volume claim.</li>
@@ -260,7 +287,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex="0"]:foc
           </ul>
         </details>
         <details>
-          <summary>Data and scenario record</summary>
+          <summary>Data and scenarios</summary>
           <p>Forest evidence: TreeMap 2023, NALCMS 2020, and state FIA growth controls. New England adds common-year 2024 official FIADB-API/EVALIDator controls, 34 USGS 3DEP tiles, six NWI packages, PAD-US 4.1, and the Northeast OSM extract. Public buyer evidence combines the existing Lake States and Mid-Atlantic validations with six 2023 New England TPO workbooks.</p>
           <p>Supply is one joint low/base/high product basket per cell, so sawlogs, pulpwood, biomass, and other products are not independently multiplied from the same stand. Lake States’ combined high-quality-log pool is partitioned 1/15 veneer and 14/15 ordinary sawlog to match the later five-product contract without changing its total.</p>
         </details>
@@ -712,7 +739,7 @@ function updateSummary(){
   g("regional-cold-cells").textContent=fmt(cold);
   g("regional-change").textContent=`${fmt1(noBuyerShare*100)}%`;
   const explanations={
-    no_buyer_supply:`Warm cells contain modeled ${PRODUCT_LABELS[state.product].toLowerCase()} supply with no ${state.evidence==="confirmed"?"confirmed":"confirmed or flagged"} compatible public buyer site inside a 150 km straight-line screen. This is not capacity-stranded volume.`,
+    no_buyer_supply:`Warm cells contain modeled ${PRODUCT_LABELS[state.product].toLowerCase()} supply with no ${state.evidence==="confirmed"?"confirmed":"confirmed or flagged"} compatible public buyer site inside a 150 km straight-line screen. The result does not estimate capacity-stranded volume.`,
     nearest:"Colors show centroid-to-site straight-line distance. Green is nearer; red means a longer lower-bound distance or no compatible site inside 150 km.",
     site_count_120:"Colors count distinct exact-coordinate public evidence sites within 120 km. Counts describe market structure, not buyer capacity or willingness to procure.",
     buyer_loss:"Warm colors identify places with fewer nearby compatible public buyer sites after applying independently documented changes to the 2023 structure.",
@@ -731,8 +758,8 @@ function render(){
 
 function resetDetail(){
   state.selected=null;clearLinks();renderCells();setCellStatLabels();
-  g("detail-title").textContent="Click a heat cell or buyer site";
-  g("detail-copy").textContent="Selecting a cell reveals its product-specific supply and nearest public buyer evidence. Up to three straight-line links are drawn for orientation; they are not wood flows or truck routes.";
+  g("detail-title").textContent="Select a heat cell or buyer site";
+  g("detail-copy").textContent="The selected cell reports product-specific supply and the nearest public buyer evidence. Up to three straight-line links provide orientation; they do not represent wood flows or truck routes.";
   g("access-class").innerHTML="";["detail-supply","detail-nearest","detail-sites","detail-gap"].forEach(id=>g(id).textContent="—");
   g("product-table").innerHTML="";g("source-list").innerHTML="";
 }
