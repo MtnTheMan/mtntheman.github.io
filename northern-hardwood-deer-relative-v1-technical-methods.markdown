@@ -21,7 +21,7 @@ excerpt: Objectives, evidence, methods, validation, uncertainty, claim boundarie
 <div class="nhr-actions">
   <a href="/assets/maps/northern-hardwood-deer-relative-v1/">Open the interactive map</a>
   <a href="/assets/maps/northern-hardwood-deer-relative-v1/public_package_manifest.csv">Public package manifest</a>
-  <a href="/projects/">Return to projects</a>
+  <a href="/projects.html">Return to projects</a>
 </div>
 
 <div class="nhr-note"><strong>Interpretation limit:</strong> this is a Tier-3 relative camera-observation benchmark, not population density, absolute abundance, deer/km2, browse damage, or a management-performance score. Unsupported or unsurveyed does not mean zero deer.</div>
@@ -130,3 +130,4 @@ The package passed ten structural and integrity tests. Headless browser QA verif
 ## Recommended citation
 
 > Hopkins, P. A. 2026. *Northern Hardwood deer relative-observation map, version 1*. Tier-3 governed camera-observation benchmark with support, uncertainty, extrapolation, border, reporting, and monitoring-priority companions. https://www.mtntheman.com/northern-hardwood-deer-relative-v1-technical-methods/
+
