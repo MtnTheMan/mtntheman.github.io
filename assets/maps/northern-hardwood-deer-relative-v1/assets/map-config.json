@@ -1,0 +1,37 @@
+{
+  "decision_id": "DEC-NHPA-W002-T03-2026-09-18-01",
+  "year": 2024,
+  "evidence_tier": "Tier 3 relative observation-model benchmark",
+  "estimand": "Intended October-1 pre-hunt density; not identified by current outputs",
+  "native_support": "Camera deployments and native-support evidence; 5-km cells are computational prediction support",
+  "bounds": [
+    [
+      24.533,
+      -139.0926
+    ],
+    [
+      60.0241,
+      -57.0666
+    ]
+  ],
+  "center": [
+    42.2785,
+    -98.0796
+  ],
+  "minZoom": 3,
+  "maxZoom": 6,
+  "cells": 437891,
+  "chunks": 416,
+  "tile_counts": {
+    "baseline": 135,
+    "uncertainty": 135,
+    "support": 135,
+    "source": 135,
+    "country": 135,
+    "reporting": 28,
+    "priority": 135
+  },
+  "sources": ["NHPA-W001-T02-v1.1.0", "NHPA-W002-T03 governed product", "country/support remediation v1", "monitoring priority v1"],
+  "permitted": ["Relative camera-observation benchmark", "Support uncertainty extrapolation and evidence-gap context"],
+  "prohibited": ["Deer/km2 or absolute abundance", "Confirmed absence or zero in unsurveyed cells", "Exact camera locations", "1-km deer surface"]
+}

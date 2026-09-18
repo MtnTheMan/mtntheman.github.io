@@ -1,0 +1,11 @@
+test,passed,detail
+required_layers,TRUE,baseline;uncertainty;support;source;country;reporting;priority
+tiles_present,TRUE,838 tiles
+cell_details_complete,TRUE,437891 cells
+relative_default,TRUE,baseline plus support default
+no_density_label,TRUE,relative semantics explicit
+confidential_fields_absent,TRUE,no confidential camera fields
+one_km_qa_only,TRUE,QA geometry only
+offline_vendor,TRUE,vendored Leaflet; no external URL
+responsive_css,TRUE,constrained-width layout
+manifest,TRUE,1273 of 1273

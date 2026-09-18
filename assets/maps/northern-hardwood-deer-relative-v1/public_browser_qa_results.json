@@ -1,0 +1,46 @@
+{
+  "timestamp_utc": "2026-09-18T18:15:31.171Z",
+  "initial": {
+    "title": "NHPA deer relative-observation map",
+    "mapSize": [
+      397,
+      512
+    ],
+    "leafletLoaded": true,
+    "tileCount": 27,
+    "loadedTileCount": 24,
+    "labels": [
+      "Relative baseline",
+      "Uncertainty interval width",
+      "Evidence support / extrapolation",
+      "Source support and data age",
+      "Country and border context",
+      "Governed reporting relationship",
+      "Monitoring priority",
+      "Experimental 1-km QA geometry"
+    ],
+    "checked": 3,
+    "details": "Move or click on the map to inspect the nearest governed 5-km cell.",
+    "externalRequests": []
+  },
+  "afterToggle": {
+    "clicked": true,
+    "checked": 4
+  },
+  "afterClick": {
+    "details": "Grid cell\nNHPA5K_V1_R+000072_C-000006\nRelative estimate (95% interval)\n0.95977 (0.91369–0.98174)\nUncertainty width\n0.06805\nSupport / extrapolation\nHIGH_EXTRAPOLATION_WITHIN_CAMERA_ENVELOPE / HIGH\nSource support\nspatial_smooth_extrapolation\nCountry / border\nUnited States; border=false; U.S. 25 km²; Canada 0 km²\nReporting relationship\nNO_GOVERNED_REPORTING_OVERLAP; 0 km² overlap\nMonitoring priority\nP2_HIGH_PRIORITY: STANDARDIZED_CAMERA\nCamera-neighborhood count\n0\nSemantics\nRELATIVE_OBSERVATION_NOT_DENSITY",
+    "tileCount": 36
+  },
+  "mobile": {
+    "viewport": [
+      390,
+      844
+    ],
+    "bodyWidth": 390,
+    "mapSize": [
+      390,
+      512
+    ],
+    "panelWidth": 390
+  }
+}
