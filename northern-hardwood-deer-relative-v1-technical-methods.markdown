@@ -125,9 +125,8 @@ The public map is a static HTML-plus-assets package with vendored Leaflet; it ma
 - [Functional QA results](/assets/maps/northern-hardwood-deer-relative-v1/browser_qa_results.json)
 - [Reproducible public-package builder](https://github.com/MtnTheMan/mtntheman.github.io/blob/master/scripts/build-nhpa-deer-public-package.mjs)
 
-The package passed ten structural and integrity tests. Headless browser QA verified the default layers, independent monitoring-priority toggle, cell-detail lookup, desktop rendering, a 390-pixel responsive viewport without horizontal overflow, and zero external requests.
+The package passed eleven structural and integrity tests, including a tile-edge canvas regression that prevents seam bars. Headless browser QA verified the default layers, independent monitoring-priority toggle, cell-detail lookup, desktop rendering, a 390-pixel responsive viewport without horizontal overflow, and zero external requests.
 
 ## Recommended citation
 
 > Hopkins, P. A. 2026. *Northern Hardwood deer relative-observation map, version 1*. Tier-3 governed camera-observation benchmark with support, uncertainty, extrapolation, border, reporting, and monitoring-priority companions. https://www.mtntheman.com/northern-hardwood-deer-relative-v1-technical-methods/
-

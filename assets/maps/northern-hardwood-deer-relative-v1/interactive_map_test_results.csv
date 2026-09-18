@@ -1,5 +1,6 @@
 test,passed,detail
 required_layers,TRUE,baseline;uncertainty;support;source;country;reporting;priority
+tile_canvas_edges,TRUE,representative 256px tile fills top and left canvas edges
 tiles_present,TRUE,838 tiles
 cell_details_complete,TRUE,437891 cells
 relative_default,TRUE,baseline plus support default
