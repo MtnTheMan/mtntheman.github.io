@@ -1,0 +1,2 @@
+artifact,path,bytes,sha256,canonical_source,source_status,claim_boundary
+interactive_html,assets/maps/northern-hardwood-deer-relative-v2-experimental/index.html,3819291,b331e715b5a086122875a22a8361dd4a584f4d8994aa04f953e5e1fae9626523,workstreams/NHPA-W002/T04/outputs/interactive/deer_relative_encounter_v2_staged.html,NOT_PROMOTED_FAIL_CLOSED,experimental_relative_camera_encounter_not_deer_density
