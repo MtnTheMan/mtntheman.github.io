@@ -1,0 +1,640 @@
+---
+layout: null
+permalink: /trip-tracker/fullscreen/
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trip Tracker Full-Screen Map</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.css"
+  />
+  <style>
+    html,
+    body {
+      background: #080900;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      color: #FFFDD0;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    #trip-map {
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .fullscreen-panel {
+      background: rgba(18, 22, 5, 0.92);
+      border: 2px solid #00FF00;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.45);
+      box-sizing: border-box;
+      left: 1rem;
+      max-width: min(31rem, calc(100vw - 2rem));
+      padding: 0.75rem;
+      position: absolute;
+      top: 1rem;
+      z-index: 2;
+    }
+
+    .fullscreen-panel h1 {
+      color: #FFFF00;
+      font-size: 1rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .fullscreen-panel p {
+      margin: 0.35rem 0;
+    }
+
+    .fullscreen-controls {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1rem;
+      margin-top: 0.65rem;
+    }
+
+    .fullscreen-controls label {
+      align-items: center;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 0.4rem;
+    }
+
+    .tracker-swatch {
+      border: 1px solid #FFFDD0;
+      display: inline-block;
+      height: 0.7rem;
+      width: 1.5rem;
+    }
+
+    .tracker-swatch-nhr {
+      background-color: #00ff66;
+    }
+
+    .tracker-swatch-maine {
+      background: linear-gradient(90deg, #c1121f 0%, #ff7a00 52%, #ffd60a 100%);
+    }
+
+    .fullscreen-button {
+      background-color: #333300;
+      border: 2px outset #00FF00;
+      color: #FFFDD0;
+      cursor: pointer;
+      font: inherit;
+      padding: 0.35rem 0.55rem;
+    }
+
+    .fullscreen-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .fullscreen-detail {
+      background: rgba(37, 37, 4, 0.94);
+      border: 2px solid #5ab0ff;
+      bottom: 1rem;
+      box-sizing: border-box;
+      left: 1rem;
+      max-width: min(31rem, calc(100vw - 2rem));
+      padding: 0.75rem;
+      position: absolute;
+      z-index: 2;
+    }
+
+    .fullscreen-detail p,
+    .tracker-popup-detail p {
+      margin: 0.35rem 0 0;
+    }
+
+    .maplibregl-popup-content {
+      background: #252504;
+      border: 2px solid #5ab0ff;
+      color: #FFFDD0;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .maplibregl-popup-tip {
+      border-top-color: #5ab0ff;
+    }
+
+    @media (max-width: 760px) {
+      .fullscreen-panel,
+      .fullscreen-detail {
+        left: 0.5rem;
+        max-width: calc(100vw - 1rem);
+      }
+
+      .fullscreen-panel {
+        top: 0.5rem;
+      }
+
+      .fullscreen-detail {
+        bottom: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="trip-map" role="application" aria-label="Full-screen trip tracker map"></div>
+
+  <section class="fullscreen-panel" aria-label="Map controls">
+    <h1>Trip Tracker</h1>
+    <p id="fullscreen-status">Loading route archives...</p>
+    <div class="fullscreen-controls">
+      <label>
+        <input type="checkbox" data-track-toggle value="nhr-megatrip-2026" checked />
+        <span class="tracker-swatch tracker-swatch-nhr" aria-hidden="true"></span>
+        NHR Megatrip 2026
+      </label>
+      <label>
+        <input type="checkbox" data-track-toggle value="maine-august-trip" checked />
+        <span class="tracker-swatch tracker-swatch-maine" aria-hidden="true"></span>
+        Maine Trip August 2026
+      </label>
+      <button id="tracker-recenter" class="fullscreen-button" type="button">Recenter</button>
+    </div>
+  </section>
+
+  <section id="tracker-detail" class="fullscreen-detail" aria-live="polite" aria-label="Selected route detail">
+    <strong>Route details</strong>
+    <p>Hover over a route on desktop, or tap/click a point or segment to keep its details here.</p>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.7.3/maplibre-gl.min.js"></script>
+  <script>
+    (function () {
+      var archiveUrl = "{{ '/assets/data/trip-route-final.geojson' | relative_url }}";
+      var maineArchiveUrl = "{{ '/assets/data/maine-trip-august-2026.geojson' | relative_url }}";
+      var trackDefinitions = {
+        "nhr-megatrip-2026": { name: "NHR Megatrip 2026", color: "#00ff66" },
+        "maine-august-trip": { name: "Maine Trip August 2026", color: "#ff7a00" }
+      };
+      var visibleTracks = new Set(Object.keys(trackDefinitions));
+      var emptyGeoJson = { type: "FeatureCollection", features: [] };
+      var archivedGeoJson = emptyGeoJson;
+      var maineArchivedGeoJson = emptyGeoJson;
+      var latestLngLat = null;
+      var hoveredFeatureId = null;
+      var pinnedFeature = null;
+      var hoverPopup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10 });
+      var pinnedPopup = new maplibregl.Popup({ closeButton: true, closeOnClick: false, offset: 12 });
+
+      var map = new maplibregl.Map({
+        container: "trip-map",
+        center: [-98.35, 39.5],
+        zoom: 3,
+        attributionControl: false,
+        style: {
+          version: 8,
+          sources: {
+            osm: {
+              type: "raster",
+              tiles: [
+                "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              ],
+              tileSize: 256,
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }
+          },
+          layers: [{ id: "osm", type: "raster", source: "osm" }]
+        }
+      });
+
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+      map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+
+      map.on("load", function () {
+        map.addSource("tracker", {
+          type: "geojson",
+          tolerance: 0,
+          generateId: true,
+          data: emptyGeoJson
+        });
+
+        map.addLayer({
+          id: "tracker-route-segments",
+          type: "line",
+          source: "tracker",
+          filter: featureFilter("route-segment"),
+          layout: { "line-cap": "round", "line-join": "round" },
+          paint: {
+            "line-color": ["coalesce", ["get", "color"], "#00ff66"],
+            "line-width": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              3,
+              ["case", ["boolean", ["feature-state", "hover"], false], 8, 3.5],
+              8,
+              ["case", ["boolean", ["feature-state", "hover"], false], 10, 5.5]
+            ],
+            "line-opacity": 0.95
+          }
+        });
+
+        map.addLayer({
+          id: "tracker-route-points",
+          type: "circle",
+          source: "tracker",
+          filter: featureFilter("route-point"),
+          paint: {
+            "circle-radius": ["case", ["boolean", ["feature-state", "hover"], false], 7, 3.5],
+            "circle-color": ["coalesce", ["get", "color"], "#ffffff"],
+            "circle-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.95, 0.48],
+            "circle-stroke-color": "#1d1d08",
+            "circle-stroke-width": 1
+          }
+        });
+
+        map.addLayer({
+          id: "tracker-latest",
+          type: "circle",
+          source: "tracker",
+          filter: featureFilter("latest"),
+          paint: {
+            "circle-radius": ["case", ["boolean", ["feature-state", "hover"], false], 11, 8],
+            "circle-color": ["coalesce", ["get", "color"], "#ffff00"],
+            "circle-stroke-color": "#ffff00",
+            "circle-stroke-width": 3
+          }
+        });
+
+        ["tracker-route-segments", "tracker-route-points", "tracker-latest"].forEach(bindInteractions);
+        loadRoutes();
+      });
+
+      function featureFilter(kind) {
+        return [
+          "all",
+          ["==", ["get", "kind"], kind],
+          ["in", ["get", "track_id"], ["literal", Array.from(visibleTracks)]]
+        ];
+      }
+
+      function bindInteractions(layerId) {
+        map.on("mouseenter", layerId, function () {
+          map.getCanvas().style.cursor = "pointer";
+        });
+
+        map.on("mousemove", layerId, function (event) {
+          var feature = event.features && event.features[0];
+          if (!feature) return;
+          setHoveredFeature(feature);
+          if (!pinnedFeature) renderDetail(feature, false);
+          hoverPopup
+            .setLngLat(feature.geometry.type === "Point" ? feature.geometry.coordinates : event.lngLat)
+            .setDOMContent(buildDetailNode(feature, true, false))
+            .addTo(map);
+        });
+
+        map.on("mouseleave", layerId, function () {
+          map.getCanvas().style.cursor = "";
+          clearHoveredFeature();
+          hoverPopup.remove();
+          if (pinnedFeature) renderDetail(pinnedFeature, true);
+          else renderDetail(null, false);
+        });
+
+        map.on("click", layerId, function (event) {
+          var feature = event.features && event.features[0];
+          if (!feature) return;
+          pinnedFeature = feature;
+          hoverPopup.remove();
+          renderDetail(feature, true);
+          pinnedPopup
+            .setLngLat(feature.geometry.type === "Point" ? feature.geometry.coordinates : event.lngLat)
+            .setDOMContent(buildDetailNode(feature, true, true))
+            .addTo(map);
+        });
+      }
+
+      function setHoveredFeature(feature) {
+        if (hoveredFeatureId === feature.id) return;
+        clearHoveredFeature();
+        if (feature.id === undefined || feature.id === null) return;
+        hoveredFeatureId = feature.id;
+        map.setFeatureState({ source: "tracker", id: hoveredFeatureId }, { hover: true });
+      }
+
+      function clearHoveredFeature() {
+        if (hoveredFeatureId === null) return;
+        try {
+          map.setFeatureState({ source: "tracker", id: hoveredFeatureId }, { hover: false });
+        } catch (error) {
+        }
+        hoveredFeatureId = null;
+      }
+
+      function loadRoutes() {
+        Promise.all([
+          fetchJson(archiveUrl)
+            .then(function (geojson) {
+              archivedGeoJson = normalizeArchivedGeoJson(geojson || emptyGeoJson, "nhr-megatrip-2026");
+            })
+            .catch(function () {
+              archivedGeoJson = emptyGeoJson;
+            }),
+          fetchJson(maineArchiveUrl)
+            .then(function (geojson) {
+              maineArchivedGeoJson = normalizeArchivedGeoJson(geojson || emptyGeoJson, "maine-august-trip");
+            })
+            .catch(function () {
+              maineArchivedGeoJson = emptyGeoJson;
+            })
+        ]).then(function () {
+          updateTrackerSource();
+          updateLatestLngLat();
+          updateStatus();
+          fitRoute(combinedTrackerGeoJson());
+        });
+      }
+
+      function fetchJson(url) {
+        return fetch(url, { cache: "no-store" }).then(function (response) {
+          if (!response.ok) throw new Error(url + " returned " + response.status);
+          return response.json();
+        });
+      }
+
+      function normalizeArchivedGeoJson(geojson, trackId) {
+        var normalized = [];
+        var features = geojson && geojson.features ? geojson.features : [];
+        var definition = trackDefinitions[trackId] || {};
+
+        features.forEach(function (feature) {
+          var properties = feature.properties || {};
+          if (properties.kind === "route-segment") {
+            var start = finiteNumber(properties.start_recorded_at);
+            if (start === null) start = finiteNumber(properties.recorded_at_start);
+            var end = finiteNumber(properties.end_recorded_at);
+            if (end === null) end = finiteNumber(properties.recorded_at_end);
+            var distanceMiles = segmentDistanceMiles(feature.geometry && feature.geometry.coordinates);
+            var elapsedHours = start !== null && end !== null ? (end - start) / 3600 : 0;
+            var speedMph = elapsedHours > 0 && distanceMiles !== null ? roundOne(distanceMiles / elapsedHours) : null;
+            normalized.push({
+              type: "Feature",
+              geometry: feature.geometry,
+              properties: Object.assign({}, properties, {
+                kind: "route-segment",
+                track_id: trackId,
+                track_name: definition.name || properties.track_name || trackId,
+                start_recorded_at: start,
+                end_recorded_at: end,
+                distance_miles: distanceMiles === null ? null : roundOne(distanceMiles),
+                speed_mph: speedMph,
+                color: properties.color || definition.color || "#ffffff",
+                source: "archived"
+              })
+            });
+          } else if (properties.kind === "route-point" || properties.kind === "latest") {
+            normalized.push({
+              type: "Feature",
+              geometry: feature.geometry,
+              properties: Object.assign({}, properties, {
+                track_id: trackId,
+                track_name: definition.name || properties.track_name || trackId,
+                color: properties.color || definition.color || "#ffffff",
+                source: "archived"
+              })
+            });
+          }
+        });
+
+        return {
+          type: "FeatureCollection",
+          metadata: geojson.metadata || {},
+          properties: geojson.properties || {},
+          features: normalized
+        };
+      }
+
+      function combinedTrackerGeoJson() {
+        return {
+          type: "FeatureCollection",
+          features: (archivedGeoJson.features || []).concat(maineArchivedGeoJson.features || [])
+        };
+      }
+
+      function updateTrackerSource() {
+        clearHoveredFeature();
+        var source = map.getSource("tracker");
+        if (source) source.setData(combinedTrackerGeoJson());
+        applyTrackFilters();
+      }
+
+      function applyTrackFilters() {
+        [
+          ["tracker-route-segments", "route-segment"],
+          ["tracker-route-points", "route-point"],
+          ["tracker-latest", "latest"]
+        ].forEach(function (entry) {
+          if (map.getLayer(entry[0])) map.setFilter(entry[0], featureFilter(entry[1]));
+        });
+      }
+
+      function updateLatestLngLat() {
+        latestLngLat = null;
+        var latestEpoch = null;
+        combinedTrackerGeoJson().features.forEach(function (feature) {
+          var properties = feature.properties || {};
+          if (!visibleTracks.has(properties.track_id)) return;
+          var recordedAt = null;
+          var coordinate = null;
+          if (properties.kind === "latest" && feature.geometry && feature.geometry.type === "Point") {
+            recordedAt = finiteNumber(properties.recorded_at);
+            coordinate = feature.geometry.coordinates;
+          } else if (properties.kind === "route-segment" && feature.geometry && feature.geometry.type === "LineString") {
+            recordedAt = finiteNumber(properties.end_recorded_at);
+            coordinate = feature.geometry.coordinates[feature.geometry.coordinates.length - 1];
+          }
+          if (coordinate && (latestLngLat === null || (recordedAt !== null && (latestEpoch === null || recordedAt > latestEpoch)))) {
+            latestLngLat = coordinate;
+            latestEpoch = recordedAt;
+          }
+        });
+        document.getElementById("tracker-recenter").disabled = !latestLngLat;
+      }
+
+      function updateStatus() {
+        var pointCount = (archivedGeoJson.features || []).length + (maineArchivedGeoJson.features || []).length;
+        setText("fullscreen-status", pointCount ? "Final route archives loaded" : "Route archives unavailable");
+      }
+
+      function renderDetail(feature, pinned) {
+        var panel = document.getElementById("tracker-detail");
+        if (!panel) return;
+        panel.replaceChildren(buildDetailNode(feature, false, pinned));
+      }
+
+      function buildDetailNode(feature, compact, pinned) {
+        var wrapper = document.createElement("div");
+        wrapper.className = compact ? "tracker-popup-detail" : "tracker-detail-content";
+        if (!feature) {
+          var heading = document.createElement("strong");
+          heading.textContent = "Route details";
+          var instruction = document.createElement("p");
+          instruction.textContent = "Hover over a route on desktop, or tap/click a point or segment to keep its details here.";
+          wrapper.append(heading, instruction);
+          return wrapper;
+        }
+
+        var properties = feature.properties || {};
+        var title = document.createElement("strong");
+        title.textContent = pinned ? "Pinned route detail" : "Route detail";
+        wrapper.appendChild(title);
+        appendDetailRow(wrapper, "Route", properties.track_name || "Route");
+
+        if (properties.kind === "route-segment") {
+          var start = detailTime(properties.start_recorded_at, properties.start_time_eastern);
+          var end = detailTime(properties.end_recorded_at, properties.end_time_eastern);
+          appendDetailRow(wrapper, "Segment", start && end ? start + " to " + end : "Time unavailable for this archived segment");
+          appendDetailRow(wrapper, "Speed", speedLabel(properties.speed_mph));
+          appendDetailRow(wrapper, "Distance", distanceLabel(properties.distance_miles));
+        } else {
+          var time = detailTime(properties.recorded_at, properties.time_eastern);
+          appendDetailRow(wrapper, "Time", time || "Time unavailable for this archived point");
+          appendDetailRow(wrapper, "Speed", speedLabel(properties.speed_mph));
+        }
+
+        appendDetailRow(wrapper, "Source", "Archived/static");
+        return wrapper;
+      }
+
+      function appendDetailRow(wrapper, label, value) {
+        var row = document.createElement("p");
+        var strong = document.createElement("strong");
+        strong.textContent = label + ": ";
+        row.append(strong, document.createTextNode(value));
+        wrapper.appendChild(row);
+      }
+
+      function fitRoute(geojson) {
+        var bounds = routeBounds(geojson);
+        if (!bounds || bounds.isEmpty()) return;
+        map.resize();
+        map.fitBounds(bounds, { padding: 50, maxZoom: 11, duration: 0 });
+      }
+
+      function routeBounds(geojson) {
+        var bounds = null;
+        (geojson.features || []).forEach(function (feature) {
+          if (!feature.geometry || !visibleTracks.has(feature.properties && feature.properties.track_id)) return;
+          if (feature.geometry.type === "LineString") {
+            feature.geometry.coordinates.forEach(function (coordinate) {
+              bounds = extendBounds(bounds, coordinate);
+            });
+          } else if (feature.geometry.type === "Point") {
+            bounds = extendBounds(bounds, feature.geometry.coordinates);
+          }
+        });
+        return bounds;
+      }
+
+      function extendBounds(bounds, coordinate) {
+        if (!Array.isArray(coordinate) || coordinate.length < 2) return bounds;
+        if (!bounds) return new maplibregl.LngLatBounds(coordinate, coordinate);
+        bounds.extend(coordinate);
+        return bounds;
+      }
+
+      function segmentDistanceMiles(coordinates) {
+        if (!Array.isArray(coordinates) || coordinates.length < 2) return null;
+        var first = coordinates[0];
+        var second = coordinates[coordinates.length - 1];
+        if (!Array.isArray(first) || !Array.isArray(second)) return null;
+        var earthRadiusMiles = 3958.7613;
+        var lat1 = degreesToRadians(first[1]);
+        var lat2 = degreesToRadians(second[1]);
+        var deltaLat = degreesToRadians(second[1] - first[1]);
+        var deltaLon = degreesToRadians(second[0] - first[0]);
+        var a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2)
+          + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+        return 2 * earthRadiusMiles * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      function degreesToRadians(value) {
+        return value * Math.PI / 180;
+      }
+
+      function finiteNumber(value) {
+        if (value === null || value === undefined || value === "") return null;
+        var number = Number(value);
+        return Number.isFinite(number) ? number : null;
+      }
+
+      function roundOne(value) {
+        return Math.round(value * 10) / 10;
+      }
+
+      function detailTime(epoch, fallback) {
+        var value = finiteNumber(epoch);
+        if (value !== null) return formatEastern(value);
+        return typeof fallback === "string" && fallback ? fallback : null;
+      }
+
+      function speedLabel(value) {
+        var speed = finiteNumber(value);
+        return speed === null ? "Speed unavailable" : formatNumber(speed, 1) + " mph";
+      }
+
+      function distanceLabel(value) {
+        var distance = finiteNumber(value);
+        return distance === null ? "Distance unavailable" : formatNumber(distance, 1) + " mi";
+      }
+
+      function formatNumber(value, digits) {
+        return Number(value).toLocaleString(undefined, {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits
+        });
+      }
+
+      function formatEastern(epoch) {
+        var date = new Date(epoch * 1000);
+        if (Number.isNaN(date.getTime())) return null;
+        return new Intl.DateTimeFormat("en-US", {
+          timeZone: "America/New_York",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit"
+        }).format(date) + " ET";
+      }
+
+      function setText(id, value) {
+        var element = document.getElementById(id);
+        if (element) element.textContent = value;
+      }
+
+      document.querySelectorAll("[data-track-toggle]").forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+          if (checkbox.checked) visibleTracks.add(checkbox.value);
+          else visibleTracks.delete(checkbox.value);
+          applyTrackFilters();
+          updateLatestLngLat();
+        });
+      });
+
+      document.getElementById("tracker-recenter").addEventListener("click", function () {
+        if (!latestLngLat) return;
+        map.easeTo({ center: latestLngLat, zoom: Math.max(map.getZoom(), 9), duration: 500 });
+      });
+
+      window.setTimeout(function () { map.resize(); }, 0);
+      window.addEventListener("resize", function () { map.resize(); });
+    })();
+  </script>
+</body>
+</html>
