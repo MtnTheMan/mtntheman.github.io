@@ -1,0 +1,9 @@
+# NHPA T21 experimental public research archive
+
+The self-contained `index.html` is a **redacted public derivative** of the frozen local T21 private viewer, not a copy of the private HTML or model table. The 59,373 aligned 5-km cells and ten selectable rank/support layers are retained. Detailed 5-km GBIF record counts and unused embedded model fields are removed. No camera deployment/site coordinates, GBIF occurrence coordinates, harvest totals, interview evidence, or local source files are present.
+
+The map is an unvalidated, illustrative 50/50 synthesis of 2019–2024 camera encounter-model ranks and 2019–2025 GBIF reporting-share-model ranks. It is **not** a deer count, validated abundance estimate, browse-impact map, or northern-hardwood exposure map. See the [public methods page](/northern-hardwood-deer-t21-relative-index-experimental-methods/) for source DOIs, mixed GBIF CC0/CC BY/CC BY-NC terms, support gaps, validation limits, and weight sensitivity. The archive is intended for noncommercial research viewing; commercial reuse of underlying GBIF records is not authorized by this page.
+
+Provenance: frozen private viewer SHA-256 `e616ed2a4c9ee5d37f90c58e6bc94c5e540f3681c2785fd9a9db1390ba126d86`; redacted `index.html` SHA-256 `66039b99845abef13dcd520601db79a2f69720f7ec3027e9a14abd206648f2e6`; public methods page SHA-256 `e2a9111e65a95684709f0b3e89df7c1241dd30e328859fd45db0ce8d346b3b8e`. The reproducible redaction script and detailed publication gate are in the canonical NHPA T21/publication directory, not in this website repository. `public_package_manifest.csv` hashes the files in this package.
+
+T22 is deliberately **not** included: its fixed version embeds restricted Maine town-level harvest and its older version still exposes source-native state harvest data without completed reuse clearance.
